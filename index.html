@@ -454,6 +454,54 @@
                     <!-- News will be loaded here from Firebase -->
                 </div>
             </div>
+            
+            <!-- NEW: REFERRAL VIEW -->
+            <div id="view-referral" class="app-view space-y-6">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-slate-100">Refer & Earn</h2>
+                    <p class="text-slate-500 text-sm">Invite friends and earn rewards together</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 text-center">
+                    <div class="neo-card p-4 rounded-xl bg-slate-800/50">
+                        <p class="text-sm text-slate-400">Total Referrals</p>
+                        <p id="stat-referrals" class="text-xl font-bold text-cyan-400">0</p>
+                    </div>
+                    <div class="neo-card p-4 rounded-xl bg-slate-800/50">
+                        <p class="text-sm text-slate-400">Referral Earnings</p>
+                        <p id="stat-ref-earnings" class="text-xl font-bold text-emerald-400">$0.00</p>
+                    </div>
+                </div>
+
+                <div class="neo-card p-5 rounded-2xl space-y-4">
+                    <h3 class="font-semibold text-slate-200 text-center">Your Unique Referral Link</h3>
+                    <div class="relative flex items-center">
+                        <input type="text" id="referral-link-input" readonly class="neo-input w-full p-3 rounded-xl pr-12 font-mono text-sm" value="Loading...">
+                        <button onclick="copyText(document.getElementById('referral-link-input').value)" class="absolute right-2 p-2 text-slate-400 hover:text-white">
+                            <i data-lucide="copy" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                     <button id="btn-share-telegram" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500">
+                        <i data-lucide="send" class="w-5 h-5"></i> Telegram
+                    </button>
+                    <button id="btn-share-live" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500">
+                        <i data-lucide="share-2" class="w-5 h-5"></i> Share Live
+                    </button>
+                </div>
+
+                <div class="neo-card p-4 rounded-xl bg-slate-800/50">
+                    <h4 class="font-bold text-slate-300 mb-2">Referral Benefits:</h4>
+                    <ul class="text-xs text-slate-400 list-disc list-inside space-y-1">
+                        <li>Share your link with friends.</li>
+                        <li>When they join, they become your referral.</li>
+                        <li>You earn a commission on their every deposit.</li>
+                        <li>The more friends you invite, the more you earn!</li>
+                    </ul>
+                </div>
+            </div>
 
         </main>
 
@@ -467,9 +515,9 @@
                 <i data-lucide="clipboard-check" class="w-6 h-6"></i>
                 <span>Tasks</span>
             </button>
-             <button class="dock-item" data-target="view-deposit">
-                <i data-lucide="plus-square" class="w-6 h-6"></i>
-                <span>Add Fund</span>
+             <button class="dock-item" data-target="view-referral">
+                <i data-lucide="users" class="w-6 h-6"></i>
+                <span>Refer</span>
             </button>
             <button class="dock-item" data-target="view-news">
                 <i data-lucide="rss" class="w-6 h-6"></i>
@@ -502,11 +550,12 @@
         const P2P_FEE_PERCENT = 0.05; // 5%
         const MIN_P2P_AMT = 0.5;
         const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
+        const YOUR_TELEGRAM_BOT_USERNAME = "YourNexusBot"; // <<< গুরুত্বপূর্ণ: এখানে আপনার টেলিগ্রাম বটের ইউজারনেম দিন
 
         // --- NEW TASK SYSTEM CONFIG ---
         const TASK_REWARD = 0.5; // $0.5 reward
         const TASK_DURATION_MS = 20000; // 20 seconds
-        const TASK_COOLDOWN_MS = 60 * 60 * 1000; // 1 hour
+        const TASK_COOLDOWN_MS = 5000; // 5 seconds <<<<<<< পরিবর্তন করা হয়েছে
         
         // --- PREMIUM TIER CONFIGURATION (Default values, will be overridden by Firestore) ---
         let premiumTiers = {
@@ -584,7 +633,9 @@
                     premiumExpiry: null,
                     lastNotificationCheck: null,
                     tasksToday: 0,
-                    lastTaskDate: null
+                    lastTaskDate: null,
+                    referralCount: 0, // New field
+                    referralEarnings: 0 // New field
                 };
                 await setDoc(userRef, userData);
             }
@@ -681,7 +732,7 @@
             document.querySelectorAll('.app-view').forEach(el => el.classList.remove('active-view'));
             document.getElementById(viewId).classList.add('active-view');
 
-            const mainViews = ['view-dashboard', 'view-tasks', 'view-deposit', 'view-news', 'view-profile'];
+            const mainViews = ['view-dashboard', 'view-tasks', 'view-referral', 'view-news', 'view-profile'];
             if (mainViews.includes(viewId)) {
                 document.querySelectorAll('.dock-item').forEach(btn => {
                     btn.classList.toggle('nav-active', btn.dataset.target === viewId);
@@ -694,6 +745,7 @@
             if(viewId === 'view-news') loadNewsFeed();
             if(viewId === 'view-premium') loadPremiumTiers();
             if(viewId === 'view-features') loadActivityLog();
+            if(viewId === 'view-referral') loadReferralPage(); // New
 
             window.scrollTo(0,0);
         }
@@ -830,10 +882,8 @@
                         loadTasksView();
                         return;
                     }
-                    const hours = Math.floor(remaining / (1000 * 60 * 60));
-                    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-                    statusContainer.innerHTML = `<p class="text-cyan-400">Next task available in:</p><p class="text-2xl font-mono font-bold text-white">${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}</p>`;
+                    const seconds = Math.floor(remaining / 1000);
+                    statusContainer.innerHTML = `<p class="text-cyan-400">Next task available in:</p><p class="text-2xl font-mono font-bold text-white">${String(seconds).padStart(2, '0')} seconds</p>`;
                     btn.textContent = 'ON COOLDOWN';
                 };
                 const timerId = setInterval(updateTimer, 1000);
@@ -1034,6 +1084,39 @@
             }
         }
 
+        // --- NEW REFERRAL FUNCTIONS ---
+        function loadReferralPage() {
+            if (!userData) return;
+            const refLink = `https://t.me/${YOUR_TELEGRAM_BOT_USERNAME}?start=${userData.tgChatId}`;
+            document.getElementById('referral-link-input').value = refLink;
+            document.getElementById('stat-referrals').textContent = userData.referralCount || 0;
+            document.getElementById('stat-ref-earnings').textContent = `$${(userData.referralEarnings || 0).toFixed(2)}`;
+
+            const shareText = encodeURIComponent(`🔥 Join me on NEXUS and earn rewards! Use my link to get started.`);
+            const shareUrl = encodeURIComponent(refLink);
+            
+            document.getElementById('btn-share-telegram').onclick = () => {
+                window.open(`https://t.me/share/url?url=${shareUrl}&text=${shareText}`, '_blank');
+            };
+            
+            document.getElementById('btn-share-live').onclick = async () => {
+                 if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: 'Join NEXUS',
+                            text: `🔥 Join me on NEXUS and earn rewards!`,
+                            url: refLink
+                        });
+                    } catch (error) {
+                        console.error('Error sharing:', error);
+                        copyText(refLink); // Fallback to copy
+                    }
+                } else {
+                    copyText(refLink); // Fallback for desktop/unsupported browsers
+                }
+            };
+        }
+
         // --- HELPER FUNCTIONS ---
         window.openPremiumPage = () => { closeSidePanel(); switchView('view-premium'); };
         window.openSupport = () => { window.open("https://t.me/your_support_username", '_blank'); };
@@ -1164,6 +1247,9 @@
                     if (document.getElementById('view-tasks').classList.contains('active-view')) {
                         loadTasksView();
                     }
+                    if (document.getElementById('view-referral').classList.contains('active-view')) {
+                        loadReferralPage();
+                    }
                 }
             });
         }
@@ -1202,7 +1288,7 @@
                     }
                 });
                 
-                statEarnedEl.textContent = `$${(totalTaskEarnings + totalCashback).toFixed(2)}`;
+                statEarnedEl.textContent = `$${(totalTaskEarnings + totalCashback + (userData.referralEarnings || 0)).toFixed(2)}`;
         
                 // P2P savings
                 const p2pQuery = query(collection(db, "p2p_logs"), where("fromId", "==", uid));
