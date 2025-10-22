@@ -125,6 +125,24 @@
             background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px);
             border: 1px solid rgba(99, 102, 241, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
+        /* Task Card Styling */
+        .task-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .task-card.completed {
+            background-color: #10b981;
+            cursor: not-allowed;
+        }
+        .task-card:not(.completed):hover {
+            border-color: #6366f1;
+            transform: translateY(-5px);
+        }
+
     </style>
 </head>
 <body class="max-w-md mx-auto min-h-screen overflow-x-hidden no-select pb-28">
@@ -246,41 +264,15 @@
             
             <!-- NEW: TASKS VIEW -->
             <div id="view-tasks" class="app-view space-y-6">
-                 <div class="text-center">
-                    <h2 class="text-2xl font-bold text-slate-100">Daily Task</h2>
-                    <p class="text-slate-500 text-sm">Complete simple tasks to earn rewards</p>
-                </div>
-                
-                <div class="neo-card p-6 rounded-2xl text-center space-y-4">
-                    <div class="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto text-indigo-400">
-                        <i data-lucide="hourglass" class="w-10 h-10"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-white">Earn $0.50 Daily!</h3>
-                        <p class="text-slate-400 text-sm mt-1">
-                            Just stay outside the app for at least <span class="font-bold text-cyan-400">20 seconds</span>.
-                        </p>
-                         <p id="task-limit-info" class="text-xs text-slate-500 mt-2"></p>
-                    </div>
-                    
-                    <div id="task-status-container" class="py-2">
-                        <!-- Task status will be rendered here by JS -->
-                    </div>
+                <div class="text-center">
+                   <h2 class="text-2xl font-bold text-slate-100">Daily Tasks</h2>
+                   <p class="text-slate-500 text-sm">Complete simple tasks to earn rewards</p>
+               </div>
+               <div id="task-list" class="space-y-4">
+                   <!-- Tasks will be dynamically inserted here -->
+               </div>
+           </div>
 
-                    <button id="btn-start-task" class="action-btn w-full py-3 rounded-xl text-lg">START TASK</button>
-                </div>
-
-                <div class="neo-card p-4 rounded-xl bg-slate-800/50">
-                    <h4 class="font-bold text-slate-300 mb-2">How it works:</h4>
-                    <ol class="text-xs text-slate-400 list-decimal list-inside space-y-1">
-                        <li>Click the "START TASK" button.</li>
-                        <li>Switch to another app or go to your home screen.</li>
-                        <li>Wait for at least 20 seconds.</li>
-                        <li>Return to this app to claim your reward automatically.</li>
-                        <li>You can complete this task multiple times a day based on your premium plan.</li>
-                    </ol>
-                </div>
-            </div>
 
             <!-- DEPOSIT VIEW (Redesigned) -->
             <div id="view-deposit" class="app-view space-y-6">
@@ -454,54 +446,6 @@
                     <!-- News will be loaded here from Firebase -->
                 </div>
             </div>
-            
-            <!-- NEW: REFERRAL VIEW -->
-            <div id="view-referral" class="app-view space-y-6">
-                <div class="text-center">
-                    <h2 class="text-2xl font-bold text-slate-100">Refer & Earn</h2>
-                    <p class="text-slate-500 text-sm">Invite friends and earn rewards together</p>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-3 text-center">
-                    <div class="neo-card p-4 rounded-xl bg-slate-800/50">
-                        <p class="text-sm text-slate-400">Total Referrals</p>
-                        <p id="stat-referrals" class="text-xl font-bold text-cyan-400">0</p>
-                    </div>
-                    <div class="neo-card p-4 rounded-xl bg-slate-800/50">
-                        <p class="text-sm text-slate-400">Referral Earnings</p>
-                        <p id="stat-ref-earnings" class="text-xl font-bold text-emerald-400">$0.00</p>
-                    </div>
-                </div>
-
-                <div class="neo-card p-5 rounded-2xl space-y-4">
-                    <h3 class="font-semibold text-slate-200 text-center">Your Unique Referral Link</h3>
-                    <div class="relative flex items-center">
-                        <input type="text" id="referral-link-input" readonly class="neo-input w-full p-3 rounded-xl pr-12 font-mono text-sm" value="Loading...">
-                        <button onclick="copyText(document.getElementById('referral-link-input').value)" class="absolute right-2 p-2 text-slate-400 hover:text-white">
-                            <i data-lucide="copy" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                     <button id="btn-share-telegram" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500">
-                        <i data-lucide="send" class="w-5 h-5"></i> Telegram
-                    </button>
-                    <button id="btn-share-live" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500">
-                        <i data-lucide="share-2" class="w-5 h-5"></i> Share Live
-                    </button>
-                </div>
-
-                <div class="neo-card p-4 rounded-xl bg-slate-800/50">
-                    <h4 class="font-bold text-slate-300 mb-2">Referral Benefits:</h4>
-                    <ul class="text-xs text-slate-400 list-disc list-inside space-y-1">
-                        <li>Share your link with friends.</li>
-                        <li>When they join, they become your referral.</li>
-                        <li>You earn a commission on their every deposit.</li>
-                        <li>The more friends you invite, the more you earn!</li>
-                    </ul>
-                </div>
-            </div>
 
         </main>
 
@@ -515,9 +459,9 @@
                 <i data-lucide="clipboard-check" class="w-6 h-6"></i>
                 <span>Tasks</span>
             </button>
-             <button class="dock-item" data-target="view-referral">
-                <i data-lucide="users" class="w-6 h-6"></i>
-                <span>Refer</span>
+             <button class="dock-item" data-target="view-deposit">
+                <i data-lucide="plus-square" class="w-6 h-6"></i>
+                <span>Add Fund</span>
             </button>
             <button class="dock-item" data-target="view-news">
                 <i data-lucide="rss" class="w-6 h-6"></i>
@@ -550,12 +494,15 @@
         const P2P_FEE_PERCENT = 0.05; // 5%
         const MIN_P2P_AMT = 0.5;
         const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
-        const YOUR_TELEGRAM_BOT_USERNAME = "YourNexusBot"; // <<< গুরুত্বপূর্ণ: এখানে আপনার টেলিগ্রাম বটের ইউজারনেম দিন
 
         // --- NEW TASK SYSTEM CONFIG ---
-        const TASK_REWARD = 0.5; // $0.5 reward
-        const TASK_DURATION_MS = 20000; // 20 seconds
-        const TASK_COOLDOWN_MS = 5000; // 5 seconds <<<<<<< পরিবর্তন করা হয়েছে
+        const tasks = [
+            { id: 1, title: "Watch a Video", description: "Watch a short video to earn a reward.", reward: 0.10, link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
+            { id: 2, title: "Visit a Website", description: "Visit our partner's website.", reward: 0.15, link: "https://www.google.com" },
+            { id: 3, title: "Follow on Social Media", description: "Follow us on our social media channels.", reward: 0.20, link: "https://www.twitter.com" }
+        ];
+
+        const TASK_DURATION_MS = 10000; // 10 seconds
         
         // --- PREMIUM TIER CONFIGURATION (Default values, will be overridden by Firestore) ---
         let premiumTiers = {
@@ -583,7 +530,7 @@
         let userData = null;
         let sysConfig = {};
         let activeTimers = []; 
-        let taskState = { isActive: false, leaveTime: null }; // NEW state for task
+        let taskState = { isActive: false, leaveTime: null, activeTask: null };
 
         // --- CORE FUNCTIONS ---
         window.onload = async () => {
@@ -632,10 +579,7 @@
                     premiumTier: null,
                     premiumExpiry: null,
                     lastNotificationCheck: null,
-                    tasksToday: 0,
-                    lastTaskDate: null,
-                    referralCount: 0, // New field
-                    referralEarnings: 0 // New field
+                    completedTasks: []
                 };
                 await setDoc(userRef, userData);
             }
@@ -645,13 +589,6 @@
                 throw new Error("Blocked");
             }
             
-            // Reset daily task count if it's a new day
-            const today = new Date().toISOString().slice(0, 10);
-            if(userData.lastTaskDate !== today) {
-                userData.tasksToday = 0;
-                await updateDoc(userRef, { tasksToday: 0, lastTaskDate: today });
-            }
-
             updateDashboard();
             initRealtimeListeners();
             checkNewNotifications();
@@ -732,7 +669,7 @@
             document.querySelectorAll('.app-view').forEach(el => el.classList.remove('active-view'));
             document.getElementById(viewId).classList.add('active-view');
 
-            const mainViews = ['view-dashboard', 'view-tasks', 'view-referral', 'view-news', 'view-profile'];
+            const mainViews = ['view-dashboard', 'view-tasks', 'view-deposit', 'view-news', 'view-profile'];
             if (mainViews.includes(viewId)) {
                 document.querySelectorAll('.dock-item').forEach(btn => {
                     btn.classList.toggle('nav-active', btn.dataset.target === viewId);
@@ -745,7 +682,6 @@
             if(viewId === 'view-news') loadNewsFeed();
             if(viewId === 'view-premium') loadPremiumTiers();
             if(viewId === 'view-features') loadActivityLog();
-            if(viewId === 'view-referral') loadReferralPage(); // New
 
             window.scrollTo(0,0);
         }
@@ -842,64 +778,41 @@
 
         // --- NEW TASK SYSTEM FUNCTIONS ---
         function loadTasksView() {
-            const btn = document.getElementById('btn-start-task');
-            const statusContainer = document.getElementById('task-status-container');
-            const taskLimitInfo = document.getElementById('task-limit-info');
-            
-            activeTimers.forEach(clearInterval);
-            activeTimers = [];
+            const taskListContainer = document.getElementById('task-list');
+            taskListContainer.innerHTML = '';
 
-            const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
-            const currentTierKey = (userData.isPremium && !isPremiumExpired) ? userData.premiumTier : null;
-            const taskLimit = currentTierKey ? premiumTiers[currentTierKey].taskLimit : 1;
-            const tasksCompleted = userData.tasksToday || 0;
+            tasks.forEach(task => {
+                const isCompleted = userData.completedTasks && userData.completedTasks.includes(task.id);
 
-            taskLimitInfo.textContent = `Today's Progress: ${tasksCompleted} / ${taskLimit} tasks completed.`;
-
-            if (tasksCompleted >= taskLimit) {
-                statusContainer.innerHTML = `<p class="text-red-400">You have completed all your tasks for today.</p>`;
-                btn.disabled = true;
-                btn.textContent = 'DAILY LIMIT REACHED';
-                return;
-            }
-
-            if (taskState.isActive) {
-                statusContainer.innerHTML = `<p class="text-yellow-400 animate-pulse">Task is active. Please leave the app now.</p>`;
-                btn.disabled = true;
-                btn.textContent = 'TASK IN PROGRESS';
-                return;
-            }
-
-            const lastCompletion = userData.lastTaskCompletion ? userData.lastTaskCompletion.toMillis() : 0;
-            const cooldownEnd = lastCompletion + TASK_COOLDOWN_MS;
-
-            if (Date.now() < cooldownEnd) {
-                btn.disabled = true;
-                const updateTimer = () => {
-                    const remaining = cooldownEnd - Date.now();
-                    if (remaining <= 0) {
-                        clearInterval(timerId);
-                        loadTasksView();
-                        return;
+                const taskCard = document.createElement('div');
+                taskCard.className = `task-card ${isCompleted ? 'completed' : ''}`;
+                taskCard.onclick = () => {
+                    if (!isCompleted) {
+                        startTask(task);
                     }
-                    const seconds = Math.floor(remaining / 1000);
-                    statusContainer.innerHTML = `<p class="text-cyan-400">Next task available in:</p><p class="text-2xl font-mono font-bold text-white">${String(seconds).padStart(2, '0')} seconds</p>`;
-                    btn.textContent = 'ON COOLDOWN';
                 };
-                const timerId = setInterval(updateTimer, 1000);
-                activeTimers.push(timerId);
-                updateTimer();
-            } else {
-                statusContainer.innerHTML = `<p class="text-emerald-400">Task is ready to start!</p>`;
-                btn.disabled = false;
-                btn.textContent = 'START TASK';
-            }
+
+                taskCard.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold">${task.title}</h3>
+                            <p class="text-sm text-slate-400">${task.description}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-bold text-green-400">+$${task.reward.toFixed(2)}</p>
+                            <p class="text-xs ${isCompleted ? 'text-white' : 'text-slate-500'}">${isCompleted ? 'Completed' : 'Tap to start'}</p>
+                        </div>
+                    </div>
+                `;
+                taskListContainer.appendChild(taskCard);
+            });
         }
         
-        function startTask() {
+        function startTask(task) {
             taskState.isActive = true;
-            showToast("Task started! Now, leave the app for 20 seconds.", "info");
-            loadTasksView();
+            taskState.activeTask = task;
+            window.open(task.link, '_blank');
+            showToast(`Task started! Stay on the opened page for ${TASK_DURATION_MS / 1000} seconds.`, "info");
         }
 
         async function handleVisibilityChange() {
@@ -917,6 +830,7 @@
                     }
                     taskState.isActive = false;
                     taskState.leaveTime = null;
+                    taskState.activeTask = null;
                     if (document.getElementById('view-tasks').classList.contains('active-view')) {
                         loadTasksView();
                     }
@@ -925,6 +839,10 @@
         }
 
         async function completeTask() {
+            const task = taskState.activeTask;
+            if (!task || (userData.completedTasks && userData.completedTasks.includes(task.id))) {
+                return;
+            }
             try {
                 const userRef = doc(db, "users", userData.tgChatId);
                 await runTransaction(db, async (transaction) => {
@@ -932,37 +850,23 @@
                     if (!userDoc.exists()) throw "User not found.";
 
                     const currentData = userDoc.data();
-                    const isPremiumExpired = currentData.premiumExpiry && currentData.premiumExpiry.toDate() < new Date();
-                    const currentTierKey = (currentData.isPremium && !isPremiumExpired) ? currentData.premiumTier : null;
-                    const taskLimit = currentTierKey ? premiumTiers[currentTierKey].taskLimit : 1;
                     
-                    const today = new Date().toISOString().slice(0, 10);
-                    const tasksToday = (currentData.lastTaskDate === today) ? currentData.tasksToday : 0;
-                    
-                    if (tasksToday >= taskLimit) {
-                        throw "You have reached your daily task limit.";
-                    }
+                    const newBalance = currentData.balance + task.reward;
+                    const updatedCompletedTasks = [...(currentData.completedTasks || []), task.id];
 
-                    const lastCompletion = currentData.lastTaskCompletion ? currentData.lastTaskCompletion.toMillis() : 0;
-                    if (Date.now() < lastCompletion + TASK_COOLDOWN_MS) {
-                        throw "Task is still on cooldown.";
-                    }
-                    
-                    const newBalance = currentData.balance + TASK_REWARD;
                     transaction.update(userRef, {
                         balance: newBalance,
-                        lastTaskCompletion: serverTimestamp(),
-                        tasksToday: tasksToday + 1,
-                        lastTaskDate: today
+                        completedTasks: updatedCompletedTasks
                     });
                 });
                 
-                showToast(`Congratulations! You've earned $${TASK_REWARD.toFixed(2)}`, 'success');
-                logPublicActivity(`earned $${TASK_REWARD.toFixed(2)} from a task.`);
+                showToast(`Congratulations! You've earned $${task.reward.toFixed(2)}`, 'success');
+                logPublicActivity(`earned $${task.reward.toFixed(2)} from a task.`);
             } catch (e) {
                 showToast(`Error: ${e}`, 'error');
             }
         }
+
 
         // --- DEPOSIT FUNCTIONS ---
         document.getElementById('btn-submit-deposit').addEventListener('click', async () => {
@@ -1084,39 +988,6 @@
             }
         }
 
-        // --- NEW REFERRAL FUNCTIONS ---
-        function loadReferralPage() {
-            if (!userData) return;
-            const refLink = `https://t.me/${YOUR_TELEGRAM_BOT_USERNAME}?start=${userData.tgChatId}`;
-            document.getElementById('referral-link-input').value = refLink;
-            document.getElementById('stat-referrals').textContent = userData.referralCount || 0;
-            document.getElementById('stat-ref-earnings').textContent = `$${(userData.referralEarnings || 0).toFixed(2)}`;
-
-            const shareText = encodeURIComponent(`🔥 Join me on NEXUS and earn rewards! Use my link to get started.`);
-            const shareUrl = encodeURIComponent(refLink);
-            
-            document.getElementById('btn-share-telegram').onclick = () => {
-                window.open(`https://t.me/share/url?url=${shareUrl}&text=${shareText}`, '_blank');
-            };
-            
-            document.getElementById('btn-share-live').onclick = async () => {
-                 if (navigator.share) {
-                    try {
-                        await navigator.share({
-                            title: 'Join NEXUS',
-                            text: `🔥 Join me on NEXUS and earn rewards!`,
-                            url: refLink
-                        });
-                    } catch (error) {
-                        console.error('Error sharing:', error);
-                        copyText(refLink); // Fallback to copy
-                    }
-                } else {
-                    copyText(refLink); // Fallback for desktop/unsupported browsers
-                }
-            };
-        }
-
         // --- HELPER FUNCTIONS ---
         window.openPremiumPage = () => { closeSidePanel(); switchView('view-premium'); };
         window.openSupport = () => { window.open("https://t.me/your_support_username", '_blank'); };
@@ -1218,7 +1089,6 @@
             document.getElementById('modal-backdrop').addEventListener('click', closeModal);
             document.getElementById('btn-copy-uid').addEventListener('click', () => copyText(userData.tgChatId));
             
-            document.getElementById('btn-start-task').addEventListener('click', startTask); // NEW
             document.addEventListener('visibilitychange', handleVisibilityChange); // NEW
 
             document.getElementById('btn-exec-p2p').addEventListener('click', executeP2PTransfer);
@@ -1247,9 +1117,6 @@
                     if (document.getElementById('view-tasks').classList.contains('active-view')) {
                         loadTasksView();
                     }
-                    if (document.getElementById('view-referral').classList.contains('active-view')) {
-                        loadReferralPage();
-                    }
                 }
             });
         }
@@ -1273,9 +1140,15 @@
                 statDepositEl.textContent = `$${totalDeposit.toFixed(2)}`;
         
                 // Total earnings from tasks and cashback
-                const taskQuery = query(collection(db, "public_activity"), where("userId", "==", uid), where("action", "==", `earned $${TASK_REWARD.toFixed(2)} from a task.`));
-                const taskSnap = await getDocs(taskQuery);
-                const totalTaskEarnings = taskSnap.size * TASK_REWARD;
+                let totalTaskEarnings = 0;
+                if (userData.completedTasks) {
+                    userData.completedTasks.forEach(taskId => {
+                        const task = tasks.find(t => t.id === taskId);
+                        if (task) {
+                            totalTaskEarnings += task.reward;
+                        }
+                    });
+                }
                 
                 const purchaseQuery = query(collection(db, "deposits"), where("userId", "==", uid), where("status", "==", "approved"));
                 const purchaseSnap = await getDocs(purchaseQuery);
@@ -1288,7 +1161,7 @@
                     }
                 });
                 
-                statEarnedEl.textContent = `$${(totalTaskEarnings + totalCashback + (userData.referralEarnings || 0)).toFixed(2)}`;
+                statEarnedEl.textContent = `$${(totalTaskEarnings + totalCashback).toFixed(2)}`;
         
                 // P2P savings
                 const p2pQuery = query(collection(db, "p2p_logs"), where("fromId", "==", uid));
