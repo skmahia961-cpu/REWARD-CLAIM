@@ -1,1266 +1,1260 @@
 <!DOCTYPE html>
+
 <html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS MARKET</title>
-    <meta name="monetag" content="a41ceca9ffc67edad031c0024f85ef59">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NEXUS MARKET</title>
+<meta name="monetag" content="a41ceca9ffc67edad031c0024f85ef59">
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Poppins', 'sans-serif'], mono: ['Roboto Mono', 'monospace'] },
-                    colors: {
-                        nexus: {
-                            dark: '#0f172a',
-                            card: '#1e293b',
-                            primary: '#6366f1',
-                            accent: '#06b6d4',
-                            success: '#10b981',
-                            warning: '#f59e0b',
-                            danger: '#ef4444'
-                        }
+code
+Code
+download
+content_copy
+expand_less
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Poppins', 'sans-serif'], mono: ['Roboto Mono', 'monospace'] },
+                colors: {
+                    nexus: {
+                        dark: '#0f172a',
+                        card: '#1e293b',
+                        primary: '#6366f1',
+                        accent: '#06b6d4',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444'
                     }
                 }
             }
         }
-    </script>
-    <style>
-        :root { --nexus-bg: #0f172a; --nexus-card: #1e293b; --primary-grad: linear-gradient(135deg, #6366f1, #8b5cf6); }
-        body { background-color: var(--nexus-bg); color: #e2e8f0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .no-select { -webkit-user-select: none; user-select: none; }
-        .allow-select { -webkit-user-select: text; user-select: text; }
-        .neo-card {
-            background: var(--nexus-card); border: 1px solid #334155;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .neo-card:active { transform: scale(0.98); }
-        .neo-input {
-            background: #0f172a; border: 1px solid #334155; color: #fff; transition: all 0.3s ease;
-        }
-        .neo-input:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); outline: none; }
-        .action-btn {
-            background: var(--primary-grad); color: white; font-weight: 600; border: none;
-            position: relative; overflow: hidden; transition: all 0.3s ease;
-        }
-        .action-btn::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0));
-            opacity: 0; transition: opacity 0.3s;
-        }
-        .action-btn:active { transform: scale(0.97); }
-        .action-btn:hover::after { opacity: 1; }
-        .action-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
-        .action-btn:disabled::after { display: none; }
-        .app-view { display: none; opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease; }
-        .app-view.active-view { display: block; opacity: 1; transform: translateY(0); }
-        .dock-nav {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 95%; max-width: 400px; background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
-            display: flex; justify-content: space-evenly; padding: 12px; z-index: 50;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-        }
-        .dock-item {
-            color: #94a3b8; display: flex; flex-direction: column; align-items: center;
-            font-size: 10px; gap: 4px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative; padding: 0 8px;
-        }
-        .dock-item.nav-active { color: #6366f1; transform: translateY(-4px); }
-        .dock-item.nav-active::after {
-            content: ''; position: absolute; bottom: -8px; width: 6px; height: 6px;
-            background: #6366f1; border-radius: 50%;
-        }
-        #splash-screen {
-            position: fixed; inset: 0; background: var(--nexus-bg); z-index: 100;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease;
-        }
-        .loader-ring {
-            width: 60px; height: 60px; border: 4px solid #1e293b; border-top-color: #6366f1;
-            border-radius: 50%; animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .side-panel-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
-            opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 80;
-        }
-        .side-panel {
-            position: fixed; left: 0; top: 0; bottom: 0; width: 85%; max-width: 320px;
-            background: var(--nexus-bg); z-index: 90; transform: translateX(-105%);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-right: 1px solid #334155;
-        }
-        .side-panel.open { transform: translateX(0); }
-        .side-panel-overlay.open { opacity: 1; visibility: visible; }
-        .glass-modal {
-            background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px);
-            border: 1px solid rgba(99, 102, 241, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-    </style>
+    }
+</script>
+<style>
+    :root { --nexus-bg: #0f172a; --nexus-card: #1e293b; --primary-grad: linear-gradient(135deg, #6366f1, #8b5cf6); }
+    body { background-color: var(--nexus-bg); color: #e2e8f0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .no-select { -webkit-user-select: none; user-select: none; }
+    .allow-select { -webkit-user-select: text; user-select: text; }
+    .neo-card {
+        background: var(--nexus-card); border: 1px solid #334155;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transition: transform 0.2s, border-color 0.2s;
+    }
+    .neo-card:active { transform: scale(0.98); }
+    .neo-input {
+        background: #0f172a; border: 1px solid #334155; color: #fff; transition: all 0.3s ease;
+    }
+    .neo-input:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); outline: none; }
+    .action-btn {
+        background: var(--primary-grad); color: white; font-weight: 600; border: none;
+        position: relative; overflow: hidden; transition: all 0.3s ease;
+    }
+    .action-btn::after {
+        content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0));
+        opacity: 0; transition: opacity 0.3s;
+    }
+    .action-btn:active { transform: scale(0.97); }
+    .action-btn:hover::after { opacity: 1; }
+    .action-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+    .action-btn:disabled::after { display: none; }
+    .app-view { display: none; opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease; }
+    .app-view.active-view { display: block; opacity: 1; transform: translateY(0); }
+    .dock-nav {
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        width: 95%; max-width: 400px; background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
+        display: flex; justify-content: space-evenly; padding: 12px; z-index: 50;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .dock-item {
+        color: #94a3b8; display: flex; flex-direction: column; align-items: center;
+        font-size: 10px; gap: 4px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative; padding: 0 8px;
+    }
+    .dock-item.nav-active { color: #6366f1; transform: translateY(-4px); }
+    .dock-item.nav-active::after {
+        content: ''; position: absolute; bottom: -8px; width: 6px; height: 6px;
+        background: #6366f1; border-radius: 50%;
+    }
+    #splash-screen {
+        position: fixed; inset: 0; background: var(--nexus-bg); z-index: 100;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        transition: opacity 0.5s ease;
+    }
+    .loader-ring {
+        width: 60px; height: 60px; border: 4px solid #1e293b; border-top-color: #6366f1;
+        border-radius: 50%; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .side-panel-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+        opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 80;
+    }
+    .side-panel {
+        position: fixed; left: 0; top: 0; bottom: 0; width: 85%; max-width: 320px;
+        background: var(--nexus-bg); z-index: 90; transform: translateX(-105%);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-right: 1px solid #334155;
+    }
+    .side-panel.open { transform: translateX(0); }
+    .side-panel-overlay.open { opacity: 1; visibility: visible; }
+    .glass-modal {
+        background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px);
+        border: 1px solid rgba(99, 102, 241, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+</style>
 </head>
 <body class="max-w-md mx-auto min-h-screen overflow-x-hidden no-select pb-28">
 
-    <!-- SPLASH SCREEN -->
-    <div id="splash-screen">
-        <div class="relative">
-            <div class="loader-ring"></div>
-            <div class="absolute inset-0 flex items-center justify-center">
-                <i data-lucide="hexagon" class="w-6 h-6 text-indigo-500 fill-indigo-500/20"></i>
+code
+Code
+download
+content_copy
+expand_less
+<!-- SPLASH SCREEN -->
+<div id="splash-screen">
+    <div class="relative">
+        <div class="loader-ring"></div>
+        <div class="absolute inset-0 flex items-center justify-center">
+            <i data-lucide="hexagon" class="w-6 h-6 text-indigo-500 fill-indigo-500/20"></i>
+        </div>
+    </div>
+    <h1 class="mt-6 text-2xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">NEXUS</h1>
+    <p id="loading-msg" class="text-slate-500 text-sm mt-2 animate-pulse">Establishing Secure Connection...</p>
+</div>
+
+<!-- SIDE PANEL -->
+<div class="side-panel-overlay" id="panel-overlay"></div>
+<aside class="side-panel" id="main-side-panel">
+    <div class="p-6 bg-slate-900/50 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <i data-lucide="shield-check" class="w-7 h-7 text-white"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-slate-100">Help Center</h3>
+                <p class="text-xs text-slate-400">24/7 Priority Support</p>
             </div>
         </div>
-        <h1 class="mt-6 text-2xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">NEXUS</h1>
-        <p id="loading-msg" class="text-slate-500 text-sm mt-2 animate-pulse">Establishing Secure Connection...</p>
     </div>
-
-    <!-- SIDE PANEL -->
-    <div class="side-panel-overlay" id="panel-overlay"></div>
-    <aside class="side-panel" id="main-side-panel">
-        <div class="p-6 bg-slate-900/50 border-b border-slate-800">
+    <div id="panel-content" class="p-4 space-y-2 overflow-y-auto h-[calc(100%-160px)]">
+        <button onclick="openPremiumPage()" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <i data-lucide="shield-check" class="w-7 h-7 text-white"></i>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg text-slate-100">Help Center</h3>
-                    <p class="text-xs text-slate-400">24/7 Priority Support</p>
-                </div>
+                <div class="p-2 rounded-lg bg-yellow-500/10 text-yellow-500"><i data-lucide="gem" class="w-5 h-5"></i></div>
+                <span class="font-medium">Get Premium</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600"></i>
+        </button>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800 bg-slate-900">
+        <div class="flex justify-evenly text-slate-400">
+            <a href="#" class="hover:text-indigo-400 transition"><i data-lucide="globe" class="w-5 h-5"></i></a>
+            <a href="#" class="hover:text-cyan-400 transition"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+            <a href="#" class="hover:text-indigo-400 transition"><i data-lucide="send" class="w-5 h-5"></i></a>
+        </div>
+        <p class="text-center text-[10px] text-slate-600 mt-3 tracking-widest">NEXUS v4.5.2 encrypted</p>
+    </div>
+</aside>
+
+<!-- MAIN APP CONTAINER -->
+<div id="nexus-app" class="min-h-screen">
+
+    <!-- TOP BAR -->
+    <header class="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3" id="user-quick-info">
+            <div class="relative">
+                <img id="nav-user-img" src="" class="w-10 h-10 rounded-full border-2 border-indigo-500/30 hidden object-cover" alt="User">
+                <div id="nav-user-initials" class="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center font-bold text-slate-400">U</div>
+                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-slate-900 rounded-full"></div>
+            </div>
+            <div>
+                <p id="welcome-text" class="text-xs text-slate-400 font-medium">Welcome back,</p>
+                <p id="user-balance-top" class="text-sm font-bold text-emerald-400">$0.00</p>
             </div>
         </div>
-        <div id="panel-content" class="p-4 space-y-2 overflow-y-auto h-[calc(100%-160px)]">
-            <button onclick="openPremiumPage()" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 rounded-lg bg-yellow-500/10 text-yellow-500"><i data-lucide="gem" class="w-5 h-5"></i></div>
-                    <span class="font-medium">Get Premium</span>
-                </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600"></i>
+        <div class="flex items-center gap-2">
+            <button onclick="switchView('view-deposit')" class="bg-indigo-500/10 text-indigo-400 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-500/20 hover:bg-indigo-500/20 transition">
+                + ADD FUND
+            </button>
+            <button id="btn-notifications" class="relative p-2 text-slate-400 hover:text-slate-200 transition bg-slate-800/50 rounded-full">
+                <i data-lucide="bell" class="w-5 h-5"></i>
+                <span id="badge-notify" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-slate-900 rounded-full hidden"></span>
+            </button>
+            <button id="btn-menu" class="p-2 text-slate-400 hover:text-slate-200 transition">
+                <i data-lucide="align-right" class="w-6 h-6"></i>
             </button>
         </div>
-        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800 bg-slate-900">
-            <div class="flex justify-evenly text-slate-400">
-                <a href="#" class="hover:text-indigo-400 transition"><i data-lucide="globe" class="w-5 h-5"></i></a>
-                <a href="#" class="hover:text-cyan-400 transition"><i data-lucide="twitter" class="w-5 h-5"></i></a>
-                <a href="#" class="hover:text-indigo-400 transition"><i data-lucide="send" class="w-5 h-5"></i></a>
+    </header>
+
+    <main class="p-4">
+
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dashboard" class="app-view active-view space-y-6">
+            <!-- Promo Slider -->
+            <div class="neo-card rounded-2xl overflow-hidden relative aspect-video">
+                <div id="promo-slider" class="h-full flex transition-transform duration-500 ease-out">
+                     <div class="min-w-full h-full bg-slate-800 relative">
+                        <img src="https://i.postimg.cc/zBp8rCX9/Yellow-Orange-Modern-Marketing-Courses-You-Tube-Thumbnail-20250910-185659-0000.png" class="w-full h-full object-cover opacity-80" alt="Promo 1">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                    </div>
+                     <div class="min-w-full h-full bg-slate-800 relative">
+                        <img src="https://i.postimg.cc/W1syFD8p/Grey-Blue-Illustration-Refer-a-Friend-Instagram-Post-1080-x-720-px-20250917-223749-0000.png" class="w-full h-full object-cover opacity-80" alt="Promo 2">
+                    </div>
+                </div>
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2" id="slider-dots">
+                    <span class="w-2 h-2 rounded-full bg-white"></span><span class="w-2 h-2 rounded-full bg-slate-600"></span>
+                </div>
             </div>
-            <p class="text-center text-[10px] text-slate-600 mt-3 tracking-widest">NEXUS v4.5.2 encrypted</p>
+
+            <!-- Main Balance Card -->
+            <div class="neo-card p-6 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                <p class="text-slate-400 font-medium mb-2 flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> Available Balance</p>
+                <h2 id="main-balance-display" class="text-4xl font-bold text-white tracking-tight mb-6">$0.00</h2>
+                <div class="grid grid-cols-1 gap-3">
+                    <button onclick="switchView('view-deposit')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i> DEPOSIT
+                    </button>
+                </div>
+            </div>
         </div>
-    </aside>
-
-    <!-- MAIN APP CONTAINER -->
-    <div id="nexus-app" class="min-h-screen">
-
-        <!-- TOP BAR -->
-        <header class="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3" id="user-quick-info">
-                <div class="relative">
-                    <img id="nav-user-img" src="" class="w-10 h-10 rounded-full border-2 border-indigo-500/30 hidden object-cover" alt="User">
-                    <div id="nav-user-initials" class="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center font-bold text-slate-400">U</div>
-                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-slate-900 rounded-full"></div>
-                </div>
-                <div>
-                    <p id="welcome-text" class="text-xs text-slate-400 font-medium">Welcome back,</p>
-                    <p id="user-balance-top" class="text-sm font-bold text-emerald-400">$0.00</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <button onclick="switchView('view-deposit')" class="bg-indigo-500/10 text-indigo-400 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-500/20 hover:bg-indigo-500/20 transition">
-                    + ADD FUND
-                </button>
-                <button id="btn-notifications" class="relative p-2 text-slate-400 hover:text-slate-200 transition bg-slate-800/50 rounded-full">
-                    <i data-lucide="bell" class="w-5 h-5"></i>
-                    <span id="badge-notify" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-slate-900 rounded-full hidden"></span>
-                </button>
-                <button id="btn-menu" class="p-2 text-slate-400 hover:text-slate-200 transition">
-                    <i data-lucide="align-right" class="w-6 h-6"></i>
-                </button>
-            </div>
-        </header>
-
-        <main class="p-4">
-
-            <!-- DASHBOARD VIEW -->
-            <div id="view-dashboard" class="app-view active-view space-y-6">
-                <!-- Promo Slider -->
-                <div class="neo-card rounded-2xl overflow-hidden relative aspect-video">
-                    <div id="promo-slider" class="h-full flex transition-transform duration-500 ease-out">
-                         <div class="min-w-full h-full bg-slate-800 relative">
-                            <img src="https://i.postimg.cc/zBp8rCX9/Yellow-Orange-Modern-Marketing-Courses-You-Tube-Thumbnail-20250910-185659-0000.png" class="w-full h-full object-cover opacity-80" alt="Promo 1">
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
-                        </div>
-                         <div class="min-w-full h-full bg-slate-800 relative">
-                            <img src="https://i.postimg.cc/W1syFD8p/Grey-Blue-Illustration-Refer-a-Friend-Instagram-Post-1080-x-720-px-20250917-223749-0000.png" class="w-full h-full object-cover opacity-80" alt="Promo 2">
-                        </div>
-                    </div>
-                    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2" id="slider-dots">
-                        <span class="w-2 h-2 rounded-full bg-white"></span><span class="w-2 h-2 rounded-full bg-slate-600"></span>
-                    </div>
-                </div>
-
-                <!-- Main Balance Card -->
-                <div class="neo-card p-6 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
-                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
-                    <p class="text-slate-400 font-medium mb-2 flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> Available Balance</p>
-                    <h2 id="main-balance-display" class="text-4xl font-bold text-white tracking-tight mb-6">$0.00</h2>
-                    <div class="grid grid-cols-1 gap-3">
-                        <button onclick="switchView('view-deposit')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2">
-                            <i data-lucide="plus-circle" class="w-5 h-5"></i> DEPOSIT
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- TASKS VIEW -->
-            <div id="view-tasks" class="app-view space-y-6">
-                <div class="text-center">
-                   <h2 class="text-2xl font-bold text-slate-100">Daily Tasks</h2>
-                   <p class="text-slate-500 text-sm">Complete simple tasks to earn rewards</p>
-               </div>
-               <div id="task-list" class="space-y-4">
-                   <!-- Tasks will be dynamically inserted here -->
-               </div>
+        
+        <!-- TASKS VIEW -->
+        <div id="view-tasks" class="app-view space-y-6">
+            <div class="text-center">
+               <h2 class="text-2xl font-bold text-slate-100">Daily Tasks</h2>
+               <p class="text-slate-500 text-sm">Complete simple tasks to earn rewards</p>
            </div>
+           <div id="task-list" class="space-y-4">
+               <!-- Tasks will be dynamically inserted here -->
+           </div>
+       </div>
 
 
-            <!-- DEPOSIT VIEW -->
-            <div id="view-deposit" class="app-view space-y-6">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-slate-100">Add Funds</h2>
-                    <p class="text-slate-500 text-sm">Secure & Fast Balance Top-up</p>
-                </div>
-                <div class="neo-card p-5 rounded-2xl border-indigo-500/30 bg-indigo-500/5">
-                    <div class="flex items-start gap-3">
-                        <i data-lucide="alert-circle" class="w-6 h-6 text-indigo-400 shrink-0 mt-1"></i>
-                        <div>
-                             <h4 class="font-bold text-indigo-300 mb-1">IMPORTANT NOTE</h4>
-                             <p class="text-xs text-indigo-200/70 leading-relaxed">
-                                Please use a valid payment method. Minimum deposit is <span class="text-white font-bold">$1.00</span>.
-                             </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-3 text-center">
-                     <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('YOUR_USDT_ADDRESS', 'USDT')">
-                         <img src="https://i.postimg.cc/zX04M20M/usdt-logo.png" class="w-8 h-8 mb-2 rounded-full" alt="USDT">
-                         <span class="font-mono text-xs text-slate-300">USDT (TRC20)</span>
-                         <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
-                     </div>
-                     <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('YOUR_BTC_ADDRESS', 'BTC')">
-                         <img src="https://i.postimg.cc/0j3PEKkc/btc-logo.png" class="w-8 h-8 mb-2 rounded-full" alt="BTC">
-                         <span class="font-mono text-xs text-slate-300">Bitcoin</span>
-                         <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
-                     </div>
-                     <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('8796384283', 'Binance')">
-                         <img src="https://i.postimg.cc/pXq3r5M1/binance-logo.png" class="w-8 h-8 mb-2 rounded-full bg-white p-1" alt="Binance">
-                         <span class="font-mono text-xs text-slate-300">Binance Pay</span>
-                         <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
-                     </div>
-                </div>
-                <div class="neo-card p-5 rounded-2xl space-y-4">
-                    <h3 class="font-semibold text-slate-200">Submit Verification Info</h3>
-                    <select id="dep-method" class="neo-input w-full p-3 rounded-xl">
-                        <option value="" disabled selected>Select Payment Method</option>
-                        <option value="USDT">USDT</option>
-                        <option value="BTC">BTC</option>
-                        <option value="Binance">Binance</option>
-                    </select>
-                    <input type="number" id="dep-amount" placeholder="Amount (Min 1 USD)" class="neo-input w-full p-3 rounded-xl">
-                    <input type="text" id="dep-sender" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
-                    <input type="text" id="dep-trx" placeholder="Transaction ID (TxID)" class="neo-input w-full p-3 rounded-xl">
-                    <button id="btn-submit-deposit" class="action-btn w-full py-4 rounded-xl text-lg shadow-lg shadow-indigo-500/20">VERIFY DEPOSIT</button>
-                </div>
-                <div class="pt-4">
-                    <h3 class="text-sm font-bold text-slate-400 mb-3 px-2">Transaction History</h3>
-                    <div id="deposit-history-log" class="space-y-2"></div>
-                </div>
+        <!-- DEPOSIT VIEW -->
+        <div id="view-deposit" class="app-view space-y-6">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-slate-100">Add Funds</h2>
+                <p class="text-slate-500 text-sm">Secure & Fast Balance Top-up</p>
             </div>
-
-            <!-- PROFILE VIEW -->
-            <div id="view-profile" class="app-view space-y-6">
-                <div class="flex flex-col items-center pt-6">
-                     <div class="relative mb-4">
-                        <div class="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-indigo-500 to-cyan-500">
-                             <img id="profile-user-img" src="" class="w-full h-full rounded-full bg-slate-900 object-cover p-1 hidden" alt="Profile">
-                             <div id="profile-user-initials" class="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-4xl font-bold text-slate-500 border-4 border-slate-900"></div>
-                        </div>
-                        <span id="profile-badge" class="absolute bottom-2 right-0 px-3 py-1 bg-slate-700 text-xs rounded-full border border-slate-600 font-semibold">FREE USER</span>
-                    </div>
-                    <h3 id="profile-name-display" class="text-2xl font-bold text-white text-center">Loading...</h3>
-                    <button id="btn-copy-uid" class="mt-2 text-xs text-slate-400 bg-slate-800/50 px-3 py-1 rounded-full flex items-center gap-1 hover:bg-slate-800 transition">
-                        UID: <span id="uid-display">...</span> <i data-lucide="copy" class="w-3 h-3"></i>
-                    </button>
-                </div>
-                <div class="grid grid-cols-3 gap-3 text-center">
-                    <div class="neo-card p-3 rounded-xl bg-slate-800/50">
-                        <p class="text-[11px] text-slate-500">Total Deposit</p>
-                        <p id="stat-deposit" class="text-md font-bold text-emerald-400">$0.00</p>
-                    </div>
-                    <div class="neo-card p-3 rounded-xl bg-slate-800/50">
-                        <p class="text-[11px] text-slate-500">Total Earned</p>
-                        <p id="stat-cashback" class="text-md font-bold text-yellow-400">$0.00</p>
-                    </div>
-                    <div class="neo-card p-3 rounded-xl bg-slate-800/50">
-                        <p class="text-[11px] text-slate-500">Premium Savings</p>
-                        <p id="stat-savings" class="text-md font-bold text-cyan-400">$0.00</p>
-                    </div>
-                </div>
-                <div class="space-y-3">
-                    <button onclick="switchView('view-features')" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 rounded-lg bg-orange-500/10 text-orange-500"><i data-lucide="zap" class="w-5 h-5"></i></div>
-                            <span class="font-medium">Advanced Features</span>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600"></i>
-                    </button>
-                    <button onclick="openSupport()" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
-                         <div class="flex items-center gap-3">
-                            <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-500"><i data-lucide="life-buoy" class="w-5 h-5"></i></div>
-                            <span class="font-medium">Support Hub</span>
-                        </div>
-                        <i data-lucide="external-link" class="w-5 h-5 text-slate-600"></i>
-                    </button>
-                </div>
-            </div>
-
-             <!-- FEATURES VIEW (Transfer) -->
-            <div id="view-features" class="app-view space-y-6">
-                 <div class="flex items-center gap-3 mb-6">
-                    <button onclick="switchView('view-profile')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                    <h2 class="text-xl font-bold">Tools & Services</h2>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="switchView('subview-send')" class="neo-card p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-indigo-500 transition group">
-                        <div class="w-14 h-14 rounded-full bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all text-indigo-500">
-                            <i data-lucide="send" class="w-7 h-7 ml-1"></i>
-                        </div>
-                        <span class="font-semibold">P2P Transfer</span>
-                    </button>
-                </div>
-                <div class="neo-card p-5 rounded-2xl mt-4 bg-slate-800/30">
-                     <h3 class="font-bold text-slate-300 mb-4 flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4"></i> Recent Activities</h3>
-                     <div id="activity-log" class="space-y-3 text-sm text-slate-500 text-center py-4 max-h-60 overflow-y-auto">
-                         No recent activities found.
-                     </div>
-                </div>
-            </div>
-
-            <!-- SUBVIEW: P2P SEND -->
-            <div id="subview-send" class="app-view space-y-6">
-                 <div class="flex items-center gap-3 mb-6">
-                    <button onclick="switchView('view-features')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                    <h2 class="text-xl font-bold">Transfer Balance</h2>
-                </div>
-                <div class="neo-card p-6 rounded-3xl space-y-5">
-                    <div class="bg-yellow-500/10 text-yellow-500 p-3 rounded-xl text-sm flex gap-2 items-start">
-                        <i data-lucide="alert-triangle" class="w-5 h-5 shrink-0"></i>
-                        <p>Default transfer fee is <strong>5%</strong>. Minimum transfer is <strong>$0.50</strong>. Premium members get fee discounts.</p>
-                    </div>
+            <div class="neo-card p-5 rounded-2xl border-indigo-500/30 bg-indigo-500/5">
+                <div class="flex items-start gap-3">
+                    <i data-lucide="alert-circle" class="w-6 h-6 text-indigo-400 shrink-0 mt-1"></i>
                     <div>
-                        <label class="text-xs text-slate-400 ml-2 mb-1 block">Recipient UID</label>
-                        <input type="text" id="p2p-uid" placeholder="Enter User ID" class="neo-input w-full p-4 rounded-xl font-mono">
+                         <h4 class="font-bold text-indigo-300 mb-1">IMPORTANT NOTE</h4>
+                         <p class="text-xs text-indigo-200/70 leading-relaxed">
+                            Please use a valid payment method. Minimum deposit is <span class="text-white font-bold">$1.00</span>.
+                         </p>
                     </div>
-                     <div>
-                        <label class="text-xs text-slate-400 ml-2 mb-1 block">Amount</label>
-                        <input type="number" id="p2p-amount" placeholder="0.00" class="neo-input w-full p-4 rounded-xl font-bold text-lg">
-                        <p id="p2p-fee-calc" class="text-right text-xs text-slate-500 mt-2 h-4"></p>
-                    </div>
-                    <button id="btn-exec-p2p" class="action-btn w-full py-4 rounded-xl text-lg">CONFIRM TRANSFER</button>
                 </div>
             </div>
-
-           <!-- GET PREMIUM VIEW -->
-           <div id="view-premium" class="app-view space-y-6">
-                <div class="flex items-center gap-3 mb-6">
-                   <button onclick="switchView('view-profile')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                   <h2 class="text-xl font-bold">Premium Membership</h2>
-                </div>
-                <div id="premium-tiers-container" class="space-y-4">
-                    <!-- Tiers will be dynamically loaded here -->
-                </div>
-           </div>
-
-            <!-- NEWS VIEW -->
-            <div id="view-news" class="app-view space-y-4">
-                <h2 class="text-2xl font-bold px-2">Latest News</h2>
-                <div id="news-feed" class="space-y-4">
-                    <!-- News will be loaded here from Firebase -->
-                </div>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                 <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('YOUR_USDT_ADDRESS', 'USDT')">
+                     <img src="https://i.postimg.cc/zX04M20M/usdt-logo.png" class="w-8 h-8 mb-2 rounded-full" alt="USDT">
+                     <span class="font-mono text-xs text-slate-300">USDT (TRC20)</span>
+                     <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
+                 </div>
+                 <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('YOUR_BTC_ADDRESS', 'BTC')">
+                     <img src="https://i.postimg.cc/0j3PEKkc/btc-logo.png" class="w-8 h-8 mb-2 rounded-full" alt="BTC">
+                     <span class="font-mono text-xs text-slate-300">Bitcoin</span>
+                     <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
+                 </div>
+                 <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('8796384283', 'Binance')">
+                     <img src="https://i.postimg.cc/pXq3r5M1/binance-logo.png" class="w-8 h-8 mb-2 rounded-full bg-white p-1" alt="Binance">
+                     <span class="font-mono text-xs text-slate-300">Binance Pay</span>
+                     <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
+                 </div>
             </div>
-
-        </main>
-
-        <!-- DOCK NAVIGATION -->
-        <nav class="dock-nav">
-            <button class="dock-item nav-active" data-target="view-dashboard">
-                <i data-lucide="home" class="w-6 h-6"></i>
-                <span>Home</span>
-            </button>
-            <button class="dock-item" data-target="view-tasks">
-                <i data-lucide="clipboard-check" class="w-6 h-6"></i>
-                <span>Tasks</span>
-            </button>
-             <button class="dock-item" data-target="view-deposit">
-                <i data-lucide="plus-square" class="w-6 h-6"></i>
-                <span>Add Fund</span>
-            </button>
-            <button class="dock-item" data-target="view-news">
-                <i data-lucide="rss" class="w-6 h-6"></i>
-                <span>News</span>
-            </button>
-            <button class="dock-item" data-target="view-profile">
-                <i data-lucide="user-circle" class="w-6 h-6"></i>
-                <span>Account</span>
-            </button>
-        </nav>
-    </div>
-
-    <!-- GENERIC MODAL -->
-    <div id="nexus-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-backdrop"></div>
-        <div class="glass-modal w-full max-w-sm p-6 rounded-3xl relative transform scale-95 transition-all duration-300" id="modal-content">
-            <div id="modal-body"></div>
-            <button id="modal-close" class="absolute top-4 right-4 p-1 rounded-full bg-slate-800 text-slate-400 hover:text-white">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
+            <div class="neo-card p-5 rounded-2xl space-y-4">
+                <h3 class="font-semibold text-slate-200">Submit Verification Info</h3>
+                <select id="dep-method" class="neo-input w-full p-3 rounded-xl">
+                    <option value="" disabled selected>Select Payment Method</option>
+                    <option value="USDT">USDT</option>
+                    <option value="BTC">BTC</option>
+                    <option value="Binance">Binance</option>
+                </select>
+                <input type="number" id="dep-amount" placeholder="Amount (Min 1 USD)" class="neo-input w-full p-3 rounded-xl">
+                <input type="text" id="dep-sender" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
+                <input type="text" id="dep-trx" placeholder="Transaction ID (TxID)" class="neo-input w-full p-3 rounded-xl">
+                <button id="btn-submit-deposit" class="action-btn w-full py-4 rounded-xl text-lg shadow-lg shadow-indigo-500/20">VERIFY DEPOSIT</button>
+            </div>
+            <div class="pt-4">
+                <h3 class="text-sm font-bold text-slate-400 mb-3 px-2">Transaction History</h3>
+                <div id="deposit-history-log" class="space-y-2"></div>
+            </div>
         </div>
-    </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, runTransaction, onSnapshot, updateDoc, Timestamp, writeBatch } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-        // --- CONFIGURATION ---
-        const MIN_DEPOSIT_AMT = 1; 
-        const P2P_FEE_PERCENT = 0.05; // 5%
-        const MIN_P2P_AMT = 0.5;
-        const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
-
-        const TASK_DURATION_MS = 10000; // 10 seconds
-        
-        // --- PREMIUM TIER CONFIGURATION (Default values, will be overridden by Firestore) ---
-        let premiumTiers = {
-            silver:    { name: 'Silver',    price: 1, duration: 30, taskLimit: 3, benefits: { noAds: true, depositCashback: 0.01, feeReduction: 0.01 } },
-            palladium: { name: 'Palladium', price: 5, duration: 30, taskLimit: 5, benefits: { noAds: true, depositCashback: 0.02, feeReduction: 0.02 } },
-            diamond:   { name: 'Diamond',   price: 15, duration: 30, taskLimit: 8, benefits: { noAds: true, depositCashback: 0.03, feeReduction: 0.03 } },
-            heroic:    { name: 'Heroic',    price: 30, duration: 30, taskLimit: 10, benefits: { noAds: true, depositCashback: 0.04, feeReduction: 0.04 } },
-            master:    { name: 'Master',    price: 50, duration: 30, taskLimit: 15, benefits: { noAds: true, depositCashback: 0.05, feeReduction: 0.05 } }
-        };
-
-        // FIREBASE CONFIG
-        const fbConfig = {
-            apiKey: "AIzaSyABzUFAkmkbYmaEPC1mpAIM3TWnG_NkxU0",
-            authDomain: "backup-mail-store.firebaseapp.com",
-            databaseURL: "https://backup-mail-store-default-rtdb.firebaseio.com",
-            projectId: "backup-mail-store",
-            storageBucket: "backup-mail-store.firebasestorage.app",
-            messagingSenderId: "856776939573",
-            appId: "1:856776939573:web:0f8b852e4028249b5ff97c"
-        };
-
-        const app = initializeApp(fbConfig);
-        const db = getFirestore(app);
-        let tgSession = null;
-        let userData = null;
-        let sysConfig = {};
-        let activeTimers = []; 
-        let taskState = { isActive: false, leaveTime: null, activeTask: null };
-
-        // --- CORE FUNCTIONS ---
-        window.onload = async () => {
-            setTimeout(async () => {
-                 try {
-                    if(window.Telegram?.WebApp) {
-                        window.Telegram.WebApp.ready();
-                        window.Telegram.WebApp.expand();
-                        window.Telegram.WebApp.setHeaderColor('#0f172a');
-                        window.Telegram.WebApp.setBackgroundColor('#0f172a');
-                        tgSession = window.Telegram.WebApp.initDataUnsafe.user;
-                    }
-                } catch (e) { console.log("Not in TG environment"); }
-
-                if (!tgSession) {
-                    document.getElementById('loading-msg').textContent = "Error: Please open via Telegram";
-                    document.getElementById('loading-msg').classList.add('text-red-500');
-                    return; 
-                }
-
-                await loadConfig();
-                await initSession();
-                setupInteractions();
-                lucide.createIcons();
-
-                document.getElementById('splash-screen').style.opacity = '0';
-                setTimeout(() => document.getElementById('splash-screen').remove(), 500);
-            }, 1500);
-        };
-
-        async function initSession() {
-            const uid = String(tgSession.id);
-            const userRef = doc(db, "users", uid);
-            const snap = await getDoc(userRef);
-
-            if (snap.exists()) {
-                userData = snap.data();
-            } else {
-                userData = {
-                    tgChatId: uid,
-                    name: `${tgSession.first_name} ${tgSession.last_name || ''}`.trim(),
-                    username: tgSession.username || null,
-                    balance: 0,
-                    createdAt: serverTimestamp(),
-                    isPremium: false,
-                    premiumTier: null,
-                    premiumExpiry: null,
-                    lastNotificationCheck: null,
-                    dailyCompletedTasks: [] // MODIFIED: Changed from completedTasks
-                };
-                await setDoc(userRef, userData);
-            }
-
-            if(userData.isBlocked) {
-                document.body.innerHTML = '<div class="flex items-center justify-center h-screen text-red-500 font-bold">ACCOUNT SUSPENDED</div>';
-                throw new Error("Blocked");
-            }
-            
-            updateDashboard();
-            initRealtimeListeners();
-            checkNewNotifications();
-        }
-
-        async function loadConfig() {
-            try {
-                const configRef = doc(db, "config", "main");
-                const configSnap = await getDoc(configRef);
-                if (configSnap.exists()) {
-                    const configData = configSnap.data();
-                    sysConfig = configData;
-                    if(configData.premiumTiers) {
-                         Object.keys(premiumTiers).forEach(key => {
-                            if(configData.premiumTiers[key]) {
-                                premiumTiers[key] = { ...premiumTiers[key], ...configData.premiumTiers[key] };
-                            }
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error("Could not load remote config, using defaults.", error);
-            }
-        }
-
-
-        function updateDashboard() {
-            if(!userData) return;
-            const bal = userData.balance.toFixed(2);
-            document.getElementById('main-balance-display').textContent = `$${bal}`;
-            document.getElementById('user-balance-top').textContent = `$${bal}`;
-
-            const initials = (tgSession.first_name?.[0] || 'U') + (tgSession.last_name?.[0] || '');
-            document.getElementById('nav-user-initials').textContent = initials.toUpperCase();
-            document.getElementById('profile-user-initials').textContent = initials.toUpperCase();
-
-            if(tgSession.photo_url) {
-                document.getElementById('nav-user-img').src = tgSession.photo_url;
-                document.getElementById('nav-user-img').classList.remove('hidden');
-                document.getElementById('nav-user-initials').classList.add('hidden');
-                 document.getElementById('profile-user-img').src = tgSession.photo_url;
-                document.getElementById('profile-user-img').classList.remove('hidden');
-                document.getElementById('profile-user-initials').classList.add('hidden');
-            }
-
-            const profileNameEl = document.getElementById('profile-name-display');
-            const profileBadgeEl = document.getElementById('profile-badge');
-            
-            const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
-            
-            if (userData.isPremium && userData.premiumTier && !isPremiumExpired) {
-                const tierName = premiumTiers[userData.premiumTier]?.name || 'Premium';
-                profileNameEl.innerHTML = `${userData.name} <span class="text-yellow-400" title="Premium User">⭐</span>`;
-                profileBadgeEl.textContent = tierName.toUpperCase();
-                profileBadgeEl.classList.remove('bg-slate-700', 'border-slate-600');
-                profileBadgeEl.classList.add('bg-yellow-500/10', 'text-yellow-400', 'border', 'border-yellow-500/20');
-            } else {
-                if(userData.isPremium && isPremiumExpired){
-                    updateDoc(doc(db, "users", userData.tgChatId), { isPremium: false, premiumTier: null, premiumExpiry: null });
-                }
-                profileNameEl.textContent = userData.name;
-                profileBadgeEl.textContent = 'FREE USER';
-                profileBadgeEl.classList.add('bg-slate-700', 'border-slate-600');
-                profileBadgeEl.classList.remove('bg-yellow-500/10', 'text-yellow-400', 'border', 'border-yellow-500/20');
-            }
-
-            document.getElementById('uid-display').textContent = userData.tgChatId;
-        }
-
-
-        // --- VIEW CONTROLLER ---
-        window.switchView = function(viewId) {
-            activeTimers.forEach(timerId => clearInterval(timerId));
-            activeTimers = [];
-
-            document.querySelectorAll('.app-view').forEach(el => el.classList.remove('active-view'));
-            document.getElementById(viewId).classList.add('active-view');
-
-            const mainViews = ['view-dashboard', 'view-tasks', 'view-deposit', 'view-news', 'view-profile'];
-            if (mainViews.includes(viewId)) {
-                document.querySelectorAll('.dock-item').forEach(btn => {
-                    btn.classList.toggle('nav-active', btn.dataset.target === viewId);
-                });
-            }
-
-            if(viewId === 'view-tasks') loadTasksView();
-            if(viewId === 'view-deposit') loadDepositHistory();
-            if(viewId === 'view-profile') loadProfileStats();
-            if(viewId === 'view-news') loadNewsFeed();
-            if(viewId === 'view-premium') loadPremiumTiers();
-            if(viewId === 'view-features') loadActivityLog();
-
-            window.scrollTo(0,0);
-        }
-        
-        // --- PREMIUM TIER FUNCTIONS ---
-        function loadPremiumTiers() {
-            const container = document.getElementById('premium-tiers-container');
-            let html = Object.keys(premiumTiers).map(key => {
-                const tier = premiumTiers[key];
-                const benefitsList = [
-                    `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> Daily Task Limit: <strong>${tier.taskLimit}</strong></li>`,
-                    tier.benefits.noAds ? '<li><i class="inline-block w-4 h-4" data-lucide="check"></i> No Ads</li>' : '',
-                    tier.benefits.depositCashback > 0 ? `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> ${tier.benefits.depositCashback * 100}% Deposit Cashback</li>` : '',
-                    tier.benefits.feeReduction > 0 ? `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> P2P Fee reduced to ${(P2P_FEE_PERCENT - tier.benefits.feeReduction) * 100}%</li>` : ''
-                ].filter(Boolean).join('');
-
-                const isCurrentUserTier = userData.premiumTier === key && userData.premiumExpiry && userData.premiumExpiry.toDate() > new Date();
-                const buttonHtml = isCurrentUserTier
-                    ? `<button class="action-btn w-full py-3 rounded-xl" disabled>CURRENT PLAN</button>`
-                    : `<button onclick="purchasePremium('${key}')" class="action-btn w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500">UPGRADE</button>`;
-
-                return `
-                <div class="neo-card p-5 rounded-2xl ${isCurrentUserTier ? 'border-yellow-400/50' : 'border-slate-700'}">
-                    <h3 class="text-2xl font-bold text-yellow-400">${tier.name}</h3>
-                    <p class="text-3xl font-bold my-3">$${tier.price} <span class="text-lg text-slate-400">/ ${tier.duration} days</span></p>
-                    <ul class="text-sm text-slate-300 space-y-2 my-4 text-left pl-2">
-                        ${benefitsList}
-                    </ul>
-                    ${buttonHtml}
-                </div>`;
-            }).join('');
-            container.innerHTML = html;
-            lucide.createIcons();
-        }
-
-        window.purchasePremium = async function(tierKey) {
-            const tier = premiumTiers[tierKey];
-            if (userData.balance < tier.price) {
-                return showToast(`Insufficient balance. You need $${tier.price}.`, 'error');
-            }
-
-            showModal(`
-                <div class="text-center space-y-4">
-                    <h3 class="text-xl font-bold">Confirm Purchase</h3>
-                    <p>Are you sure you want to buy the ${tier.name} plan for $${tier.price} (${tier.duration} days)?</p>
-                    <button id="confirm-premium-purchase" class="action-btn w-full py-3 rounded-xl">Confirm</button>
-                    <button onclick="closeModal()" class="neo-card w-full py-2 rounded-xl mt-2">Cancel</button>
+        <!-- PROFILE VIEW -->
+        <div id="view-profile" class="app-view space-y-6">
+            <div class="flex flex-col items-center pt-6">
+                 <div class="relative mb-4">
+                    <div class="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-indigo-500 to-cyan-500">
+                         <img id="profile-user-img" src="" class="w-full h-full rounded-full bg-slate-900 object-cover p-1 hidden" alt="Profile">
+                         <div id="profile-user-initials" class="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-4xl font-bold text-slate-500 border-4 border-slate-900"></div>
+                    </div>
+                    <span id="profile-badge" class="absolute bottom-2 right-0 px-3 py-1 bg-slate-700 text-xs rounded-full border border-slate-600 font-semibold">FREE USER</span>
                 </div>
-            `);
+                <h3 id="profile-name-display" class="text-2xl font-bold text-white text-center">Loading...</h3>
+                <button id="btn-copy-uid" class="mt-2 text-xs text-slate-400 bg-slate-800/50 px-3 py-1 rounded-full flex items-center gap-1 hover:bg-slate-800 transition">
+                    UID: <span id="uid-display">...</span> <i data-lucide="copy" class="w-3 h-3"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <div class="neo-card p-3 rounded-xl bg-slate-800/50">
+                    <p class="text-[11px] text-slate-500">Total Deposit</p>
+                    <p id="stat-deposit" class="text-md font-bold text-emerald-400">$0.00</p>
+                </div>
+                <div class="neo-card p-3 rounded-xl bg-slate-800/50">
+                    <p class="text-[11px] text-slate-500">Total Earned</p>
+                    <p id="stat-cashback" class="text-md font-bold text-yellow-400">$0.00</p>
+                </div>
+                <div class="neo-card p-3 rounded-xl bg-slate-800/50">
+                    <p class="text-[11px] text-slate-500">Premium Savings</p>
+                    <p id="stat-savings" class="text-md font-bold text-cyan-400">$0.00</p>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <button onclick="switchView('view-features')" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 rounded-lg bg-orange-500/10 text-orange-500"><i data-lucide="zap" class="w-5 h-5"></i></div>
+                        <span class="font-medium">Advanced Features</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600"></i>
+                </button>
+                <button onclick="openSupport()" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
+                     <div class="flex items-center gap-3">
+                        <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-500"><i data-lucide="life-buoy" class="w-5 h-5"></i></div>
+                        <span class="font-medium">Support Hub</span>
+                    </div>
+                    <i data-lucide="external-link" class="w-5 h-5 text-slate-600"></i>
+                </button>
+            </div>
+        </div>
 
-            document.getElementById('confirm-premium-purchase').onclick = async function() {
-                this.disabled = true; this.textContent = "PROCESSING...";
-                try {
-                    const userRef = doc(db, "users", userData.tgChatId);
-                    await runTransaction(db, async (transaction) => {
-                        const userDoc = await transaction.get(userRef);
-                        if (!userDoc.exists() || userDoc.data().balance < tier.price) {
-                            throw "Transaction failed: Insufficient funds.";
-                        }
-                        
-                        const newBalance = userDoc.data().balance - tier.price;
-                        const expiryDate = new Date();
-                        expiryDate.setDate(expiryDate.getDate() + tier.duration);
-                        
-                        transaction.update(userRef, {
-                            balance: newBalance,
-                            isPremium: true,
-                            premiumTier: tierKey,
-                            premiumExpiry: Timestamp.fromDate(expiryDate)
-                        });
-                    });
-                    
-                    logPublicActivity(`upgraded to ${tier.name} Premium!`);
-                    closeModal();
-                    showToast(`Successfully upgraded to ${tier.name}!`, 'success');
-                    
-                    userData.balance -= tier.price;
-                    userData.isPremium = true;
-                    userData.premiumTier = tierKey;
-                    const expiryDate = new Date();
-                    expiryDate.setDate(expiryDate.getDate() + tier.duration);
-                    userData.premiumExpiry = Timestamp.fromDate(expiryDate);
+         <!-- FEATURES VIEW (Transfer) -->
+        <div id="view-features" class="app-view space-y-6">
+             <div class="flex items-center gap-3 mb-6">
+                <button onclick="switchView('view-profile')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                <h2 class="text-xl font-bold">Tools & Services</h2>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="switchView('subview-send')" class="neo-card p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-indigo-500 transition group">
+                    <div class="w-14 h-14 rounded-full bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all text-indigo-500">
+                        <i data-lucide="send" class="w-7 h-7 ml-1"></i>
+                    </div>
+                    <span class="font-semibold">P2P Transfer</span>
+                </button>
+                <button onclick="switchView('view-premium')" class="neo-card p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-yellow-500 transition group">
+                    <div class="w-14 h-14 rounded-full bg-yellow-500/10 flex items-center justify-center group-hover:bg-yellow-500 group-hover:text-white transition-all text-yellow-500">
+                        <i data-lucide="gem" class="w-7 h-7"></i>
+                    </div>
+                    <span class="font-semibold">Premium</span>
+                </button>
+            </div>
+            <div class="neo-card p-5 rounded-2xl mt-4 bg-slate-800/30">
+                 <h3 class="font-bold text-slate-300 mb-4 flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4"></i> Recent Activities</h3>
+                 <div id="activity-log" class="space-y-3 text-sm text-slate-500 text-center py-4 max-h-60 overflow-y-auto">
+                     No recent activities found.
+                 </div>
+            </div>
+        </div>
 
-                    updateDashboard();
-                    loadPremiumTiers();
+        <!-- SUBVIEW: P2P SEND -->
+        <div id="subview-send" class="app-view space-y-6">
+             <div class="flex items-center gap-3 mb-6">
+                <button onclick="switchView('view-features')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                <h2 class="text-xl font-bold">Transfer Balance</h2>
+            </div>
+            <div class="neo-card p-6 rounded-3xl space-y-5">
+                <div class="bg-yellow-500/10 text-yellow-500 p-3 rounded-xl text-sm flex gap-2 items-start">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 shrink-0"></i>
+                    <p>Default transfer fee is <strong>5%</strong>. Minimum transfer is <strong>$0.50</strong>. Premium members get fee discounts.</p>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 ml-2 mb-1 block">Recipient UID</label>
+                    <input type="text" id="p2p-uid" placeholder="Enter User ID" class="neo-input w-full p-4 rounded-xl font-mono">
+                </div>
+                 <div>
+                    <label class="text-xs text-slate-400 ml-2 mb-1 block">Amount</label>
+                    <input type="number" id="p2p-amount" placeholder="0.00" class="neo-input w-full p-4 rounded-xl font-bold text-lg">
+                    <p id="p2p-fee-calc" class="text-right text-xs text-slate-500 mt-2 h-4"></p>
+                </div>
+                <button id="btn-exec-p2p" class="action-btn w-full py-4 rounded-xl text-lg">CONFIRM TRANSFER</button>
+            </div>
+        </div>
 
-                } catch (error) {
-                    closeModal();
-                    showToast(error.toString(), 'error');
+       <!-- GET PREMIUM VIEW -->
+       <div id="view-premium" class="app-view space-y-6">
+            <div class="flex items-center gap-3 mb-6">
+               <button onclick="switchView('view-profile')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+               <h2 class="text-xl font-bold">Premium Membership</h2>
+            </div>
+            <div id="premium-tiers-container" class="space-y-4">
+                <!-- Tiers will be dynamically loaded here -->
+            </div>
+       </div>
+
+        <!-- NEWS VIEW -->
+        <div id="view-news" class="app-view space-y-4">
+            <h2 class="text-2xl font-bold px-2">Latest News</h2>
+            <div id="news-feed" class="space-y-4">
+                <!-- News will be loaded here from Firebase -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- DOCK NAVIGATION -->
+    <nav class="dock-nav">
+        <button class="dock-item nav-active" data-target="view-dashboard">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span>Home</span>
+        </button>
+        <button class="dock-item" data-target="view-tasks">
+            <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+            <span>Tasks</span>
+        </button>
+         <button class="dock-item" data-target="view-deposit">
+            <i data-lucide="plus-square" class="w-6 h-6"></i>
+            <span>Add Fund</span>
+        </button>
+        <button class="dock-item" data-target="view-news">
+            <i data-lucide="rss" class="w-6 h-6"></i>
+            <span>News</span>
+        </button>
+        <button class="dock-item" data-target="view-profile">
+            <i data-lucide="user-circle" class="w-6 h-6"></i>
+            <span>Account</span>
+        </button>
+    </nav>
+</div>
+
+<!-- GENERIC MODAL -->
+<div id="nexus-modal" class="fixed inset-0 z- flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-backdrop"></div>
+    <div class="glass-modal w-full max-w-sm p-6 rounded-3xl relative transform scale-95 transition-all duration-300" id="modal-content">
+        <div id="modal-body"></div>
+        <button id="modal-close" class="absolute top-4 right-4 p-1 rounded-full bg-slate-800 text-slate-400 hover:text-white">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, runTransaction, onSnapshot, updateDoc, Timestamp, writeBatch } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    // --- CONFIGURATION ---
+    const MIN_DEPOSIT_AMT = 1; 
+    const P2P_FEE_PERCENT = 0.05; // 5%
+    const MIN_P2P_AMT = 0.5;
+    const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
+
+    const TASK_DURATION_MS = 10000; // 10 seconds
+    const TASK_REWARD_AMT = 0.50; // Fixed reward of $0.50
+    
+    // --- PREMIUM TIER CONFIGURATION (Default values, will be overridden by Firestore) ---
+    let premiumTiers = {
+        silver:    { name: 'Silver',    price: 1, duration: 30, taskLimit: 3, benefits: { noAds: true, depositCashback: 0.01, feeReduction: 0.01 } },
+        palladium: { name: 'Palladium', price: 5, duration: 30, taskLimit: 5, benefits: { noAds: true, depositCashback: 0.02, feeReduction: 0.02 } },
+        diamond:   { name: 'Diamond',   price: 15, duration: 30, taskLimit: 8, benefits: { noAds: true, depositCashback: 0.03, feeReduction: 0.03 } },
+        heroic:    { name: 'Heroic',    price: 30, duration: 30, taskLimit: 10, benefits: { noAds: true, depositCashback: 0.04, feeReduction: 0.04 } },
+        master:    { name: 'Master',    price: 50, duration: 30, taskLimit: 15, benefits: { noAds: true, depositCashback: 0.05, feeReduction: 0.05 } }
+    };
+
+    // FIREBASE CONFIG
+    const fbConfig = {
+        apiKey: "AIzaSyABzUFAkmkbYmaEPC1mpAIM3TWnG_NkxU0",
+        authDomain: "backup-mail-store.firebaseapp.com",
+        databaseURL: "https://backup-mail-store-default-rtdb.firebaseio.com",
+        projectId: "backup-mail-store",
+        storageBucket: "backup-mail-store.firebasestorage.app",
+        messagingSenderId: "856776939573",
+        appId: "1:856776939573:web:0f8b852e4028249b5ff97c"
+    };
+
+    const app = initializeApp(fbConfig);
+    const db = getFirestore(app);
+    let tgSession = null;
+    let userData = null;
+    let sysConfig = {};
+    let activeTimers = []; 
+    let taskState = { isActive: false, leaveTime: null, activeTask: null };
+
+    // --- CORE FUNCTIONS ---
+    window.onload = async () => {
+        setTimeout(async () => {
+             try {
+                if(window.Telegram?.WebApp) {
+                    window.Telegram.WebApp.ready();
+                    window.Telegram.WebApp.expand();
+                    window.Telegram.WebApp.setHeaderColor('#0f172a');
+                    window.Telegram.WebApp.setBackgroundColor('#0f172a');
+                    tgSession = window.Telegram.WebApp.initDataUnsafe.user;
                 }
-            };
-        }
+            } catch (e) { console.log("Not in TG environment"); }
 
-        // --- TASK SYSTEM FUNCTIONS ---
-        function loadTasksView() {
-            const taskListContainer = document.getElementById('task-list');
-            const pageTitle = document.querySelector('#view-tasks h2');
-            const pageSubtitle = document.querySelector('#view-tasks p');
-
-            window.startTask = startTask;
-            window.switchView = switchView;
-
-            pageTitle.textContent = "Daily Earning Tasks";
-            pageSubtitle.textContent = "Complete simple tasks to earn rewards";
-
-            const taskReward = sysConfig.taskReward || 5.00;
-            const taskLink = sysConfig.taskLink || "https://otieu.com/4/10076799";
-            
-            let taskLimit = sysConfig.freeUserTaskLimit || 1;
-            const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
-            
-            if (userData.isPremium && userData.premiumTier && !isPremiumExpired) {
-                taskLimit = premiumTiers[userData.premiumTier]?.taskLimit || taskLimit;
+            if (!tgSession) {
+                document.getElementById('loading-msg').textContent = "Error: Please open via Telegram";
+                document.getElementById('loading-msg').classList.add('text-red-500');
+                return; 
             }
 
-            const today = new Date().toISOString().split('T')[0];
-            const completedToday = (userData.dailyCompletedTasks || [])
-                .filter(task => task.completedAt && new Date(task.completedAt.seconds * 1000).toISOString().split('T')[0] === today)
-                .map(task => task.taskId);
-
-            let tasksHTML = '';
-            for (let i = 1; i <= taskLimit; i++) {
-                const taskId = `daily_task_${i}`;
-                const isCompleted = completedToday.includes(taskId);
-
-                const task = {
-                    id: taskId,
-                    title: `Task ${i}`,
-                    reward: taskReward,
-                    link: taskLink
-                };
-                const taskJSON = JSON.stringify(task);
-
-                tasksHTML += `
-                    <div class="flex items-center justify-between bg-slate-800 p-3 rounded-xl border border-slate-700">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-indigo-500/20 p-3 rounded-full">
-                                 <i data-lucide="arrow-up-right-square" class="w-6 h-6 text-indigo-400"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-md text-slate-200">${task.title}</h3>
-                                <p class="text-yellow-400 font-bold text-sm">Reward: $${task.reward.toFixed(2)}</p>
-                            </div>
-                        </div>
-                        ${isCompleted 
-                            ? `<button class="bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold text-sm cursor-not-allowed">Completed</button>`
-                            : `<button onclick='startTask(${taskJSON})' class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-semibold text-sm">VISIT NOW</button>`
-                        }
-                    </div>
-                `;
-            }
-            taskListContainer.innerHTML = tasksHTML;
-            
-            // NEW: Add countdown timer if all tasks are completed
-            if (completedToday.length >= taskLimit) {
-                const countdownHTML = `
-                    <div id="task-countdown-container" class="neo-card p-6 rounded-2xl text-center mt-8 bg-slate-800/50">
-                        <h3 class="text-xl font-bold text-white">All Tasks Completed Today!</h3>
-                        <p class="text-slate-400 mt-2 mb-4">New tasks will be available in:</p>
-                        <div id="task-countdown-timer" class="text-4xl font-bold text-cyan-400 font-mono tracking-wider">
-                            --:--:--
-                        </div>
-                    </div>
-                `;
-                taskListContainer.innerHTML += countdownHTML;
-                startTaskCountdown();
-            }
-
+            await loadConfig();
+            await initSession();
+            setupInteractions();
             lucide.createIcons();
+
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('splash-screen').remove(), 500);
+        }, 1500);
+    };
+
+    async function initSession() {
+        const uid = String(tgSession.id);
+        const userRef = doc(db, "users", uid);
+        const snap = await getDoc(userRef);
+
+        if (snap.exists()) {
+            userData = snap.data();
+        } else {
+            userData = {
+                tgChatId: uid,
+                name: `${tgSession.first_name} ${tgSession.last_name || ''}`.trim(),
+                username: tgSession.username || null,
+                balance: 0,
+                createdAt: serverTimestamp(),
+                isPremium: false,
+                premiumTier: null,
+                premiumExpiry: null,
+                lastNotificationCheck: null,
+                dailyCompletedTasks: [] // MODIFIED: Changed from completedTasks
+            };
+            await setDoc(userRef, userData);
+        }
+
+        if(userData.isBlocked) {
+            document.body.innerHTML = '<div class="flex items-center justify-center h-screen text-red-500 font-bold">ACCOUNT SUSPENDED</div>';
+            throw new Error("Blocked");
         }
         
-        // NEW: Function to start the 24-hour countdown
-        function startTaskCountdown() {
-            const timerElement = document.getElementById('task-countdown-timer');
-            if (!timerElement) return;
+        updateDashboard();
+        initRealtimeListeners();
+        checkNewNotifications();
+    }
 
-            const countdownInterval = setInterval(() => {
-                const now = new Date();
-                const tomorrow = new Date();
-                tomorrow.setDate(now.getDate() + 1);
-                tomorrow.setHours(0, 0, 0, 0);
-
-                const diff = tomorrow.getTime() - now.getTime();
-
-                if (diff <= 0) {
-                    clearInterval(countdownInterval);
-                    timerElement.textContent = "00:00:00";
-                    loadTasksView(); // Refresh tasks
-                    return;
-                }
-
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-                timerElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            }, 1000);
-
-            activeTimers.push(countdownInterval);
-        }
-
-        function startTask(task) {
-            taskState.isActive = true;
-            taskState.activeTask = task;
-            window.open(task.link, '_blank');
-            showToast(`Task started! Stay on the opened page for ${TASK_DURATION_MS / 1000} seconds.`, "info");
-        }
-
-        async function handleVisibilityChange() {
-            if (!taskState.isActive) return;
-
-            if (document.hidden) {
-                taskState.leaveTime = Date.now();
-            } else {
-                if (taskState.leaveTime) {
-                    const duration = Date.now() - taskState.leaveTime;
-                    if (duration >= TASK_DURATION_MS) {
-                        await completeTask();
-                    } else {
-                        showToast(`Task failed. You returned too early. Please try again.`, 'error');
-                    }
-                    taskState.isActive = false;
-                    taskState.leaveTime = null;
-                    taskState.activeTask = null;
-                    if (document.getElementById('view-tasks').classList.contains('active-view')) {
-                        loadTasksView();
-                    }
+    async function loadConfig() {
+        try {
+            const configRef = doc(db, "config", "main");
+            const configSnap = await getDoc(configRef);
+            if (configSnap.exists()) {
+                const configData = configSnap.data();
+                sysConfig = configData;
+                if(configData.premiumTiers) {
+                     Object.keys(premiumTiers).forEach(key => {
+                        if(configData.premiumTiers[key]) {
+                            premiumTiers[key] = { ...premiumTiers[key], ...configData.premiumTiers[key] };
+                        }
+                    });
                 }
             }
+        } catch (error) {
+            console.error("Could not load remote config, using defaults.", error);
         }
+    }
+
+
+    function updateDashboard() {
+        if(!userData) return;
+        const bal = userData.balance.toFixed(2);
+        document.getElementById('main-balance-display').textContent = `$${bal}`;
+        document.getElementById('user-balance-top').textContent = `$${bal}`;
+
+        const initials = (tgSession.first_name?. || 'U') + (tgSession.last_name?. || '');
+        document.getElementById('nav-user-initials').textContent = initials.toUpperCase();
+        document.getElementById('profile-user-initials').textContent = initials.toUpperCase();
+
+        if(tgSession.photo_url) {
+            document.getElementById('nav-user-img').src = tgSession.photo_url;
+            document.getElementById('nav-user-img').classList.remove('hidden');
+            document.getElementById('nav-user-initials').classList.add('hidden');
+             document.getElementById('profile-user-img').src = tgSession.photo_url;
+            document.getElementById('profile-user-img').classList.remove('hidden');
+            document.getElementById('profile-user-initials').classList.add('hidden');
+        }
+
+        const profileNameEl = document.getElementById('profile-name-display');
+        const profileBadgeEl = document.getElementById('profile-badge');
         
-        // MODIFIED: completeTask function to handle new data structure
-        async function completeTask() {
-            const task = taskState.activeTask;
-            if (!task) return;
-
-            const today = new Date().toISOString().split('T')[0];
-            const alreadyCompleted = (userData.dailyCompletedTasks || [])
-                .some(t => t.taskId === task.id && t.completedAt && new Date(t.completedAt.seconds * 1000).toISOString().split('T')[0] === today);
-
-            if (alreadyCompleted) {
-                showToast(`This task has already been completed today.`, 'info');
-                return;
+        const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
+        
+        if (userData.isPremium && userData.premiumTier && !isPremiumExpired) {
+            const tierName = premiumTiers[userData.premiumTier]?.name || 'Premium';
+            profileNameEl.innerHTML = `${userData.name} <span class="text-yellow-400" title="Premium User">⭐</span>`;
+            profileBadgeEl.textContent = tierName.toUpperCase();
+            profileBadgeEl.classList.remove('bg-slate-700', 'border-slate-600');
+            profileBadgeEl.classList.add('bg-yellow-500/10', 'text-yellow-400', 'border', 'border-yellow-500/20');
+        } else {
+            if(userData.isPremium && isPremiumExpired){
+                updateDoc(doc(db, "users", userData.tgChatId), { isPremium: false, premiumTier: null, premiumExpiry: null });
             }
+            profileNameEl.textContent = userData.name;
+            profileBadgeEl.textContent = 'FREE USER';
+            profileBadgeEl.classList.add('bg-slate-700', 'border-slate-600');
+            profileBadgeEl.classList.remove('bg-yellow-500/10', 'text-yellow-400', 'border', 'border-yellow-500/20');
+        }
 
+        document.getElementById('uid-display').textContent = userData.tgChatId;
+    }
+
+
+    // --- VIEW CONTROLLER ---
+    window.switchView = function(viewId) {
+        activeTimers.forEach(timerId => clearInterval(timerId));
+        activeTimers = [];
+
+        document.querySelectorAll('.app-view').forEach(el => el.classList.remove('active-view'));
+        document.getElementById(viewId).classList.add('active-view');
+
+        const mainViews = ['view-dashboard', 'view-tasks', 'view-deposit', 'view-news', 'view-profile'];
+        if (mainViews.includes(viewId)) {
+            document.querySelectorAll('.dock-item').forEach(btn => {
+                btn.classList.toggle('nav-active', btn.dataset.target === viewId);
+            });
+        }
+
+        if(viewId === 'view-tasks') loadTasksView();
+        if(viewId === 'view-deposit') loadDepositHistory();
+        if(viewId === 'view-profile') loadProfileStats();
+        if(viewId === 'view-news') loadNewsFeed();
+        if(viewId === 'view-premium') loadPremiumTiers();
+        if(viewId === 'view-features') loadActivityLog();
+
+        window.scrollTo(0,0);
+    }
+    
+    // --- PREMIUM TIER FUNCTIONS ---
+    function loadPremiumTiers() {
+        const container = document.getElementById('premium-tiers-container');
+        let html = Object.keys(premiumTiers).map(key => {
+            const tier = premiumTiers[key];
+            const benefitsList = [
+                `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> Daily Task Limit: <strong>${tier.taskLimit}</strong></li>`,
+                tier.benefits.noAds ? '<li><i class="inline-block w-4 h-4" data-lucide="check"></i> No Ads</li>' : '',
+                tier.benefits.depositCashback > 0 ? `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> ${tier.benefits.depositCashback * 100}% Deposit Cashback</li>` : '',
+                tier.benefits.feeReduction > 0 ? `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> P2P Fee reduced to ${(P2P_FEE_PERCENT - tier.benefits.feeReduction) * 100}%</li>` : ''
+            ].filter(Boolean).join('');
+
+            const isCurrentUserTier = userData.premiumTier === key && userData.premiumExpiry && userData.premiumExpiry.toDate() > new Date();
+            const buttonHtml = isCurrentUserTier
+                ? `<button class="action-btn w-full py-3 rounded-xl" disabled>CURRENT PLAN</button>`
+                : `<button onclick="purchasePremium('${key}')" class="action-btn w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500">UPGRADE</button>`;
+
+            return `
+            <div class="neo-card p-5 rounded-2xl ${isCurrentUserTier ? 'border-yellow-400/50' : 'border-slate-700'}">
+                <h3 class="text-2xl font-bold text-yellow-400">${tier.name}</h3>
+                <p class="text-3xl font-bold my-3">$${tier.price} <span class="text-lg text-slate-400">/ ${tier.duration} days</span></p>
+                <ul class="text-sm text-slate-300 space-y-2 my-4 text-left pl-2">
+                    ${benefitsList}
+                </ul>
+                ${buttonHtml}
+            </div>`;
+        }).join('');
+        container.innerHTML = html;
+        lucide.createIcons();
+    }
+
+    window.purchasePremium = async function(tierKey) {
+        const tier = premiumTiers[tierKey];
+        if (userData.balance < tier.price) {
+            return showToast(`Insufficient balance. You need $${tier.price}.`, 'error');
+        }
+
+        showModal(`
+            <div class="text-center space-y-4">
+                <h3 class="text-xl font-bold">Confirm Purchase</h3>
+                <p>Are you sure you want to buy the ${tier.name} plan for $${tier.price} (${tier.duration} days)?</p>
+                <button id="confirm-premium-purchase" class="action-btn w-full py-3 rounded-xl">Confirm</button>
+                <button onclick="closeModal()" class="neo-card w-full py-2 rounded-xl mt-2">Cancel</button>
+            </div>
+        `);
+
+        document.getElementById('confirm-premium-purchase').onclick = async function() {
+            this.disabled = true; this.textContent = "PROCESSING...";
             try {
                 const userRef = doc(db, "users", userData.tgChatId);
                 await runTransaction(db, async (transaction) => {
                     const userDoc = await transaction.get(userRef);
-                    if (!userDoc.exists()) throw "User not found.";
-
-                    const currentData = userDoc.data();
-                    const newBalance = currentData.balance + task.reward;
+                    if (!userDoc.exists() || userDoc.data().balance < tier.price) {
+                        throw "Transaction failed: Insufficient funds.";
+                    }
                     
-                    const newTaskEntry = { 
-                        taskId: task.id, 
-                        completedAt: serverTimestamp()
-                    };
+                    const newBalance = userDoc.data().balance - tier.price;
+                    const expiryDate = new Date();
+                    expiryDate.setDate(expiryDate.getDate() + tier.duration);
                     
-                    const updatedCompletedTasks = [...(currentData.dailyCompletedTasks || []), newTaskEntry];
-
                     transaction.update(userRef, {
                         balance: newBalance,
-                        dailyCompletedTasks: updatedCompletedTasks
+                        isPremium: true,
+                        premiumTier: tierKey,
+                        premiumExpiry: Timestamp.fromDate(expiryDate)
                     });
                 });
                 
-                showToast(`Congratulations! You've earned $${task.reward.toFixed(2)}`, 'success');
-                logPublicActivity(`earned $${task.reward.toFixed(2)} from a task.`);
-            } catch (e) {
-                console.error("Error completing task:", e);
-                showToast(`Error: ${e.message || e}`, 'error');
+                logPublicActivity(`upgraded to ${tier.name} Premium!`);
+                closeModal();
+                showToast(`Successfully upgraded to ${tier.name}!`, 'success');
+                
+                userData.balance -= tier.price;
+                userData.isPremium = true;
+                userData.premiumTier = tierKey;
+                const expiryDate = new Date();
+                expiryDate.setDate(expiryDate.getDate() + tier.duration);
+                userData.premiumExpiry = Timestamp.fromDate(expiryDate);
+
+                updateDashboard();
+                loadPremiumTiers();
+
+            } catch (error) {
+                closeModal();
+                showToast(error.toString(), 'error');
             }
+        };
+    }
+
+    // --- TASK SYSTEM FUNCTIONS ---
+    function loadTasksView() {
+        const taskListContainer = document.getElementById('task-list');
+        window.startTask = startTask;
+
+        let taskLimit = sysConfig.freeUserTaskLimit || 1;
+        const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
+        
+        if (userData.isPremium && userData.premiumTier && !isPremiumExpired) {
+            taskLimit = premiumTiers[userData.premiumTier]?.taskLimit || taskLimit;
         }
 
+        const today = new Date().toISOString().split('T');
+        const completedToday = (userData.dailyCompletedTasks || [])
+            .filter(task => task.completedAt && new Date(task.completedAt.seconds * 1000).toISOString().split('T') === today)
+            .map(task => task.taskId);
 
-        // --- DEPOSIT FUNCTIONS ---
-        document.getElementById('btn-submit-deposit').addEventListener('click', async () => {
-            const method = document.getElementById('dep-method').value;
-            const amount = parseInt(document.getElementById('dep-amount').value);
-            const sender = document.getElementById('dep-sender').value.trim();
-            const trx = document.getElementById('dep-trx').value.trim();
+        let tasksHTML = '';
+        for (let i = 1; i <= taskLimit; i++) {
+            const taskId = `daily_task_${i}`;
+            const isCompleted = completedToday.includes(taskId);
 
-            if(!method || !amount || !sender || !trx) return showToast("Please fill all fields", "warning");
-
-            if(amount < MIN_DEPOSIT_AMT) return showModal(`<div class="text-center text-red-400 space-y-3"><i data-lucide="alert-octagon" class="w-12 h-12 mx-auto"></i><h3 class="font-bold text-lg">Invalid Amount</h3><p class="text-slate-300">Minimum deposit amount is <span class="font-bold text-white">$${MIN_DEPOSIT_AMT.toFixed(2)}</span>.</p><button onclick="closeModal()" class="neo-card w-full py-2 rounded-xl mt-4">OK</button></div>`);
-
-            const btn = document.getElementById('btn-submit-deposit');
-            btn.disabled = true; btn.innerText = "VERIFYING...";
-
-            try {
-                const q = query(collection(db, "deposits"), where("transactionId", "==", trx));
-                const snap = await getDocs(q);
-                if(!snap.empty) throw new Error("This Transaction ID is already used.");
-
-                await addDoc(collection(db, "deposits"), {
-                    userId: userData.tgChatId, userName: userData.name, method, amount, senderNumber: sender, transactionId: trx,
-                    status: "pending", requestedAt: serverTimestamp()
-                });
-                
-                showModal(`<div class="text-center space-y-3"><i data-lucide="check-circle" class="w-12 h-12 text-emerald-500 mx-auto"></i><h3 class="text-lg font-bold text-white">Submitted!</h3><p class="text-slate-400">Your deposit of $${amount} is under review. It typically takes 5-30 minutes.</p><button onclick="closeModal()" class="action-btn w-full py-2 rounded-xl">OK</button></div>`);
-                
-                if (userData.isPremium && premiumTiers[userData.premiumTier]?.benefits.depositCashback > 0) {
-                    const expectedCashback = amount * premiumTiers[userData.premiumTier].benefits.depositCashback;
-                    setTimeout(() => showToast(`As a ${premiumTiers[userData.premiumTier].name} member, you'll get $${expectedCashback.toFixed(2)} cashback upon approval.`), 1000);
-                }
-
-                document.getElementById('dep-amount').value = ''; document.getElementById('dep-trx').value = '';
-                loadDepositHistory();
-
-            } catch(e) { showToast(e.message, "error");
-            } finally {
-                btn.disabled = false; btn.innerText = "VERIFY DEPOSIT"; lucide.createIcons();
-            }
-        });
-
-        async function loadDepositHistory() {
-            const el = document.getElementById('deposit-history-log');
-            const q = query(collection(db, "deposits"), where("userId", "==", userData.tgChatId), orderBy("requestedAt", "desc"), limit(10));
-            const snap = await getDocs(q);
-
-            if(snap.empty) { el.innerHTML = '<p class="text-slate-600 text-center text-xs py-2">No transactions yet.</p>'; return; }
-
-            el.innerHTML = snap.docs.map(d => {
-                const data = d.data();
-                const statusColors = { pending: 'text-yellow-500', approved: 'text-emerald-500', rejected: 'text-red-500' };
-                return `
-                <div class="flex justify-between items-center p-3 bg-slate-800/40 rounded-xl border border-slate-800">
-                    <div>
-                        <p class="text-sm font-medium text-slate-300">${data.method} - $${data.amount}</p>
-                        <p class="text-[10px] text-slate-500 font-mono">${data.transactionId}</p>
+            const task = {
+                id: taskId,
+                title: `Task ${i}`,
+                reward: TASK_REWARD_AMT
+            };
+            
+            tasksHTML += `
+                <div class="flex items-center justify-between bg-slate-800 p-3 rounded-xl border border-slate-700">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-indigo-500/20 p-3 rounded-full">
+                             <i data-lucide="arrow-up-right-square" class="w-6 h-6 text-indigo-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-md text-slate-200">${task.title}</h3>
+                            <p class="text-yellow-400 font-bold text-sm">Reward: $${task.reward.toFixed(2)}</p>
+                        </div>
                     </div>
-                    <span class="text-xs font-bold ${statusColors[data.status] || 'text-slate-400'} uppercase">${data.status}</span>
-                </div>`;
+                    ${isCompleted 
+                        ? `<button class="bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold text-sm cursor-not-allowed">Completed</button>`
+                        : `<button id="task-btn-${task.id}" onclick='startTask(this, ${JSON.stringify(task)})' class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-semibold text-sm">START TASK</button>`
+                    }
+                </div>
+            `;
+        }
+        taskListContainer.innerHTML = tasksHTML;
+        
+        if (completedToday.length >= taskLimit) {
+            const countdownHTML = `
+                <div id="task-countdown-container" class="neo-card p-6 rounded-2xl text-center mt-8 bg-slate-800/50">
+                    <h3 class="text-xl font-bold text-white">All Tasks Completed Today!</h3>
+                    <p class="text-slate-400 mt-2 mb-4">New tasks will be available in:</p>
+                    <div id="task-countdown-timer" class="text-4xl font-bold text-cyan-400 font-mono tracking-wider">
+                        --:--:--
+                    </div>
+                </div>
+            `;
+            taskListContainer.innerHTML += countdownHTML;
+            startTaskCountdown();
+        }
+        lucide.createIcons();
+    }
+    
+    function startTaskCountdown() {
+        const timerElement = document.getElementById('task-countdown-timer');
+        if (!timerElement) return;
+
+        const countdownInterval = setInterval(() => {
+            const now = new Date();
+            const tomorrow = new Date();
+            tomorrow.setDate(now.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0);
+
+            const diff = tomorrow.getTime() - now.getTime();
+
+            if (diff <= 0) {
+                clearInterval(countdownInterval);
+                timerElement.textContent = "00:00:00";
+                loadTasksView(); 
+                return;
+            }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            timerElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }, 1000);
+
+        activeTimers.push(countdownInterval);
+    }
+
+    function startTask(button, task) {
+        button.disabled = true;
+        let countdown = TASK_DURATION_MS / 1000;
+        button.textContent = `Waiting... ${countdown}s`;
+
+        const interval = setInterval(() => {
+            countdown--;
+            button.textContent = `Waiting... ${countdown}s`;
+            if (countdown <= 0) {
+                clearInterval(interval);
+                button.textContent = 'Claiming...';
+                completeTask(task);
+            }
+        }, 1000);
+        activeTimers.push(interval);
+    }
+
+    async function completeTask(task) {
+        if (!task) return;
+
+        const today = new Date().toISOString().split('T');
+        const alreadyCompleted = (userData.dailyCompletedTasks || [])
+            .some(t => t.taskId === task.id && t.completedAt && new Date(t.completedAt.seconds * 1000).toISOString().split('T') === today);
+
+        if (alreadyCompleted) {
+            showToast(`This task has already been completed today.`, 'info');
+            return;
+        }
+
+        try {
+            const userRef = doc(db, "users", userData.tgChatId);
+            await runTransaction(db, async (transaction) => {
+                const userDoc = await transaction.get(userRef);
+                if (!userDoc.exists()) throw "User not found.";
+
+                const currentData = userDoc.data();
+                const newBalance = currentData.balance + task.reward;
+                
+                const newTaskEntry = { 
+                    taskId: task.id, 
+                    completedAt: serverTimestamp()
+                };
+                
+                const updatedCompletedTasks = [...(currentData.dailyCompletedTasks || []), newTaskEntry];
+
+                transaction.update(userRef, {
+                    balance: newBalance,
+                    dailyCompletedTasks: updatedCompletedTasks
+                });
+            });
+            
+            showToast(`Congratulations! You've earned $${task.reward.toFixed(2)}`, 'success');
+            logPublicActivity(`earned $${task.reward.toFixed(2)} from a task.`);
+            // No need to manually update userData, listener will catch it.
+        } catch (e) {
+            console.error("Error completing task:", e);
+            showToast(`Error: ${e.message || e}`, 'error');
+            // Re-enable button on failure
+            const button = document.getElementById(`task-btn-${task.id}`);
+            if(button) {
+                button.disabled = false;
+                button.textContent = 'START TASK';
+            }
+        }
+    }
+
+    // --- DEPOSIT FUNCTIONS ---
+    document.getElementById('btn-submit-deposit').addEventListener('click', async () => {
+        const method = document.getElementById('dep-method').value;
+        const amount = parseInt(document.getElementById('dep-amount').value);
+        const sender = document.getElementById('dep-sender').value.trim();
+        const trx = document.getElementById('dep-trx').value.trim();
+
+        if(!method || !amount || !sender || !trx) return showToast("Please fill all fields", "warning");
+
+        if(amount < MIN_DEPOSIT_AMT) return showModal(`<div class="text-center text-red-400 space-y-3"><i data-lucide="alert-octagon" class="w-12 h-12 mx-auto"></i><h3 class="font-bold text-lg">Invalid Amount</h3><p class="text-slate-300">Minimum deposit amount is <span class="font-bold text-white">$${MIN_DEPOSIT_AMT.toFixed(2)}</span>.</p><button onclick="closeModal()" class="neo-card w-full py-2 rounded-xl mt-4">OK</button></div>`);
+
+        const btn = document.getElementById('btn-submit-deposit');
+        btn.disabled = true; btn.innerText = "VERIFYING...";
+
+        try {
+            const q = query(collection(db, "deposits"), where("transactionId", "==", trx));
+            const snap = await getDocs(q);
+            if(!snap.empty) throw new Error("This Transaction ID is already used.");
+
+            await addDoc(collection(db, "deposits"), {
+                userId: userData.tgChatId, userName: userData.name, method, amount, senderNumber: sender, transactionId: trx,
+                status: "pending", requestedAt: serverTimestamp()
+            });
+            
+            showModal(`<div class="text-center space-y-3"><i data-lucide="check-circle" class="w-12 h-12 text-emerald-500 mx-auto"></i><h3 class="text-lg font-bold text-white">Submitted!</h3><p class="text-slate-400">Your deposit of $${amount} is under review. It typically takes 5-30 minutes.</p><button onclick="closeModal()" class="action-btn w-full py-2 rounded-xl">OK</button></div>`);
+            
+            if (userData.isPremium && premiumTiers[userData.premiumTier]?.benefits.depositCashback > 0) {
+                const expectedCashback = amount * premiumTiers[userData.premiumTier].benefits.depositCashback;
+                setTimeout(() => showToast(`As a ${premiumTiers[userData.premiumTier].name} member, you'll get $${expectedCashback.toFixed(2)} cashback upon approval.`), 1000);
+            }
+
+            document.getElementById('dep-amount').value = ''; document.getElementById('dep-trx').value = '';
+            loadDepositHistory();
+
+        } catch(e) { showToast(e.message, "error");
+        } finally {
+            btn.disabled = false; btn.innerText = "VERIFY DEPOSIT"; lucide.createIcons();
+        }
+    });
+
+    async function loadDepositHistory() {
+        const el = document.getElementById('deposit-history-log');
+        const q = query(collection(db, "deposits"), where("userId", "==", userData.tgChatId), orderBy("requestedAt", "desc"), limit(10));
+        const snap = await getDocs(q);
+
+        if(snap.empty) { el.innerHTML = '<p class="text-slate-600 text-center text-xs py-2">No transactions yet.</p>'; return; }
+
+        el.innerHTML = snap.docs.map(d => {
+            const data = d.data();
+            const statusColors = { pending: 'text-yellow-500', approved: 'text-emerald-500', rejected: 'text-red-500' };
+            return `
+            <div class="flex justify-between items-center p-3 bg-slate-800/40 rounded-xl border border-slate-800">
+                <div>
+                    <p class="text-sm font-medium text-slate-300">${data.method} - $${data.amount}</p>
+                    <p class="text-[10px] text-slate-500 font-mono">${data.transactionId}</p>
+                </div>
+                <span class="text-xs font-bold ${statusColors[data.status] || 'text-slate-400'} uppercase">${data.status}</span>
+            </div>`;
+        }).join('');
+    }
+
+    // --- NOTIFICATION & LIVE FEED FUNCTIONS ---
+    async function checkNewNotifications() {
+        const lastCheck = userData.lastNotificationCheck || Timestamp.fromDate(new Date(0));
+        const q = query(collection(db, "notifications"), where("createdAt", ">", lastCheck), limit(1));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+            document.getElementById('badge-notify').classList.remove('hidden');
+        }
+    }
+
+    async function loadNotifications() {
+        const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"), limit(10));
+        const snap = await getDocs(q);
+
+        let content = `<h3 class="text-lg font-bold text-white mb-4">Notifications</h3><div class="space-y-3 max-h-80 overflow-y-auto">`;
+        if (snap.empty) {
+            content += `<p class="text-slate-500 text-center">No new notifications.</p>`;
+        } else {
+            content += snap.docs.map(doc => {
+                const n = doc.data();
+                const date = n.createdAt.toDate().toLocaleString();
+                return `<div class="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                            <p class="font-semibold text-slate-200">${n.title}</p>
+                            <p class="text-sm text-slate-400">${n.message}</p>
+                            <p class="text-xs text-slate-600 text-right mt-2">${date}</p>
+                       </div>`;
             }).join('');
         }
+        content += `</div>`;
+        showModal(content);
+        lucide.createIcons();
 
-        // --- NOTIFICATION & LIVE FEED FUNCTIONS ---
-        async function checkNewNotifications() {
-            const lastCheck = userData.lastNotificationCheck || Timestamp.fromDate(new Date(0));
-            const q = query(collection(db, "notifications"), where("createdAt", ">", lastCheck), limit(1));
-            const snap = await getDocs(q);
-            if (!snap.empty) {
-                document.getElementById('badge-notify').classList.remove('hidden');
-            }
-        }
-
-        async function loadNotifications() {
-            const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"), limit(10));
-            const snap = await getDocs(q);
-
-            let content = `<h3 class="text-lg font-bold text-white mb-4">Notifications</h3><div class="space-y-3 max-h-80 overflow-y-auto">`;
-            if (snap.empty) {
-                content += `<p class="text-slate-500 text-center">No new notifications.</p>`;
-            } else {
-                content += snap.docs.map(doc => {
-                    const n = doc.data();
-                    const date = n.createdAt.toDate().toLocaleString();
-                    return `<div class="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
-                                <p class="font-semibold text-slate-200">${n.title}</p>
-                                <p class="text-sm text-slate-400">${n.message}</p>
-                                <p class="text-xs text-slate-600 text-right mt-2">${date}</p>
-                           </div>`;
-                }).join('');
-            }
-            content += `</div>`;
-            showModal(content);
-            lucide.createIcons();
-
-            document.getElementById('badge-notify').classList.add('hidden');
-            await updateDoc(doc(db, "users", userData.tgChatId), {
-                lastNotificationCheck: serverTimestamp()
+        document.getElementById('badge-notify').classList.add('hidden');
+        await updateDoc(doc(db, "users", userData.tgChatId), {
+            lastNotificationCheck: serverTimestamp()
+        });
+    }
+    
+    async function logPublicActivity(actionText) {
+        try {
+            await addDoc(collection(db, "public_activity"), {
+                userId: userData.tgChatId,
+                userName: userData.name,
+                userPhoto: tgSession.photo_url || null,
+                action: actionText,
+                timestamp: serverTimestamp()
             });
+        } catch (e) {
+            console.error("Failed to log public activity:", e);
         }
+    }
+
+    // --- HELPER FUNCTIONS ---
+    window.openPremiumPage = () => { closeSidePanel(); switchView('view-premium'); };
+    window.openSupport = () => { window.open("https://t.me/your_support_username", '_blank'); };
+    window.closeSidePanel = () => {
+        document.getElementById('main-side-panel').classList.remove('open');
+        document.getElementById('panel-overlay').classList.remove('open');
+    };
+    window.showModal = (html) => {
+        const modal = document.getElementById('nexus-modal');
+        document.getElementById('modal-body').innerHTML = html;
+        modal.style.pointerEvents = 'auto'; modal.style.opacity = '1';
+        document.getElementById('modal-content').classList.remove('scale-95');
+        document.getElementById('modal-content').classList.add('scale-100');
+        lucide.createIcons();
+    };
+    window.closeModal = () => {
+         const modal = document.getElementById('nexus-modal');
+         modal.style.opacity = '0'; modal.style.pointerEvents = 'none';
+         document.getElementById('modal-content').classList.add('scale-95');
+         document.getElementById('modal-content').classList.remove('scale-100');
+    };
+    window.showToast = (msg, type='info') => {
+         if(window.Telegram?.WebApp?.showPopup) { window.Telegram.WebApp.showAlert(msg); }
+         else { alert(msg); }
+    };
+    window.copyText = (text) => { navigator.clipboard.writeText(text); showToast("Copied to clipboard!"); };
+    window.copyNumber = (num, name) => { copyText(num); showToast(`${name} address copied!`); };
+    
+    // --- P2P TRANSFER ---
+    async function executeP2PTransfer() {
+        const recipientUid = document.getElementById('p2p-uid').value.trim();
+        const amount = parseFloat(document.getElementById('p2p-amount').value);
+        const btn = document.getElementById('btn-exec-p2p');
+
+        if (!recipientUid || !amount) return showToast("Please enter UID and amount.", "warning");
+        if (recipientUid === userData.tgChatId) return showToast("You cannot transfer to yourself.", "error");
+        if (amount < MIN_P2P_AMT) return showToast(`Minimum transfer amount is $${MIN_P2P_AMT.toFixed(2)}.`, "warning");
         
-        async function logPublicActivity(actionText) {
-            try {
-                await addDoc(collection(db, "public_activity"), {
-                    userId: userData.tgChatId,
-                    userName: userData.name,
-                    userPhoto: tgSession.photo_url || null,
-                    action: actionText,
-                    timestamp: serverTimestamp()
+        let feePercent = P2P_FEE_PERCENT;
+        if (userData.isPremium && premiumTiers[userData.premiumTier]?.benefits.feeReduction > 0) {
+            feePercent -= premiumTiers[userData.premiumTier].benefits.feeReduction;
+        }
+        const fee = amount * feePercent;
+        const totalCost = amount + fee;
+
+        if (userData.balance < totalCost) return showToast(`Insufficient balance. You need $${totalCost.toFixed(2)}.`, "error");
+
+        btn.disabled = true; btn.textContent = 'PROCESSING...';
+        try {
+            await runTransaction(db, async (transaction) => {
+                const senderRef = doc(db, "users", userData.tgChatId);
+                const recipientRef = doc(db, "users", recipientUid);
+
+                const [senderDoc, recipientDoc] = await Promise.all([
+                    transaction.get(senderRef),
+                    transaction.get(recipientRef)
+                ]);
+
+                if (!senderDoc.exists()) throw new Error("Your user data could not be found.");
+                if (!recipientDoc.exists()) throw new Error("Recipient User ID not found.");
+                
+                const senderData = senderDoc.data();
+                if (senderData.balance < totalCost) throw new Error("Insufficient balance for this transaction.");
+
+                transaction.update(senderRef, { balance: senderData.balance - totalCost });
+                transaction.update(recipientRef, { balance: recipientDoc.data().balance + amount });
+
+                const logRef = doc(collection(db, "p2p_logs"));
+                transaction.set(logRef, {
+                    fromId: userData.tgChatId, fromName: userData.name,
+                    toId: recipientUid, toName: recipientDoc.data().name || 'N/A',
+                    amount: amount, fee: fee, status: "completed", createdAt: serverTimestamp()
                 });
-            } catch (e) {
-                console.error("Failed to log public activity:", e);
-            }
-        }
+            });
 
-        // --- HELPER FUNCTIONS ---
-        window.openPremiumPage = () => { closeSidePanel(); switchView('view-premium'); };
-        window.openSupport = () => { window.open("https://t.me/your_support_username", '_blank'); };
-        window.closeSidePanel = () => {
-            document.getElementById('main-side-panel').classList.remove('open');
-            document.getElementById('panel-overlay').classList.remove('open');
-        };
-        window.showModal = (html) => {
-            const modal = document.getElementById('nexus-modal');
-            document.getElementById('modal-body').innerHTML = html;
-            modal.style.pointerEvents = 'auto'; modal.style.opacity = '1';
-            document.getElementById('modal-content').classList.remove('scale-95');
-            document.getElementById('modal-content').classList.add('scale-100');
+            showModal(`<div class="text-center space-y-3"><i data-lucide="check-circle" class="w-12 h-12 text-emerald-500 mx-auto"></i><h3 class="text-lg font-bold text-white">Transfer Successful!</h3><p class="text-slate-400">Successfully sent $${amount} to UID ${recipientUid}.</p><button onclick="closeModal(); switchView('view-features');" class="action-btn w-full py-2 rounded-xl">OK</button></div>`);
+            document.getElementById('p2p-uid').value = '';
+            document.getElementById('p2p-amount').value = '';
+        } catch (e) {
+            showToast("Transfer failed: " + e.message, "error");
+        } finally {
+            btn.disabled = false; btn.textContent = 'CONFIRM TRANSFER';
             lucide.createIcons();
-        };
-        window.closeModal = () => {
-             const modal = document.getElementById('nexus-modal');
-             modal.style.opacity = '0'; modal.style.pointerEvents = 'none';
-             document.getElementById('modal-content').classList.add('scale-95');
-             document.getElementById('modal-content').classList.remove('scale-100');
-        };
-        window.showToast = (msg, type='info') => {
-             if(window.Telegram?.WebApp?.showPopup) { window.Telegram.WebApp.showAlert(msg); }
-             else { alert(msg); }
-        };
-        window.copyText = (text) => { navigator.clipboard.writeText(text); showToast("Copied to clipboard!"); };
-        window.copyNumber = (num, name) => { copyText(num); showToast(`${name} address copied!`); };
-        
-        // --- P2P TRANSFER ---
-        async function executeP2PTransfer() {
-            const recipientUid = document.getElementById('p2p-uid').value.trim();
-            const amount = parseFloat(document.getElementById('p2p-amount').value);
-            const btn = document.getElementById('btn-exec-p2p');
+        }
+    }
 
-            if (!recipientUid || !amount) return showToast("Please enter UID and amount.", "warning");
-            if (recipientUid === userData.tgChatId) return showToast("You cannot transfer to yourself.", "error");
-            if (amount < MIN_P2P_AMT) return showToast(`Minimum transfer amount is $${MIN_P2P_AMT.toFixed(2)}.`, "warning");
-            
+    // --- EVENT LISTENERS SETUP ---
+    function setupInteractions() {
+        document.querySelectorAll('.dock-item').forEach(item => {
+            item.addEventListener('click', () => switchView(item.dataset.target));
+        });
+        document.getElementById('btn-menu').addEventListener('click', () => {
+            document.getElementById('main-side-panel').classList.add('open');
+            document.getElementById('panel-overlay').classList.add('open');
+        });
+        document.getElementById('panel-overlay').addEventListener('click', closeSidePanel);
+        document.getElementById('btn-notifications').addEventListener('click', loadNotifications);
+        document.getElementById('modal-close').addEventListener('click', closeModal);
+        document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+        document.getElementById('btn-copy-uid').addEventListener('click', () => copyText(userData.tgChatId));
+        
+        // Removed visibilitychange listener to simplify task logic
+        // document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        document.getElementById('btn-exec-p2p').addEventListener('click', executeP2PTransfer);
+
+        document.getElementById('p2p-amount').addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value) || 0;
             let feePercent = P2P_FEE_PERCENT;
             if (userData.isPremium && premiumTiers[userData.premiumTier]?.benefits.feeReduction > 0) {
                 feePercent -= premiumTiers[userData.premiumTier].benefits.feeReduction;
             }
-            const fee = amount * feePercent;
-            const totalCost = amount + fee;
+            const fee = val * feePercent;
+            document.getElementById('p2p-fee-calc').textContent = val > 0 ? `Fee (${(feePercent*100).toFixed(0)}%): $${fee.toFixed(2)}` : '';
+        });
+    }
 
-            if (userData.balance < totalCost) return showToast(`Insufficient balance. You need $${totalCost.toFixed(2)}.`, "error");
-
-            btn.disabled = true; btn.textContent = 'PROCESSING...';
-            try {
-                await runTransaction(db, async (transaction) => {
-                    const senderRef = doc(db, "users", userData.tgChatId);
-                    const recipientRef = doc(db, "users", recipientUid);
-
-                    const [senderDoc, recipientDoc] = await Promise.all([
-                        transaction.get(senderRef),
-                        transaction.get(recipientRef)
-                    ]);
-
-                    if (!senderDoc.exists()) throw new Error("Your user data could not be found.");
-                    if (!recipientDoc.exists()) throw new Error("Recipient User ID not found.");
-                    
-                    const senderData = senderDoc.data();
-                    if (senderData.balance < totalCost) throw new Error("Insufficient balance for this transaction.");
-
-                    transaction.update(senderRef, { balance: senderData.balance - totalCost });
-                    transaction.update(recipientRef, { balance: recipientDoc.data().balance + amount });
-
-                    const logRef = doc(collection(db, "p2p_logs"));
-                    transaction.set(logRef, {
-                        fromId: userData.tgChatId, fromName: userData.name,
-                        toId: recipientUid, toName: recipientDoc.data().name || 'N/A',
-                        amount: amount, fee: fee, status: "completed", createdAt: serverTimestamp()
-                    });
-                });
-
-                showModal(`<div class="text-center space-y-3"><i data-lucide="check-circle" class="w-12 h-12 text-emerald-500 mx-auto"></i><h3 class="text-lg font-bold text-white">Transfer Successful!</h3><p class="text-slate-400">Successfully sent $${amount} to UID ${recipientUid}.</p><button onclick="closeModal(); switchView('view-features');" class="action-btn w-full py-2 rounded-xl">OK</button></div>`);
-                document.getElementById('p2p-uid').value = '';
-                document.getElementById('p2p-amount').value = '';
-            } catch (e) {
-                showToast("Transfer failed: " + e.message, "error");
-            } finally {
-                btn.disabled = false; btn.textContent = 'CONFIRM TRANSFER';
-                lucide.createIcons();
-            }
-        }
-
-        // --- EVENT LISTENERS SETUP ---
-        function setupInteractions() {
-            document.querySelectorAll('.dock-item').forEach(item => {
-                item.addEventListener('click', () => switchView(item.dataset.target));
-            });
-            document.getElementById('btn-menu').addEventListener('click', () => {
-                document.getElementById('main-side-panel').classList.add('open');
-                document.getElementById('panel-overlay').classList.add('open');
-            });
-            document.getElementById('panel-overlay').addEventListener('click', closeSidePanel);
-            document.getElementById('btn-notifications').addEventListener('click', loadNotifications);
-            document.getElementById('modal-close').addEventListener('click', closeModal);
-            document.getElementById('modal-backdrop').addEventListener('click', closeModal);
-            document.getElementById('btn-copy-uid').addEventListener('click', () => copyText(userData.tgChatId));
-            
-            document.addEventListener('visibilitychange', handleVisibilityChange);
-
-            document.getElementById('btn-exec-p2p').addEventListener('click', executeP2PTransfer);
-
-            document.getElementById('p2p-amount').addEventListener('input', (e) => {
-                const val = parseFloat(e.target.value) || 0;
-                let feePercent = P2P_FEE_PERCENT;
-                if (userData.isPremium && premiumTiers[userData.premiumTier]?.benefits.feeReduction > 0) {
-                    feePercent -= premiumTiers[userData.premiumTier].benefits.feeReduction;
-                }
-                const fee = val * feePercent;
-                document.getElementById('p2p-fee-calc').textContent = val > 0 ? `Fee (${(feePercent*100).toFixed(0)}%): $${fee.toFixed(2)}` : '';
-            });
-        }
-
-        function initRealtimeListeners() {
-             onSnapshot(doc(db, "users", userData.tgChatId), (doc) => {
-                if(doc.exists()) {
-                    const oldData = {...userData};
-                    const newData = doc.data();
-                    userData = {...userData, ...newData};
-                    
-                    if (oldData.balance !== newData.balance || oldData.isPremium !== newData.isPremium || oldData.premiumTier !== newData.premiumTier) {
-                         updateDashboard();
-                    }
-                    if (document.getElementById('view-tasks').classList.contains('active-view')) {
-                        loadTasksView();
-                    }
-                }
-            });
-        }
-
-        async function loadProfileStats() {
-            const statDepositEl = document.getElementById('stat-deposit');
-            const statEarnedEl = document.getElementById('stat-cashback');
-            const statSavingsEl = document.getElementById('stat-savings');
-        
-            statDepositEl.textContent = '...';
-            statEarnedEl.textContent = '...';
-            statSavingsEl.textContent = '...';
-        
-            const uid = userData.tgChatId;
-        
-            try {
-                // Total approved deposits
-                const depositQuery = query(collection(db, "deposits"), where("userId", "==", uid), where("status", "==", "approved"));
-                const depositSnap = await getDocs(depositQuery);
-                const totalDeposit = depositSnap.docs.reduce((sum, doc) => sum + doc.data().amount, 0);
-                statDepositEl.textContent = `$${totalDeposit.toFixed(2)}`;
-        
-                // Total earnings from tasks and cashback
-                let totalTaskEarnings = 0;
-                const taskReward = sysConfig.taskReward || 5.00; // Get reward from config
-                if (userData.dailyCompletedTasks && Array.isArray(userData.dailyCompletedTasks)) {
-                    totalTaskEarnings = userData.dailyCompletedTasks.length * taskReward;
-                }
+    function initRealtimeListeners() {
+         onSnapshot(doc(db, "users", userData.tgChatId), (doc) => {
+            if(doc.exists()) {
+                const oldData = {...userData};
+                const newData = doc.data();
+                userData = {...userData, ...newData};
                 
-                const purchaseQuery = query(collection(db, "deposits"), where("userId", "==", uid), where("status", "==", "approved"));
-                const purchaseSnap = await getDocs(purchaseQuery);
-                let totalCashback = 0;
-                purchaseSnap.forEach(doc => {
-                    const depData = doc.data();
-                    const userTier = userData.premiumTier;
-                    if(userTier && premiumTiers[userTier]?.benefits.depositCashback > 0) {
-                        totalCashback += depData.amount * premiumTiers[userTier].benefits.depositCashback;
-                    }
-                });
-                
-                statEarnedEl.textContent = `$${(totalTaskEarnings + totalCashback).toFixed(2)}`;
-        
-                // P2P savings
-                const p2pQuery = query(collection(db, "p2p_logs"), where("fromId", "==", uid));
-                const p2pSnap = await getDocs(p2pQuery);
-                let totalSavings = 0;
-                p2pSnap.forEach(doc => {
-                    const log = doc.data();
-                    const defaultFee = log.amount * P2P_FEE_PERCENT;
-                    const actualFee = log.fee;
-                    const savings = defaultFee - actualFee;
-                    if (savings > 0) {
-                        totalSavings += savings;
-                    }
-                });
-                statSavingsEl.textContent = `$${totalSavings.toFixed(2)}`;
-        
-            } catch (error) {
-                console.error("Error loading profile stats:", error);
-                statDepositEl.textContent = 'Error';
-                statEarnedEl.textContent = 'Error';
-                statSavingsEl.textContent = 'Error';
+                if (oldData.balance !== newData.balance || oldData.isPremium !== newData.isPremium || oldData.premiumTier !== newData.premiumTier) {
+                     updateDashboard();
+                }
+                if (document.getElementById('view-tasks').classList.contains('active-view')) {
+                    loadTasksView();
+                }
             }
+        });
+    }
+
+    async function loadProfileStats() {
+        const statDepositEl = document.getElementById('stat-deposit');
+        const statEarnedEl = document.getElementById('stat-cashback');
+        const statSavingsEl = document.getElementById('stat-savings');
+    
+        statDepositEl.textContent = '...';
+        statEarnedEl.textContent = '...';
+        statSavingsEl.textContent = '...';
+    
+        const uid = userData.tgChatId;
+    
+        try {
+            // Total approved deposits
+            const depositQuery = query(collection(db, "deposits"), where("userId", "==", uid), where("status", "==", "approved"));
+            const depositSnap = await getDocs(depositQuery);
+            const totalDeposit = depositSnap.docs.reduce((sum, doc) => sum + doc.data().amount, 0);
+            statDepositEl.textContent = `$${totalDeposit.toFixed(2)}`;
+    
+            // Total earnings from tasks and cashback
+            let totalTaskEarnings = 0;
+            if (userData.dailyCompletedTasks && Array.isArray(userData.dailyCompletedTasks)) {
+                totalTaskEarnings = userData.dailyCompletedTasks.length * TASK_REWARD_AMT;
+            }
+            
+            const purchaseQuery = query(collection(db, "deposits"), where("userId", "==", uid), where("status", "==", "approved"));
+            const purchaseSnap = await getDocs(purchaseQuery);
+            let totalCashback = 0;
+            purchaseSnap.forEach(doc => {
+                const depData = doc.data();
+                const userTier = userData.premiumTier;
+                if(userTier && premiumTiers[userTier]?.benefits.depositCashback > 0) {
+                    totalCashback += depData.amount * premiumTiers[userTier].benefits.depositCashback;
+                }
+            });
+            
+            statEarnedEl.textContent = `$${(totalTaskEarnings + totalCashback).toFixed(2)}`;
+    
+            // P2P savings
+            const p2pQuery = query(collection(db, "p2p_logs"), where("fromId", "==", uid));
+            const p2pSnap = await getDocs(p2pQuery);
+            let totalSavings = 0;
+            p2pSnap.forEach(doc => {
+                const log = doc.data();
+                const defaultFee = log.amount * P2P_FEE_PERCENT;
+                const actualFee = log.fee;
+                const savings = defaultFee - actualFee;
+                if (savings > 0) {
+                    totalSavings += savings;
+                }
+            });
+            statSavingsEl.textContent = `$${totalSavings.toFixed(2)}`;
+    
+        } catch (error) {
+            console.error("Error loading profile stats:", error);
+            statDepositEl.textContent = 'Error';
+            statEarnedEl.textContent = 'Error';
+            statSavingsEl.textContent = 'Error';
+        }
+    }
+
+    async function loadActivityLog() {
+        const el = document.getElementById('activity-log');
+        el.innerHTML = '<div class="loader-ring w-6 h-6 border-2 mx-auto"></div>';
+        
+        let allLogs = [];
+
+        try {
+            const p2pQuery = query(collection(db, "p2p_logs"), where("fromId", "==", userData.tgChatId), orderBy("createdAt", "desc"), limit(5));
+            const p2pSnap = await getDocs(p2pQuery);
+            p2pSnap.forEach(d => { if(d.data().createdAt) allLogs.push({ ...d.data(), type: 'p2p' }); });
+        } catch (error) { console.error("Error loading P2P logs:", error); }
+        
+        allLogs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        const recentLogs = allLogs.slice(0, 10);
+
+        if (recentLogs.length === 0) {
+            el.innerHTML = 'No recent activities found.';
+            return;
         }
 
-        async function loadActivityLog() {
-            const el = document.getElementById('activity-log');
-            el.innerHTML = '<div class="loader-ring w-6 h-6 border-2 mx-auto"></div>';
-            
-            let allLogs = [];
+        el.innerHTML = recentLogs.map(log => {
+            const date = log.createdAt.toDate().toLocaleDateString();
+            if (log.type === 'p2p') {
+                return `<div class="text-left p-2 rounded-lg bg-slate-900/50">
+                            <p class="text-slate-300">Sent $${log.amount} to <span class="font-mono">${log.toId}</span></p>
+                            <p class="text-slate-500 text-xs">${date}</p>
+                        </div>`;
+            }
+            return '';
+        }).join('');
+    }
 
-            try {
-                const p2pQuery = query(collection(db, "p2p_logs"), where("fromId", "==", userData.tgChatId), orderBy("createdAt", "desc"), limit(5));
-                const p2pSnap = await getDocs(p2pQuery);
-                p2pSnap.forEach(d => { if(d.data().createdAt) allLogs.push({ ...d.data(), type: 'p2p' }); });
-            } catch (error) { console.error("Error loading P2P logs:", error); }
-            
-            allLogs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-            const recentLogs = allLogs.slice(0, 10);
-
-            if (recentLogs.length === 0) {
-                el.innerHTML = 'No recent activities found.';
+    async function loadNewsFeed() {
+        const el = document.getElementById('news-feed');
+        el.innerHTML = '<div class="flex justify-center p-8"><div class="loader-ring w-8 h-8 border-2"></div></div>';
+        try {
+            const q = query(collection(db, "news"), orderBy("createdAt", "desc"), limit(5));
+            const snap = await getDocs(q);
+            if (snap.empty) {
+                el.innerHTML = '<p class="text-slate-500 text-center">No news available right now.</p>';
                 return;
             }
-
-            el.innerHTML = recentLogs.map(log => {
-                const date = log.createdAt.toDate().toLocaleDateString();
-                if (log.type === 'p2p') {
-                    return `<div class="text-left p-2 rounded-lg bg-slate-900/50">
-                                <p class="text-slate-300">Sent $${log.amount} to <span class="font-mono">${log.toId}</span></p>
-                                <p class="text-slate-500 text-xs">${date}</p>
-                            </div>`;
-                }
-                return '';
+            el.innerHTML = snap.docs.map(doc => {
+                const news = doc.data();
+                const date = news.createdAt.toDate().toLocaleString();
+                return `
+                <div class="neo-card p-4 rounded-2xl">
+                    ${news.imageUrl ? `<img src="${news.imageUrl}" class="w-full h-40 object-cover rounded-xl mb-3" alt="news">` : ''}
+                    <h3 class="font-bold text-lg text-slate-200">${news.title}</h3>
+                    <p class="text-slate-400 text-sm mt-2">${news.content}</p>
+                    <p class="text-xs text-slate-600 mt-3">${date}</p>
+                </div>`;
             }).join('');
+        } catch (error) {
+            console.error("Error loading news:", error);
+            el.innerHTML = '<p class="text-red-500 text-center">Could not load news feed.</p>';
         }
-
-        async function loadNewsFeed() {
-            const el = document.getElementById('news-feed');
-            el.innerHTML = '<div class="flex justify-center p-8"><div class="loader-ring w-8 h-8 border-2"></div></div>';
-            try {
-                const q = query(collection(db, "news"), orderBy("createdAt", "desc"), limit(5));
-                const snap = await getDocs(q);
-                if (snap.empty) {
-                    el.innerHTML = '<p class="text-slate-500 text-center">No news available right now.</p>';
-                    return;
-                }
-                el.innerHTML = snap.docs.map(doc => {
-                    const news = doc.data();
-                    const date = news.createdAt.toDate().toLocaleString();
-                    return `
-                    <div class="neo-card p-4 rounded-2xl">
-                        ${news.imageUrl ? `<img src="${news.imageUrl}" class="w-full h-40 object-cover rounded-xl mb-3" alt="news">` : ''}
-                        <h3 class="font-bold text-lg text-slate-200">${news.title}</h3>
-                        <p class="text-slate-400 text-sm mt-2">${news.content}</p>
-                        <p class="text-xs text-slate-600 mt-3">${date}</p>
-                    </div>`;
-                }).join('');
-            } catch (error) {
-                console.error("Error loading news:", error);
-                el.innerHTML = '<p class="text-red-500 text-center">Could not load news feed.</p>';
-            }
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
