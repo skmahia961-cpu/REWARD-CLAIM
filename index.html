@@ -37,8 +37,6 @@
         body { background-color: var(--nexus-bg); color: #e2e8f0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         .no-select { -webkit-user-select: none; user-select: none; }
         .allow-select { -webkit-user-select: text; user-select: text; }
-
-        /* New Component Styles */
         .neo-card {
             background: var(--nexus-card); border: 1px solid #334155;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -49,7 +47,6 @@
             background: #0f172a; border: 1px solid #334155; color: #fff; transition: all 0.3s ease;
         }
         .neo-input:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); outline: none; }
-
         .action-btn {
             background: var(--primary-grad); color: white; font-weight: 600; border: none;
             position: relative; overflow: hidden; transition: all 0.3s ease;
@@ -63,13 +60,8 @@
         .action-btn:hover::after { opacity: 1; }
         .action-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
         .action-btn:disabled::after { display: none; }
-
-
-        /* View Management */
         .app-view { display: none; opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease; }
         .app-view.active-view { display: block; opacity: 1; transform: translateY(0); }
-
-        /* Navigation */
         .dock-nav {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             width: 95%; max-width: 400px; background: rgba(30, 41, 59, 0.8);
@@ -88,8 +80,6 @@
             content: ''; position: absolute; bottom: -8px; width: 6px; height: 6px;
             background: #6366f1; border-radius: 50%;
         }
-
-        /* Custom Loader */
         #splash-screen {
             position: fixed; inset: 0; background: var(--nexus-bg); z-index: 100;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -100,14 +90,6 @@
             border-radius: 50%; animation: spin 1s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Ticker */
-        .news-ticker-wrap { overflow: hidden; background: #1e293b; padding: 8px 0; border-radius: 8px; border: 1px solid #334155; }
-        .news-ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
-        .ticker-item { padding-right: 40px; color: #cbd5e1; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-
-        /* Off-canvas Menu */
         .side-panel-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
             opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 80;
@@ -119,35 +101,15 @@
         }
         .side-panel.open { transform: translateX(0); }
         .side-panel-overlay.open { opacity: 1; visibility: visible; }
-
-        /* Modals */
         .glass-modal {
             background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px);
             border: 1px solid rgba(99, 102, 241, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
-        /* Task Card Styling */
-        .task-card {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .task-card.completed {
-            background-color: #10b981;
-            cursor: not-allowed;
-        }
-        .task-card:not(.completed):hover {
-            border-color: #6366f1;
-            transform: translateY(-5px);
-        }
-
     </style>
 </head>
 <body class="max-w-md mx-auto min-h-screen overflow-x-hidden no-select pb-28">
 
-    <!-- NEW SPLASH SCREEN -->
+    <!-- SPLASH SCREEN -->
     <div id="splash-screen">
         <div class="relative">
             <div class="loader-ring"></div>
@@ -159,7 +121,7 @@
         <p id="loading-msg" class="text-slate-500 text-sm mt-2 animate-pulse">Establishing Secure Connection...</p>
     </div>
 
-    <!-- SIDE PANEL (Redesigned) -->
+    <!-- SIDE PANEL -->
     <div class="side-panel-overlay" id="panel-overlay"></div>
     <aside class="side-panel" id="main-side-panel">
         <div class="p-6 bg-slate-900/50 border-b border-slate-800">
@@ -174,7 +136,6 @@
             </div>
         </div>
         <div id="panel-content" class="p-4 space-y-2 overflow-y-auto h-[calc(100%-160px)]">
-            <!-- Menu items are here -->
             <button onclick="openPremiumPage()" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
                 <div class="flex items-center gap-3">
                     <div class="p-2 rounded-lg bg-yellow-500/10 text-yellow-500"><i data-lucide="gem" class="w-5 h-5"></i></div>
@@ -230,7 +191,6 @@
                 <!-- Promo Slider -->
                 <div class="neo-card rounded-2xl overflow-hidden relative aspect-video">
                     <div id="promo-slider" class="h-full flex transition-transform duration-500 ease-out">
-                        <!-- Slides will be injected here if needed, or static below -->
                          <div class="min-w-full h-full bg-slate-800 relative">
                             <img src="https://i.postimg.cc/zBp8rCX9/Yellow-Orange-Modern-Marketing-Courses-You-Tube-Thumbnail-20250910-185659-0000.png" class="w-full h-full object-cover opacity-80" alt="Promo 1">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
@@ -255,14 +215,9 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Quick Actions -->
-                <div id="premium-ads-container">
-                     <!-- Ads will load here if not premium -->
-                </div>
             </div>
             
-            <!-- NEW: TASKS VIEW -->
+            <!-- TASKS VIEW -->
             <div id="view-tasks" class="app-view space-y-6">
                 <div class="text-center">
                    <h2 class="text-2xl font-bold text-slate-100">Daily Tasks</h2>
@@ -274,13 +229,12 @@
            </div>
 
 
-            <!-- DEPOSIT VIEW (Redesigned) -->
+            <!-- DEPOSIT VIEW -->
             <div id="view-deposit" class="app-view space-y-6">
                 <div class="text-center mb-6">
                     <h2 class="text-2xl font-bold text-slate-100">Add Funds</h2>
                     <p class="text-slate-500 text-sm">Secure & Fast Balance Top-up</p>
                 </div>
-
                 <div class="neo-card p-5 rounded-2xl border-indigo-500/30 bg-indigo-500/5">
                     <div class="flex items-start gap-3">
                         <i data-lucide="alert-circle" class="w-6 h-6 text-indigo-400 shrink-0 mt-1"></i>
@@ -292,7 +246,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="grid grid-cols-3 gap-3 text-center">
                      <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('YOUR_USDT_ADDRESS', 'USDT')">
                          <img src="https://i.postimg.cc/zX04M20M/usdt-logo.png" class="w-8 h-8 mb-2 rounded-full" alt="USDT">
@@ -310,7 +263,6 @@
                          <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
                      </div>
                 </div>
-
                 <div class="neo-card p-5 rounded-2xl space-y-4">
                     <h3 class="font-semibold text-slate-200">Submit Verification Info</h3>
                     <select id="dep-method" class="neo-input w-full p-3 rounded-xl">
@@ -324,7 +276,6 @@
                     <input type="text" id="dep-trx" placeholder="Transaction ID (TxID)" class="neo-input w-full p-3 rounded-xl">
                     <button id="btn-submit-deposit" class="action-btn w-full py-4 rounded-xl text-lg shadow-lg shadow-indigo-500/20">VERIFY DEPOSIT</button>
                 </div>
-
                 <div class="pt-4">
                     <h3 class="text-sm font-bold text-slate-400 mb-3 px-2">Transaction History</h3>
                     <div id="deposit-history-log" class="space-y-2"></div>
@@ -346,7 +297,6 @@
                         UID: <span id="uid-display">...</span> <i data-lucide="copy" class="w-3 h-3"></i>
                     </button>
                 </div>
-
                 <div class="grid grid-cols-3 gap-3 text-center">
                     <div class="neo-card p-3 rounded-xl bg-slate-800/50">
                         <p class="text-[11px] text-slate-500">Total Deposit</p>
@@ -361,7 +311,6 @@
                         <p id="stat-savings" class="text-md font-bold text-cyan-400">$0.00</p>
                     </div>
                 </div>
-
                 <div class="space-y-3">
                     <button onclick="switchView('view-features')" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
                         <div class="flex items-center gap-3">
@@ -386,7 +335,6 @@
                     <button onclick="switchView('view-profile')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
                     <h2 class="text-xl font-bold">Tools & Services</h2>
                 </div>
-
                 <div class="grid grid-cols-2 gap-4">
                     <button onclick="switchView('subview-send')" class="neo-card p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-indigo-500 transition group">
                         <div class="w-14 h-14 rounded-full bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all text-indigo-500">
@@ -395,7 +343,6 @@
                         <span class="font-semibold">P2P Transfer</span>
                     </button>
                 </div>
-
                 <div class="neo-card p-5 rounded-2xl mt-4 bg-slate-800/30">
                      <h3 class="font-bold text-slate-300 mb-4 flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4"></i> Recent Activities</h3>
                      <div id="activity-log" class="space-y-3 text-sm text-slate-500 text-center py-4 max-h-60 overflow-y-auto">
@@ -428,7 +375,7 @@
                 </div>
             </div>
 
-           <!-- NEW: GET PREMIUM VIEW -->
+           <!-- GET PREMIUM VIEW -->
            <div id="view-premium" class="app-view space-y-6">
                 <div class="flex items-center gap-3 mb-6">
                    <button onclick="switchView('view-profile')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
@@ -449,7 +396,7 @@
 
         </main>
 
-        <!-- NEW DOCK NAVIGATION -->
+        <!-- DOCK NAVIGATION -->
         <nav class="dock-nav">
             <button class="dock-item nav-active" data-target="view-dashboard">
                 <i data-lucide="home" class="w-6 h-6"></i>
@@ -495,14 +442,6 @@
         const MIN_P2P_AMT = 0.5;
         const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
 
-        // --- NEW TASK SYSTEM CONFIG ---
-        const freeTask = {
-            id: 'free_youtube_task_daily', // Use a unique string ID
-            title: "Daily Free YouTube Task",
-            reward: 5.00,
-            link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" // Example link
-        };
-        
         const TASK_DURATION_MS = 10000; // 10 seconds
         
         // --- PREMIUM TIER CONFIGURATION (Default values, will be overridden by Firestore) ---
@@ -514,7 +453,7 @@
             master:    { name: 'Master',    price: 50, duration: 30, taskLimit: 15, benefits: { noAds: true, depositCashback: 0.05, feeReduction: 0.05 } }
         };
 
-        // UPDATED FIREBASE CONFIG
+        // FIREBASE CONFIG
         const fbConfig = {
             apiKey: "AIzaSyABzUFAkmkbYmaEPC1mpAIM3TWnG_NkxU0",
             authDomain: "backup-mail-store.firebaseapp.com",
@@ -580,7 +519,7 @@
                     premiumTier: null,
                     premiumExpiry: null,
                     lastNotificationCheck: null,
-                    completedTasks: []
+                    dailyCompletedTasks: [] // MODIFIED: Changed from completedTasks
                 };
                 await setDoc(userRef, userData);
             }
@@ -602,7 +541,6 @@
                 if (configSnap.exists()) {
                     const configData = configSnap.data();
                     sysConfig = configData;
-                    // Overwrite local premiumTiers with data from Firestore
                     if(configData.premiumTiers) {
                          Object.keys(premiumTiers).forEach(key => {
                             if(configData.premiumTiers[key]) {
@@ -649,7 +587,6 @@
                 profileBadgeEl.classList.add('bg-yellow-500/10', 'text-yellow-400', 'border', 'border-yellow-500/20');
             } else {
                 if(userData.isPremium && isPremiumExpired){
-                    // If expired, reset in DB
                     updateDoc(doc(db, "users", userData.tgChatId), { isPremium: false, premiumTier: null, premiumExpiry: null });
                 }
                 profileNameEl.textContent = userData.name;
@@ -759,7 +696,6 @@
                     closeModal();
                     showToast(`Successfully upgraded to ${tier.name}!`, 'success');
                     
-                    // Manually update local data for immediate UI change
                     userData.balance -= tier.price;
                     userData.isPremium = true;
                     userData.premiumTier = tierKey;
@@ -777,7 +713,7 @@
             };
         }
 
-        // --- NEW TASK SYSTEM FUNCTIONS ---
+        // --- TASK SYSTEM FUNCTIONS ---
         function loadTasksView() {
             const taskListContainer = document.getElementById('task-list');
             const pageTitle = document.querySelector('#view-tasks h2');
@@ -786,61 +722,105 @@
             window.startTask = startTask;
             window.switchView = switchView;
 
-            pageTitle.textContent = "Daily Free YouTube Tasks";
-            pageSubtitle.textContent = "Complete the task below to earn your reward";
+            pageTitle.textContent = "Daily Earning Tasks";
+            pageSubtitle.textContent = "Complete simple tasks to earn rewards";
 
-            const isCompleted = userData.completedTasks && userData.completedTasks.includes(freeTask.id);
-            const taskJSON = JSON.stringify(freeTask);
+            const taskReward = sysConfig.taskReward || 5.00;
+            const taskLink = sysConfig.taskLink || "https://otieu.com/4/10076799";
+            
+            let taskLimit = sysConfig.freeUserTaskLimit || 1;
+            const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
+            
+            if (userData.isPremium && userData.premiumTier && !isPremiumExpired) {
+                taskLimit = premiumTiers[userData.premiumTier]?.taskLimit || taskLimit;
+            }
 
-            if (!isCompleted) {
-                taskListContainer.innerHTML = `
+            const today = new Date().toISOString().split('T')[0];
+            const completedToday = (userData.dailyCompletedTasks || [])
+                .filter(task => task.completedAt && new Date(task.completedAt.seconds * 1000).toISOString().split('T')[0] === today)
+                .map(task => task.taskId);
+
+            let tasksHTML = '';
+            for (let i = 1; i <= taskLimit; i++) {
+                const taskId = `daily_task_${i}`;
+                const isCompleted = completedToday.includes(taskId);
+
+                const task = {
+                    id: taskId,
+                    title: `Task ${i}`,
+                    reward: taskReward,
+                    link: taskLink
+                };
+                const taskJSON = JSON.stringify(task);
+
+                tasksHTML += `
                     <div class="flex items-center justify-between bg-slate-800 p-3 rounded-xl border border-slate-700">
                         <div class="flex items-center gap-3">
-                            <div class="bg-green-500/20 p-3 rounded-full">
-                                 <i data-lucide="play" class="w-6 h-6 text-green-400"></i>
+                            <div class="bg-indigo-500/20 p-3 rounded-full">
+                                 <i data-lucide="arrow-up-right-square" class="w-6 h-6 text-indigo-400"></i>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-md text-slate-200">Task 1</h3>
-                                <p class="text-yellow-400 font-bold text-sm">Reward: ৳${freeTask.reward.toFixed(2)}</p>
+                                <h3 class="font-semibold text-md text-slate-200">${task.title}</h3>
+                                <p class="text-yellow-400 font-bold text-sm">Reward: $${task.reward.toFixed(2)}</p>
                             </div>
                         </div>
-                        <button onclick='startTask(${taskJSON})' class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-semibold text-sm">
-                            VISIT NOW
-                        </button>
-                    </div>
-                     <div class="neo-card p-4 rounded-xl text-center mt-8 bg-indigo-500/10 border-indigo-500/30">
-                        <p class="text-indigo-200 text-sm">This is a free daily task. For more earning opportunities, consider upgrading your account.</p>
-                    </div>
-                `;
-            } else {
-                taskListContainer.innerHTML = `
-                    <div class="flex items-center justify-between bg-slate-800 p-3 rounded-xl border border-slate-700">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-green-500/20 p-3 rounded-full">
-                                 <i data-lucide="play" class="w-6 h-6 text-green-400"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-md text-slate-200">Task 1</h3>
-                                <p class="text-yellow-400 font-bold text-sm">Reward: ৳${freeTask.reward.toFixed(2)}</p>
-                            </div>
-                        </div>
-                        <button class="bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold text-sm cursor-not-allowed">
-                            Completed
-                        </button>
-                    </div>
-
-                    <div class="neo-card p-6 rounded-2xl text-center mt-8">
-                        <h3 class="text-xl font-bold text-white">Free Task Completed!</h3>
-                        <p class="text-slate-400 mt-2 mb-4">Upgrade to a premium plan to unlock more daily tasks and increase your earnings.</p>
-                        <button onclick="switchView('view-premium')" class="action-btn w-full max-w-xs mx-auto py-3 rounded-xl">
-                            UPGRADE
-                        </button>
+                        ${isCompleted 
+                            ? `<button class="bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold text-sm cursor-not-allowed">Completed</button>`
+                            : `<button onclick='startTask(${taskJSON})' class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-semibold text-sm">VISIT NOW</button>`
+                        }
                     </div>
                 `;
             }
+            taskListContainer.innerHTML = tasksHTML;
+            
+            // NEW: Add countdown timer if all tasks are completed
+            if (completedToday.length >= taskLimit) {
+                const countdownHTML = `
+                    <div id="task-countdown-container" class="neo-card p-6 rounded-2xl text-center mt-8 bg-slate-800/50">
+                        <h3 class="text-xl font-bold text-white">All Tasks Completed Today!</h3>
+                        <p class="text-slate-400 mt-2 mb-4">New tasks will be available in:</p>
+                        <div id="task-countdown-timer" class="text-4xl font-bold text-cyan-400 font-mono tracking-wider">
+                            --:--:--
+                        </div>
+                    </div>
+                `;
+                taskListContainer.innerHTML += countdownHTML;
+                startTaskCountdown();
+            }
+
             lucide.createIcons();
         }
         
+        // NEW: Function to start the 24-hour countdown
+        function startTaskCountdown() {
+            const timerElement = document.getElementById('task-countdown-timer');
+            if (!timerElement) return;
+
+            const countdownInterval = setInterval(() => {
+                const now = new Date();
+                const tomorrow = new Date();
+                tomorrow.setDate(now.getDate() + 1);
+                tomorrow.setHours(0, 0, 0, 0);
+
+                const diff = tomorrow.getTime() - now.getTime();
+
+                if (diff <= 0) {
+                    clearInterval(countdownInterval);
+                    timerElement.textContent = "00:00:00";
+                    loadTasksView(); // Refresh tasks
+                    return;
+                }
+
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                timerElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+
+            activeTimers.push(countdownInterval);
+        }
+
         function startTask(task) {
             taskState.isActive = true;
             taskState.activeTask = task;
@@ -870,12 +850,21 @@
                 }
             }
         }
-
+        
+        // MODIFIED: completeTask function to handle new data structure
         async function completeTask() {
             const task = taskState.activeTask;
-            if (!task || (userData.completedTasks && userData.completedTasks.includes(task.id))) {
+            if (!task) return;
+
+            const today = new Date().toISOString().split('T')[0];
+            const alreadyCompleted = (userData.dailyCompletedTasks || [])
+                .some(t => t.taskId === task.id && t.completedAt && new Date(t.completedAt.seconds * 1000).toISOString().split('T')[0] === today);
+
+            if (alreadyCompleted) {
+                showToast(`This task has already been completed today.`, 'info');
                 return;
             }
+
             try {
                 const userRef = doc(db, "users", userData.tgChatId);
                 await runTransaction(db, async (transaction) => {
@@ -883,20 +872,26 @@
                     if (!userDoc.exists()) throw "User not found.";
 
                     const currentData = userDoc.data();
-                    
                     const newBalance = currentData.balance + task.reward;
-                    const updatedCompletedTasks = [...(currentData.completedTasks || []), task.id];
+                    
+                    const newTaskEntry = { 
+                        taskId: task.id, 
+                        completedAt: serverTimestamp()
+                    };
+                    
+                    const updatedCompletedTasks = [...(currentData.dailyCompletedTasks || []), newTaskEntry];
 
                     transaction.update(userRef, {
                         balance: newBalance,
-                        completedTasks: updatedCompletedTasks
+                        dailyCompletedTasks: updatedCompletedTasks
                     });
                 });
                 
                 showToast(`Congratulations! You've earned $${task.reward.toFixed(2)}`, 'success');
                 logPublicActivity(`earned $${task.reward.toFixed(2)} from a task.`);
             } catch (e) {
-                showToast(`Error: ${e}`, 'error');
+                console.error("Error completing task:", e);
+                showToast(`Error: ${e.message || e}`, 'error');
             }
         }
 
@@ -910,14 +905,7 @@
 
             if(!method || !amount || !sender || !trx) return showToast("Please fill all fields", "warning");
 
-            if(amount < MIN_DEPOSIT_AMT) return showModal(`
-                <div class="text-center text-red-400 space-y-3">
-                     <i data-lucide="alert-octagon" class="w-12 h-12 mx-auto"></i>
-                     <h3 class="font-bold text-lg">Invalid Amount</h3>
-                     <p class="text-slate-300">Minimum deposit amount is <span class="font-bold text-white">$${MIN_DEPOSIT_AMT.toFixed(2)}</span>.</p>
-                     <button onclick="closeModal()" class="neo-card w-full py-2 rounded-xl mt-4">OK</button>
-                </div>
-            `);
+            if(amount < MIN_DEPOSIT_AMT) return showModal(`<div class="text-center text-red-400 space-y-3"><i data-lucide="alert-octagon" class="w-12 h-12 mx-auto"></i><h3 class="font-bold text-lg">Invalid Amount</h3><p class="text-slate-300">Minimum deposit amount is <span class="font-bold text-white">$${MIN_DEPOSIT_AMT.toFixed(2)}</span>.</p><button onclick="closeModal()" class="neo-card w-full py-2 rounded-xl mt-4">OK</button></div>`);
 
             const btn = document.getElementById('btn-submit-deposit');
             btn.disabled = true; btn.innerText = "VERIFYING...";
@@ -1049,7 +1037,7 @@
         window.copyText = (text) => { navigator.clipboard.writeText(text); showToast("Copied to clipboard!"); };
         window.copyNumber = (num, name) => { copyText(num); showToast(`${name} address copied!`); };
         
-        // --- NEW ACTIONS ---
+        // --- P2P TRANSFER ---
         async function executeP2PTransfer() {
             const recipientUid = document.getElementById('p2p-uid').value.trim();
             const amount = parseFloat(document.getElementById('p2p-amount').value);
@@ -1122,7 +1110,7 @@
             document.getElementById('modal-backdrop').addEventListener('click', closeModal);
             document.getElementById('btn-copy-uid').addEventListener('click', () => copyText(userData.tgChatId));
             
-            document.addEventListener('visibilitychange', handleVisibilityChange); // NEW
+            document.addEventListener('visibilitychange', handleVisibilityChange);
 
             document.getElementById('btn-exec-p2p').addEventListener('click', executeP2PTransfer);
 
@@ -1156,7 +1144,7 @@
 
         async function loadProfileStats() {
             const statDepositEl = document.getElementById('stat-deposit');
-            const statEarnedEl = document.getElementById('stat-cashback'); // Re-using this element for total earned
+            const statEarnedEl = document.getElementById('stat-cashback');
             const statSavingsEl = document.getElementById('stat-savings');
         
             statDepositEl.textContent = '...';
@@ -1174,11 +1162,9 @@
         
                 // Total earnings from tasks and cashback
                 let totalTaskEarnings = 0;
-                if (userData.completedTasks) {
-                    // This logic assumes freeTask is the only task. If more tasks are added, this needs updating.
-                    if (userData.completedTasks.includes(freeTask.id)) {
-                        totalTaskEarnings += freeTask.reward;
-                    }
+                const taskReward = sysConfig.taskReward || 5.00; // Get reward from config
+                if (userData.dailyCompletedTasks && Array.isArray(userData.dailyCompletedTasks)) {
+                    totalTaskEarnings = userData.dailyCompletedTasks.length * taskReward;
                 }
                 
                 const purchaseQuery = query(collection(db, "deposits"), where("userId", "==", uid), where("status", "==", "approved"));
@@ -1275,7 +1261,6 @@
                 el.innerHTML = '<p class="text-red-500 text-center">Could not load news feed.</p>';
             }
         }
-
     </script>
 </body>
 </html>
