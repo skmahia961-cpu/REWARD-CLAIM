@@ -2,16 +2,11 @@
 
 <html lang="en" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NEXUS MARKET</title>
-<meta name="monetag" content="a41ceca9ffc67edad031c0024f85ef59">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEXUS MARKET</title>
+    <meta name="monetag" content="a41ceca9ffc67edad031c0024f85ef59">
 
-code
-Code
-download
-content_copy
-expand_less
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -115,11 +110,6 @@ expand_less
 </head>
 <body class="max-w-md mx-auto min-h-screen overflow-x-hidden no-select pb-28">
 
-code
-Code
-download
-content_copy
-expand_less
 <!-- SPLASH SCREEN -->
 <div id="splash-screen">
     <div class="relative">
@@ -353,6 +343,7 @@ expand_less
                     </div>
                     <span class="font-semibold">P2P Transfer</span>
                 </button>
+                <!-- ADDED PREMIUM BUTTON -->
                 <button onclick="switchView('view-premium')" class="neo-card p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-yellow-500 transition group">
                     <div class="w-14 h-14 rounded-full bg-yellow-500/10 flex items-center justify-center group-hover:bg-yellow-500 group-hover:text-white transition-all text-yellow-500">
                         <i data-lucide="gem" class="w-7 h-7"></i>
@@ -439,7 +430,7 @@ expand_less
 </div>
 
 <!-- GENERIC MODAL -->
-<div id="nexus-modal" class="fixed inset-0 z- flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+<div id="nexus-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-backdrop"></div>
     <div class="glass-modal w-full max-w-sm p-6 rounded-3xl relative transform scale-95 transition-all duration-300" id="modal-content">
         <div id="modal-body"></div>
@@ -458,9 +449,6 @@ expand_less
     const P2P_FEE_PERCENT = 0.05; // 5%
     const MIN_P2P_AMT = 0.5;
     const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
-
-    const TASK_DURATION_MS = 10000; // 10 seconds
-    const TASK_REWARD_AMT = 0.50; // Fixed reward of $0.50
     
     // --- PREMIUM TIER CONFIGURATION (Default values, will be overridden by Firestore) ---
     let premiumTiers = {
@@ -488,7 +476,6 @@ expand_less
     let userData = null;
     let sysConfig = {};
     let activeTimers = []; 
-    let taskState = { isActive: false, leaveTime: null, activeTask: null };
 
     // --- CORE FUNCTIONS ---
     window.onload = async () => {
@@ -537,7 +524,7 @@ expand_less
                 premiumTier: null,
                 premiumExpiry: null,
                 lastNotificationCheck: null,
-                dailyCompletedTasks: [] // MODIFIED: Changed from completedTasks
+                dailyCompletedTasks: []
             };
             await setDoc(userRef, userData);
         }
@@ -579,7 +566,7 @@ expand_less
         document.getElementById('main-balance-display').textContent = `$${bal}`;
         document.getElementById('user-balance-top').textContent = `$${bal}`;
 
-        const initials = (tgSession.first_name?. || 'U') + (tgSession.last_name?. || '');
+        const initials = (tgSession.first_name?.[0] || 'U') + (tgSession.last_name?.[0] || '');
         document.getElementById('nav-user-initials').textContent = initials.toUpperCase();
         document.getElementById('profile-user-initials').textContent = initials.toUpperCase();
 
@@ -731,11 +718,21 @@ expand_less
         };
     }
 
-    // --- TASK SYSTEM FUNCTIONS ---
+    // --- TASK SYSTEM FUNCTIONS (MODIFIED) ---
     function loadTasksView() {
         const taskListContainer = document.getElementById('task-list');
-        window.startTask = startTask;
+        const pageTitle = document.querySelector('#view-tasks h2');
+        const pageSubtitle = document.querySelector('#view-tasks p');
 
+        window.startTask = startTask;
+        window.switchView = switchView;
+
+        pageTitle.textContent = "Daily Earning Tasks";
+        pageSubtitle.textContent = "Complete simple tasks to earn rewards";
+
+        const taskReward = 0.50; // MODIFIED: Set reward to $0.50 as requested
+        const taskLink = sysConfig.taskLink || "https://otieu.com/4/10076799";
+        
         let taskLimit = sysConfig.freeUserTaskLimit || 1;
         const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
         
@@ -743,9 +740,9 @@ expand_less
             taskLimit = premiumTiers[userData.premiumTier]?.taskLimit || taskLimit;
         }
 
-        const today = new Date().toISOString().split('T');
+        const today = new Date().toISOString().split('T')[0];
         const completedToday = (userData.dailyCompletedTasks || [])
-            .filter(task => task.completedAt && new Date(task.completedAt.seconds * 1000).toISOString().split('T') === today)
+            .filter(task => task.completedAt && new Date(task.completedAt.seconds * 1000).toISOString().split('T')[0] === today)
             .map(task => task.taskId);
 
         let tasksHTML = '';
@@ -756,9 +753,11 @@ expand_less
             const task = {
                 id: taskId,
                 title: `Task ${i}`,
-                reward: TASK_REWARD_AMT
+                reward: taskReward,
+                link: taskLink
             };
-            
+            const taskJSON = JSON.stringify(task);
+
             tasksHTML += `
                 <div class="flex items-center justify-between bg-slate-800 p-3 rounded-xl border border-slate-700">
                     <div class="flex items-center gap-3">
@@ -772,7 +771,7 @@ expand_less
                     </div>
                     ${isCompleted 
                         ? `<button class="bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold text-sm cursor-not-allowed">Completed</button>`
-                        : `<button id="task-btn-${task.id}" onclick='startTask(this, ${JSON.stringify(task)})' class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-semibold text-sm">START TASK</button>`
+                        : `<button onclick='startTask(${taskJSON}, this)' class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-semibold text-sm">VISIT NOW</button>`
                     }
                 </div>
             `;
@@ -792,6 +791,7 @@ expand_less
             taskListContainer.innerHTML += countdownHTML;
             startTaskCountdown();
         }
+
         lucide.createIcons();
     }
     
@@ -810,7 +810,7 @@ expand_less
             if (diff <= 0) {
                 clearInterval(countdownInterval);
                 timerElement.textContent = "00:00:00";
-                loadTasksView(); 
+                loadTasksView();
                 return;
             }
 
@@ -823,30 +823,36 @@ expand_less
 
         activeTimers.push(countdownInterval);
     }
+    
+    // NEW: In-app countdown task function
+    function startTask(task, buttonElement) {
+        buttonElement.disabled = true;
+        window.open(task.link, '_blank'); // Still opens the link as per "VISIT NOW"
 
-    function startTask(button, task) {
-        button.disabled = true;
-        let countdown = TASK_DURATION_MS / 1000;
-        button.textContent = `Waiting... ${countdown}s`;
+        let countdown = 10;
+        buttonElement.textContent = `Waiting (${countdown}s)`;
 
-        const interval = setInterval(() => {
+        const intervalId = setInterval(() => {
             countdown--;
-            button.textContent = `Waiting... ${countdown}s`;
+            buttonElement.textContent = `Waiting (${countdown}s)`;
             if (countdown <= 0) {
-                clearInterval(interval);
-                button.textContent = 'Claiming...';
+                clearInterval(intervalId);
+                // The UI will update automatically via the real-time listener
+                // once the database is updated.
                 completeTask(task);
             }
         }, 1000);
-        activeTimers.push(interval);
+        
+        activeTimers.push(intervalId);
     }
-
+    
+    // MODIFIED: completeTask function to handle direct task object
     async function completeTask(task) {
         if (!task) return;
 
-        const today = new Date().toISOString().split('T');
+        const today = new Date().toISOString().split('T')[0];
         const alreadyCompleted = (userData.dailyCompletedTasks || [])
-            .some(t => t.taskId === task.id && t.completedAt && new Date(t.completedAt.seconds * 1000).toISOString().split('T') === today);
+            .some(t => t.taskId === task.id && t.completedAt && new Date(t.completedAt.seconds * 1000).toISOString().split('T')[0] === today);
 
         if (alreadyCompleted) {
             showToast(`This task has already been completed today.`, 'info');
@@ -877,18 +883,16 @@ expand_less
             
             showToast(`Congratulations! You've earned $${task.reward.toFixed(2)}`, 'success');
             logPublicActivity(`earned $${task.reward.toFixed(2)} from a task.`);
-            // No need to manually update userData, listener will catch it.
         } catch (e) {
             console.error("Error completing task:", e);
             showToast(`Error: ${e.message || e}`, 'error');
-            // Re-enable button on failure
-            const button = document.getElementById(`task-btn-${task.id}`);
-            if(button) {
-                button.disabled = false;
-                button.textContent = 'START TASK';
+            // If it fails, reload the task view to re-enable the button
+            if (document.getElementById('view-tasks').classList.contains('active-view')) {
+                loadTasksView();
             }
         }
     }
+
 
     // --- DEPOSIT FUNCTIONS ---
     document.getElementById('btn-submit-deposit').addEventListener('click', async () => {
@@ -1104,8 +1108,7 @@ expand_less
         document.getElementById('modal-backdrop').addEventListener('click', closeModal);
         document.getElementById('btn-copy-uid').addEventListener('click', () => copyText(userData.tgChatId));
         
-        // Removed visibilitychange listener to simplify task logic
-        // document.addEventListener('visibilitychange', handleVisibilityChange);
+        // REMOVED: document.addEventListener('visibilitychange', handleVisibilityChange);
 
         document.getElementById('btn-exec-p2p').addEventListener('click', executeP2PTransfer);
 
@@ -1130,6 +1133,7 @@ expand_less
                 if (oldData.balance !== newData.balance || oldData.isPremium !== newData.isPremium || oldData.premiumTier !== newData.premiumTier) {
                      updateDashboard();
                 }
+                // When user data changes (e.g., a task is completed), reload the tasks view if it's active
                 if (document.getElementById('view-tasks').classList.contains('active-view')) {
                     loadTasksView();
                 }
@@ -1157,8 +1161,9 @@ expand_less
     
             // Total earnings from tasks and cashback
             let totalTaskEarnings = 0;
+            const taskReward = 0.50; // Use the same reward value as in the task view
             if (userData.dailyCompletedTasks && Array.isArray(userData.dailyCompletedTasks)) {
-                totalTaskEarnings = userData.dailyCompletedTasks.length * TASK_REWARD_AMT;
+                totalTaskEarnings = userData.dailyCompletedTasks.length * taskReward;
             }
             
             const purchaseQuery = query(collection(db, "deposits"), where("userId", "==", uid), where("status", "==", "approved"));
