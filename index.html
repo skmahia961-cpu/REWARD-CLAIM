@@ -846,7 +846,7 @@
         activeTimers.push(intervalId);
     }
     
-    // MODIFIED: completeTask function to handle direct task object
+    // MODIFIED: completeTask function to handle direct task object and fix the serverTimestamp error
     async function completeTask(task) {
         if (!task) return;
 
@@ -868,9 +868,11 @@
                 const currentData = userDoc.data();
                 const newBalance = currentData.balance + task.reward;
                 
+                // === FIX IS HERE ===
+                // Replaced serverTimestamp() with Timestamp.fromDate(new Date())
                 const newTaskEntry = { 
                     taskId: task.id, 
-                    completedAt: serverTimestamp()
+                    completedAt: Timestamp.fromDate(new Date()) 
                 };
                 
                 const updatedCompletedTasks = [...(currentData.dailyCompletedTasks || []), newTaskEntry];
