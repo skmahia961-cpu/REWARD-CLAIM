@@ -496,12 +496,13 @@
         const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
 
         // --- NEW TASK SYSTEM CONFIG ---
-        const tasks = [
-            { id: 1, title: "Watch a Video", description: "Watch a short video to earn a reward.", reward: 0.10, link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
-            { id: 2, title: "Visit a Website", description: "Visit our partner's website.", reward: 0.15, link: "https://www.google.com" },
-            { id: 3, title: "Follow on Social Media", description: "Follow us on our social media channels.", reward: 0.20, link: "https://www.twitter.com" }
-        ];
-
+        const freeTask = {
+            id: 'free_youtube_task_daily', // Use a unique string ID
+            title: "Daily Free YouTube Task",
+            reward: 5.00,
+            link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" // Example link
+        };
+        
         const TASK_DURATION_MS = 10000; // 10 seconds
         
         // --- PREMIUM TIER CONFIGURATION (Default values, will be overridden by Firestore) ---
@@ -779,33 +780,65 @@
         // --- NEW TASK SYSTEM FUNCTIONS ---
         function loadTasksView() {
             const taskListContainer = document.getElementById('task-list');
-            taskListContainer.innerHTML = '';
+            const pageTitle = document.querySelector('#view-tasks h2');
+            const pageSubtitle = document.querySelector('#view-tasks p');
 
-            tasks.forEach(task => {
-                const isCompleted = userData.completedTasks && userData.completedTasks.includes(task.id);
+            window.startTask = startTask;
+            window.switchView = switchView;
 
-                const taskCard = document.createElement('div');
-                taskCard.className = `task-card ${isCompleted ? 'completed' : ''}`;
-                taskCard.onclick = () => {
-                    if (!isCompleted) {
-                        startTask(task);
-                    }
-                };
+            pageTitle.textContent = "Daily Free YouTube Tasks";
+            pageSubtitle.textContent = "Complete the task below to earn your reward";
 
-                taskCard.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-lg font-bold">${task.title}</h3>
-                            <p class="text-sm text-slate-400">${task.description}</p>
+            const isCompleted = userData.completedTasks && userData.completedTasks.includes(freeTask.id);
+            const taskJSON = JSON.stringify(freeTask);
+
+            if (!isCompleted) {
+                taskListContainer.innerHTML = `
+                    <div class="flex items-center justify-between bg-slate-800 p-3 rounded-xl border border-slate-700">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-green-500/20 p-3 rounded-full">
+                                 <i data-lucide="play" class="w-6 h-6 text-green-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-md text-slate-200">Task 1</h3>
+                                <p class="text-yellow-400 font-bold text-sm">Reward: ৳${freeTask.reward.toFixed(2)}</p>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <p class="text-lg font-bold text-green-400">+$${task.reward.toFixed(2)}</p>
-                            <p class="text-xs ${isCompleted ? 'text-white' : 'text-slate-500'}">${isCompleted ? 'Completed' : 'Tap to start'}</p>
-                        </div>
+                        <button onclick='startTask(${taskJSON})' class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-semibold text-sm">
+                            VISIT NOW
+                        </button>
+                    </div>
+                     <div class="neo-card p-4 rounded-xl text-center mt-8 bg-indigo-500/10 border-indigo-500/30">
+                        <p class="text-indigo-200 text-sm">This is a free daily task. For more earning opportunities, consider upgrading your account.</p>
                     </div>
                 `;
-                taskListContainer.appendChild(taskCard);
-            });
+            } else {
+                taskListContainer.innerHTML = `
+                    <div class="flex items-center justify-between bg-slate-800 p-3 rounded-xl border border-slate-700">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-green-500/20 p-3 rounded-full">
+                                 <i data-lucide="play" class="w-6 h-6 text-green-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-md text-slate-200">Task 1</h3>
+                                <p class="text-yellow-400 font-bold text-sm">Reward: ৳${freeTask.reward.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <button class="bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold text-sm cursor-not-allowed">
+                            Completed
+                        </button>
+                    </div>
+
+                    <div class="neo-card p-6 rounded-2xl text-center mt-8">
+                        <h3 class="text-xl font-bold text-white">Free Task Completed!</h3>
+                        <p class="text-slate-400 mt-2 mb-4">Upgrade to a premium plan to unlock more daily tasks and increase your earnings.</p>
+                        <button onclick="switchView('view-premium')" class="action-btn w-full max-w-xs mx-auto py-3 rounded-xl">
+                            UPGRADE
+                        </button>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
         }
         
         function startTask(task) {
@@ -1142,12 +1175,10 @@
                 // Total earnings from tasks and cashback
                 let totalTaskEarnings = 0;
                 if (userData.completedTasks) {
-                    userData.completedTasks.forEach(taskId => {
-                        const task = tasks.find(t => t.id === taskId);
-                        if (task) {
-                            totalTaskEarnings += task.reward;
-                        }
-                    });
+                    // This logic assumes freeTask is the only task. If more tasks are added, this needs updating.
+                    if (userData.completedTasks.includes(freeTask.id)) {
+                        totalTaskEarnings += freeTask.reward;
+                    }
                 }
                 
                 const purchaseQuery = query(collection(db, "deposits"), where("userId", "==", uid), where("status", "==", "approved"));
