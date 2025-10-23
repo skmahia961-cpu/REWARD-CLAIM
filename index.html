@@ -310,11 +310,11 @@
     <!-- Enter Referral Code -->
     <div id="referral-input-section" class="neo-card p-5 rounded-2xl text-center space-y-3">
         <h3 class="font-semibold text-slate-200 text-lg">Have a Referral Code?</h3>
-        <p class="text-xs text-slate-400">Enter your friend's code below. You both will receive <span class="text-emerald-400 font-bold">$1.00</span> instantly!</p>
+        <p class="text-xs text-slate-400">Enter your friend's code below. You both will receive <span id="referral-bonus-text" class="text-emerald-400 font-bold">$1.00</span> instantly!</p>
         <div class="relative">
             <input type="text" id="referral-code-input" placeholder="Enter Code Here" class="neo-input w-full p-3 rounded-xl text-center font-mono">
         </div>
-        <button id="btn-verify-referral" class="action-btn w-full py-3 rounded-xl">VERIFY & CLAIM $1.00</button>
+        <button id="btn-verify-referral" class="action-btn w-full py-3 rounded-xl">VERIFY & CLAIM <span id="referral-claim-bonus-text">$1.00</span></button>
     </div>
 
     <div class="grid grid-cols-2 gap-4 text-center">
@@ -350,7 +350,7 @@
     <div class="neo-card p-5 rounded-xl text-left">
         <h3 class="font-semibold text-slate-200 mb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-indigo-400"></i> How it Works:</h3>
         <ul class="space-y-3 text-sm text-slate-400">
-            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Enter a friend's code once to get a $1 bonus for both of you.</span></li>
+            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Enter a friend's code once to get a bonus for both of you.</span></li>
             <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Share your unique link with friends.</span></li>
             <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>You earn a commission on their every deposit, forever.</span></li>
             <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>The more friends you invite, the more you earn passively.</span></li>
@@ -406,12 +406,11 @@
     </div>
     <div class="neo-card p-5 rounded-2xl space-y-4">
         <h3 class="font-semibold text-slate-200">Submit Verification Info</h3>
-        <select id="dep-method" class="neo-input w-full p-3 rounded-xl">
-            <option value="" disabled selected>Select Payment Method</option>
-            <option value="USDT">USDT</option>
-            <option value="BTC">BTC</option>
-            <option value="Binance">Binance</option>
-        </select>
+        <input type="hidden" id="dep-method" value="">
+        <button id="dep-method-selector" class="neo-input w-full p-3 rounded-xl text-left text-slate-400 flex justify-between items-center">
+            <span id="dep-method-text">Select Payment Method</span>
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+        </button>
         <input type="number" id="dep-amount" placeholder="Amount (USD)" class="neo-input w-full p-3 rounded-xl">
         <input type="text" id="dep-sender" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
         <button id="btn-submit-deposit" class="action-btn w-full py-4 rounded-xl text-lg shadow-lg shadow-indigo-500/20">VERIFY DEPOSIT</button>
@@ -442,12 +441,11 @@
     
     <div class="neo-card p-5 rounded-2xl space-y-4">
         <h3 class="font-semibold text-slate-200">Enter Withdrawal Details</h3>
-        <select id="wd-method" class="neo-input w-full p-3 rounded-xl">
-            <option value="" disabled selected>Select Withdrawal Method</option>
-            <option value="USDT">USDT (TRC20)</option>
-            <option value="BTC">BTC</option>
-            <option value="Binance">Binance Pay ID</option>
-        </select>
+        <input type="hidden" id="wd-method" value="">
+        <button id="wd-method-selector" class="neo-input w-full p-3 rounded-xl text-left text-slate-400 flex justify-between items-center">
+            <span id="wd-method-text">Select Withdrawal Method</span>
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+        </button>
         <input type="text" id="wd-address" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
         <input type="number" id="wd-amount" placeholder="Amount to Withdraw (USD)" class="neo-input w-full p-3 rounded-xl">
         
@@ -621,11 +619,13 @@
     // --- CONFIGURATION ---
     let MIN_DEPOSIT_AMT = 10; 
     let MIN_WITHDRAWAL_AMT = 5;
+    let REFERRAL_BONUS = 1;
+    let TASK_REWARD = 0.5;
     const P2P_FEE_PERCENT = 0.05; // 5%
     const MIN_P2P_AMT = 0.5;
     const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
     
-    // --- PREMIUM TIER CONFIGURATION ---
+    // --- PREMIUM TIER CONFIGURATION (DEFAULTS) ---
     let premiumTiers = {
         silver:    { name: 'Silver',    price: 1,  level: 1, duration: 30, taskLimit: 3, benefits: { noAds: true, feeReduction: 0.01 } },
         palladium: { name: 'Palladium', price: 5,  level: 2, duration: 30, taskLimit: 5, benefits: { noAds: true, feeReduction: 0.02 } },
@@ -635,17 +635,16 @@
     };
 
     // FIREBASE CONFIG
-    const fbConfig = {
-        apiKey: "AIzaSyABzUFAkmkbYmaEPC1mpAIM3TWnG_NkxU0",
-        authDomain: "backup-mail-store.firebaseapp.com",
-        databaseURL: "https://backup-mail-store-default-rtdb.firebaseio.com",
-        projectId: "backup-mail-store",
-        storageBucket: "backup-mail-store.firebasestorage.app",
-        messagingSenderId: "856776939573",
-        appId: "1:856776939573:web:0f8b852e4028249b5ff97c"
+    const firebaseConfig = {
+      apiKey: "AIzaSyDPyjAlxESIPJNGev6xM2TZhaiMI6hIUl4",
+      authDomain: "reward-claim-2cdc7.firebaseapp.com",
+      projectId: "reward-claim-2cdc7",
+      storageBucket: "reward-claim-2cdc7.firebasestorage.app",
+      messagingSenderId: "891504919897",
+      appId: "1:891504919897:web:f9e9b19e7f31f69fa17848"
     };
 
-    const app = initializeApp(fbConfig);
+    const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     let tgSession = null;
     let userData = null;
@@ -724,9 +723,11 @@
                 const configData = configSnap.data();
                 sysConfig = configData;
 
-                // Set min deposit/withdrawal from Firebase config
+                // Set values from Firebase config with defaults
                 MIN_DEPOSIT_AMT = sysConfig.minDeposit || 10;
                 MIN_WITHDRAWAL_AMT = sysConfig.minWithdrawal || 5;
+                REFERRAL_BONUS = sysConfig.referralBonus || 1;
+                TASK_REWARD = sysConfig.taskReward || 0.5;
 
                 document.getElementById('min-deposit-text').textContent = `$${MIN_DEPOSIT_AMT.toFixed(2)}`;
                 document.getElementById('min-withdrawal-text').textContent = `$${MIN_WITHDRAWAL_AMT.toFixed(2)}`;
@@ -734,7 +735,11 @@
                 if(configData.premiumTiers) {
                      Object.keys(premiumTiers).forEach(key => {
                         if(configData.premiumTiers[key]) {
-                            premiumTiers[key] = { ...premiumTiers[key], ...configData.premiumTiers[key] };
+                            // Merge only price, duration, and taskLimit from Firebase
+                            const remoteTier = configData.premiumTiers[key];
+                            premiumTiers[key].price = remoteTier.price !== undefined ? remoteTier.price : premiumTiers[key].price;
+                            premiumTiers[key].duration = remoteTier.duration !== undefined ? remoteTier.duration : premiumTiers[key].duration;
+                            premiumTiers[key].taskLimit = remoteTier.taskLimit !== undefined ? remoteTier.taskLimit : premiumTiers[key].taskLimit;
                         }
                     });
                 }
@@ -926,7 +931,7 @@
         const taskListContainer = document.getElementById('task-list');
         window.startTask = startTask;
 
-        const taskReward = 0.50;
+        const taskReward = TASK_REWARD;
         const taskLink = sysConfig.taskLink || "https://otieu.com/4/10076799";
         
         let taskLimit = sysConfig.freeUserTaskLimit || 1;
@@ -1100,8 +1105,6 @@
         btn.disabled = true; btn.innerText = "VERIFYING...";
 
         try {
-            // As TxID is removed, we cannot check for duplicates easily. 
-            // This requires backend logic to prevent replay attacks.
             await addDoc(collection(db, "deposits"), {
                 userId: userData.tgChatId, userName: userData.name, method, amount, senderNumber: sender,
                 status: "pending", requestedAt: serverTimestamp()
@@ -1110,6 +1113,8 @@
             showModal(`<div class="text-center space-y-3"><i data-lucide="check-circle" class="w-12 h-12 text-emerald-500 mx-auto"></i><h3 class="text-lg font-bold text-white">Submitted!</h3><p class="text-slate-400">Your deposit of $${amount} is under review. It typically takes 5-30 minutes.</p><button onclick="closeModal()" class="action-btn w-full py-2 rounded-xl">OK</button></div>`);
             
             document.getElementById('dep-method').value = '';
+            document.getElementById('dep-method-text').textContent = 'Select Payment Method';
+            document.getElementById('dep-method-selector').classList.add('text-slate-400');
             document.getElementById('dep-amount').value = '';
             document.getElementById('dep-sender').value = '';
             loadDepositHistory();
@@ -1186,6 +1191,8 @@
             showModal(`<div class="text-center space-y-3"><i data-lucide="check-circle" class="w-12 h-12 text-emerald-500 mx-auto"></i><h3 class="text-lg font-bold text-white">Withdrawal Submitted!</h3><p class="text-slate-400">Your withdrawal request for $${amount} has been received and will be processed within 24 hours.</p><button onclick="closeModal()" class="action-btn w-full py-2 rounded-xl">OK</button></div>`);
             
             document.getElementById('wd-method').value = '';
+            document.getElementById('wd-method-text').textContent = 'Select Withdrawal Method';
+            document.getElementById('wd-method-selector').classList.add('text-slate-400');
             document.getElementById('wd-address').value = '';
             document.getElementById('wd-amount').value = '';
             loadWithdrawalHistory();
@@ -1295,6 +1302,9 @@
         const refCountEl = document.getElementById('ref-stat-count');
         const refEarningsEl = document.getElementById('ref-stat-earnings');
         
+        document.getElementById('referral-bonus-text').textContent = `$${REFERRAL_BONUS.toFixed(2)}`;
+        document.getElementById('referral-claim-bonus-text').textContent = `$${REFERRAL_BONUS.toFixed(2)}`;
+        
         const botUsername = sysConfig.botUsername || "YourNexusBot";
         const referralLink = `https://t.me/${botUsername}?start=${userData.tgChatId}`;
         linkInput.value = referralLink;
@@ -1323,7 +1333,7 @@
                 const snap = await getDocs(q);
                 
                 refCountEl.textContent = snap.docs.length;
-                const referralEarnings = snap.docs.length * 1; 
+                const referralEarnings = snap.docs.length * REFERRAL_BONUS; 
                 refEarningsEl.textContent = `$${referralEarnings.toFixed(2)}`;
                 
             } catch (error) {
@@ -1338,14 +1348,14 @@
         const btn = document.getElementById('btn-verify-referral');
         const input = document.getElementById('referral-code-input');
         const code = input.value.trim();
-        const rewardAmount = 1; // $1
+        const rewardAmount = REFERRAL_BONUS;
 
         if (!code) return showToast("Please enter a referral code.", "warning");
         if (userData.referredBy) return showToast("You have already used a referral code.", "error");
         if (code === userData.tgChatId) return showToast("You cannot refer yourself.", "error");
 
         btn.disabled = true;
-        btn.textContent = 'VERIFYING...';
+        btn.innerHTML = 'VERIFYING...';
 
         try {
             await runTransaction(db, async (transaction) => {
@@ -1395,7 +1405,7 @@
         } catch (e) {
             showToast("Error: " + e.message, "error");
             btn.disabled = false;
-            btn.textContent = 'VERIFY & CLAIM $1.00';
+            btn.innerHTML = `VERIFY & CLAIM <span id="referral-claim-bonus-text">$${REFERRAL_BONUS.toFixed(2)}</span>`;
         }
     }
     
@@ -1534,7 +1544,7 @@
         }
     }
 
-    // --- HELPER FUNCTIONS ---
+    // --- HELPER & UI FUNCTIONS ---
     window.openPremiumPage = () => { closeSidePanel(); switchView('view-premium'); };
     window.openSupport = () => { 
         const supportLink = sysConfig.supportLink || "https://t.me/sarahmartinBTC";
@@ -1569,6 +1579,33 @@
     window.copyText = (text) => { navigator.clipboard.writeText(text); showToast("Copied to clipboard!"); };
     window.copyNumber = (num, name) => { copyText(num); showToast(`${name} address copied!`); };
     
+    function showMethodSelector(targetInputId, targetTextId, title, options) {
+        let optionsHTML = options.map(opt =>
+            `<button data-value="${opt.value}" class="select-option-btn neo-card w-full p-3 rounded-lg text-left hover:bg-slate-700 transition">${opt.text}</button>`
+        ).join('');
+
+        const modalHTML = `
+            <div class="space-y-2">
+                <h3 class="text-lg font-bold text-center mb-4">${title}</h3>
+                ${optionsHTML}
+            </div>
+        `;
+        showModal(modalHTML);
+
+        document.querySelectorAll('.select-option-btn').forEach(btn => {
+            btn.onclick = () => {
+                const selectedValue = btn.dataset.value;
+                const selectedText = btn.textContent;
+                document.getElementById(targetInputId).value = selectedValue;
+                const textEl = document.getElementById(targetTextId);
+                textEl.textContent = selectedText;
+                textEl.parentElement.classList.remove('text-slate-400');
+                textEl.parentElement.classList.add('text-white');
+                closeModal();
+            };
+        });
+    }
+
     // --- P2P TRANSFER ---
     async function executeP2PTransfer() {
         const recipientUid = document.getElementById('p2p-uid').value.trim();
@@ -1649,6 +1686,25 @@
             verifyBtn.addEventListener('click', verifyReferralCode);
         }
 
+        // Custom Select Listeners
+        document.getElementById('dep-method-selector').addEventListener('click', () => {
+            const options = [
+                { value: 'USDT', text: 'USDT' },
+                { value: 'BTC', text: 'BTC' },
+                { value: 'Binance', text: 'Binance' }
+            ];
+            showMethodSelector('dep-method', 'dep-method-text', 'Select Payment Method', options);
+        });
+
+        document.getElementById('wd-method-selector').addEventListener('click', () => {
+            const options = [
+                { value: 'USDT', text: 'USDT (TRC20)' },
+                { value: 'BTC', text: 'BTC' },
+                { value: 'Binance', text: 'Binance Pay ID' }
+            ];
+            showMethodSelector('wd-method', 'wd-method-text', 'Select Withdrawal Method', options);
+        });
+
         document.getElementById('p2p-amount').addEventListener('input', (e) => {
             const val = parseFloat(e.target.value) || 0;
             let feePercent = P2P_FEE_PERCENT;
@@ -1695,7 +1751,7 @@
             statTasksEl.textContent = totalTasks;
     
             // Total Income from tasks
-            const taskReward = 0.50; 
+            const taskReward = TASK_REWARD; 
             const totalTaskEarnings = totalTasks * taskReward;
             statIncomeEl.textContent = `$${totalTaskEarnings.toFixed(2)}`;
     
