@@ -217,7 +217,6 @@
     </div>
 </aside>
 
-
 <!-- MAIN APP CONTAINER -->
 <div id="nexus-app" class="min-h-screen">
 <!-- TOP BAR -->
@@ -249,332 +248,319 @@
 
 <main class="p-4">
 
-    <!-- DASHBOARD VIEW -->
-    <div id="view-dashboard" class="app-view active-view space-y-6">
-        <!-- Promo Slider -->
-        <div class="neo-card rounded-2xl overflow-hidden relative aspect-video">
-            <div id="promo-slider" class="h-full flex transition-transform duration-500 ease-out">
-                 <div class="min-w-full h-full bg-slate-800 relative">
-                    <img src="https://i.postimg.cc/zBp8rCX9/Yellow-Orange-Modern-Marketing-Courses-You-Tube-Thumbnail-20250910-185659-0000.png" class="w-full h-full object-cover opacity-80" alt="Promo 1">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
-                </div>
-                 <div class="min-w-full h-full bg-slate-800 relative">
-                    <img src="https://i.postimg.cc/W1syFD8p/Grey-Blue-Illustration-Refer-a-Friend-Instagram-Post-1080-x-720-px-20250917-223749-0000.png" class="w-full h-full object-cover opacity-80" alt="Promo 2">
-                </div>
+<!-- DASHBOARD VIEW -->
+<div id="view-dashboard" class="app-view active-view space-y-6">
+    <!-- Promo Slider -->
+    <div class="neo-card rounded-2xl overflow-hidden relative aspect-video">
+        <div id="promo-slider" class="h-full flex transition-transform duration-500 ease-out">
+             <div class="min-w-full h-full bg-slate-800 relative">
+                <img src="https://i.postimg.cc/zBp8rCX9/Yellow-Orange-Modern-Marketing-Courses-You-Tube-Thumbnail-20250910-185659-0000.png" class="w-full h-full object-cover opacity-80" alt="Promo 1">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
             </div>
-            <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2" id="slider-dots">
-                <span class="w-2 h-2 rounded-full bg-white"></span><span class="w-2 h-2 rounded-full bg-slate-600"></span>
+             <div class="min-w-full h-full bg-slate-800 relative">
+                <img src="https://i.postimg.cc/W1syFD8p/Grey-Blue-Illustration-Refer-a-Friend-Instagram-Post-1080-x-720-px-20250917-223749-0000.png" class="w-full h-full object-cover opacity-80" alt="Promo 2">
             </div>
         </div>
-
-        <!-- Main Balance Card -->
-        <div class="neo-card p-6 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
-            <p class="text-slate-400 font-medium mb-2 flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> Available Balance</p>
-            <h2 id="main-balance-display" class="text-4xl font-bold text-white tracking-tight mb-6">$0.00</h2>
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="switchView('view-deposit')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2">
-                    <i data-lucide="plus-circle" class="w-5 h-5"></i> DEPOSIT
-                </button>
-                 <button onclick="switchView('view-withdrawal')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500">
-                    <i data-lucide="arrow-up-circle" class="w-5 h-5"></i> WITHDRAW
-                </button>
-            </div>
-        </div>
-
-        <!-- Live Withdrawal Feed -->
-        <div id="live-withdrawal-feed" class="space-y-3">
-            <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
-                <i data-lucide="arrow-up-right" class="w-5 h-5 text-cyan-400"></i>
-                Recent Activities
-            </h3>
-            <div id="withdrawal-feed-container" class="h-48 overflow-hidden relative space-y-3">
-                <!-- Feed items will be injected here -->
-            </div>
+        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2" id="slider-dots">
+            <span class="w-2 h-2 rounded-full bg-white"></span><span class="w-2 h-2 rounded-full bg-slate-600"></span>
         </div>
     </div>
-    
-    <!-- TASKS VIEW -->
-    <div id="view-tasks" class="app-view space-y-6">
-        <div class="text-center">
-           <h2 class="text-2xl font-bold text-slate-100">Daily Tasks</h2>
-           <p class="text-slate-500 text-sm">Complete simple tasks to earn rewards</p>
-       </div>
-       <div id="task-list" class="space-y-4">
-           <!-- Tasks will be dynamically inserted here -->
-       </div>
-        <div id="task-upsell-card" class="neo-card rounded-2xl p-5 flex items-center gap-4 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-indigo-500/20 cursor-pointer" onclick="switchView('view-premium')">
-            <div class="relative">
-                <div class="w-14 h-14 rounded-full bg-yellow-400/10 flex items-center justify-center">
-                    <i data-lucide="gem" class="w-8 h-8 text-yellow-400"></i>
-                </div>
-            </div>
-            <div>
-                <h3 class="font-bold text-white">Want More Tasks?</h3>
-                <p class="text-sm text-slate-400">Upgrade to Premium for more daily tasks and higher earnings!</p>
-            </div>
+
+    <!-- Main Balance Card -->
+    <div class="neo-card p-6 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
+        <p class="text-slate-400 font-medium mb-2 flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> Available Balance</p>
+        <h2 id="main-balance-display" class="text-4xl font-bold text-white tracking-tight mb-6">$0.00</h2>
+        <div class="grid grid-cols-2 gap-3">
+            <button onclick="switchView('view-deposit')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i> DEPOSIT
+            </button>
+             <button onclick="switchView('view-withdrawal')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500">
+                <i data-lucide="arrow-up-circle" class="w-5 h-5"></i> WITHDRAW
+            </button>
         </div>
+    </div>
+
+    <!-- Live Withdrawal Feed -->
+    <div id="live-withdrawal-feed" class="space-y-3">
+        <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
+            <i data-lucide="arrow-up-right" class="w-5 h-5 text-cyan-400"></i>
+            Recent Activities
+        </h3>
+        <div id="withdrawal-feed-container" class="h-48 overflow-hidden relative space-y-3">
+            <!-- Feed items will be injected here -->
+        </div>
+    </div>
+</div>
+
+<!-- TASKS VIEW -->
+<div id="view-tasks" class="app-view space-y-6">
+    <div class="text-center">
+       <h2 class="text-2xl font-bold text-slate-100">Daily Tasks</h2>
+       <p class="text-slate-500 text-sm">Complete simple tasks to earn rewards</p>
    </div>
+   <div id="task-list" class="space-y-4">
+       <!-- Tasks will be dynamically inserted here -->
+   </div>
+</div>
 
-    <!-- REFER VIEW (Improved) -->
-    <div id="view-refer" class="app-view space-y-6">
-        <div class="text-center p-6 rounded-3xl neo-card bg-gradient-to-b from-indigo-500/10">
-            <i data-lucide="gift" class="w-16 h-16 mx-auto text-indigo-400 mb-4"></i>
-            <h2 class="text-3xl font-bold text-white">Refer & Earn Big</h2>
-            <p class="text-slate-400 mt-2">Invite friends and get a commission on their every deposit!</p>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-4 text-center">
-            <div class="neo-card p-4 rounded-xl">
-                <p class="text-sm text-slate-400">Total Referrals</p>
-                <p id="ref-stat-count" class="text-2xl font-bold text-white">0</p>
-            </div>
-            <div class="neo-card p-4 rounded-xl">
-                <p class="text-sm text-slate-400">Referral Earnings</p>
-                <p id="ref-stat-earnings" class="text-2xl font-bold text-emerald-400">$0.00</p>
-            </div>
-        </div>
-        
-        <div class="neo-card p-5 rounded-2xl text-center">
-            <h3 class="font-semibold text-slate-300 mb-2">Your Unique Referral Link</h3>
-            <div class="relative">
-                <input type="text" id="referral-link-display" readonly class="neo-input w-full p-3 rounded-xl text-center bg-slate-900 font-mono text-sm" value="Loading...">
-                <button onclick="copyText(document.getElementById('referral-link-display').value)" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-slate-700">
-                    <i data-lucide="copy" class="w-4 h-4 text-slate-400"></i>
-                </button>
-            </div>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-4">
-            <button onclick="shareOnTelegram()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#2AABEE] text-white font-semibold">
-                <i data-lucide="send" class="w-5 h-5"></i> Telegram
-            </button>
-             <button onclick="shareLive()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-purple-600 text-white font-semibold">
-                <i data-lucide="share-2" class="w-5 h-5"></i> Share Live
-            </button>
-        </div>
-
-        <div class="neo-card p-5 rounded-xl text-left">
-            <h3 class="font-semibold text-slate-200 mb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-indigo-400"></i> How it Works:</h3>
-            <ul class="space-y-3 text-sm text-slate-400">
-                <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Share your unique link with friends.</span></li>
-                <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>When they join using your link, they become your referral.</span></li>
-                <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>You earn a commission on their every deposit, forever.</span></li>
-                <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>The more friends you invite, the more you earn passively.</span></li>
-            </ul>
-        </div>
+<!-- REFER VIEW (Improved) -->
+<div id="view-refer" class="app-view space-y-6">
+    <div class="text-center p-6 rounded-3xl neo-card bg-gradient-to-b from-indigo-500/10">
+        <i data-lucide="gift" class="w-16 h-16 mx-auto text-indigo-400 mb-4"></i>
+        <h2 class="text-3xl font-bold text-white">Refer & Earn Big</h2>
+        <p class="text-slate-400 mt-2">Invite friends and get a commission on their every deposit!</p>
     </div>
-
-
-    <!-- DEPOSIT VIEW -->
-    <div id="view-deposit" class="app-view space-y-6">
-        <div class="text-center mb-6">
-            <h2 class="text-2xl font-bold text-slate-100">Add Funds</h2>
-            <p class="text-slate-500 text-sm">Secure & Fast Balance Top-up</p>
+    
+    <div class="grid grid-cols-2 gap-4 text-center">
+        <div class="neo-card p-4 rounded-xl">
+            <p class="text-sm text-slate-400">Total Referrals</p>
+            <p id="ref-stat-count" class="text-2xl font-bold text-white">0</p>
         </div>
-        <div class="neo-card p-5 rounded-2xl border-indigo-500/30 bg-indigo-500/5">
-            <div class="flex items-start gap-3">
-                <i data-lucide="alert-circle" class="w-6 h-6 text-indigo-400 shrink-0 mt-1"></i>
-                <div>
-                     <h4 class="font-bold text-indigo-300 mb-1">IMPORTANT NOTE</h4>
-                     <p class="text-xs text-indigo-200/70 leading-relaxed">
-                        Please use a valid payment method. Minimum deposit is <span id="min-deposit-text" class="text-white font-bold">$10.00</span>.
-                     </p>
-                </div>
-            </div>
-        </div>
-        <div class="grid grid-cols-3 gap-3 text-center">
-             <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('0x82f67a0590e10f679c062f8e2c235af4ea980bc9', 'USDT')">
-                 <img src="https://i.postimg.cc/dkyYkPk2/usdt-logo.png" class="w-8 h-8 mb-2 rounded-full" alt="USDT">
-                 <span class="font-mono text-xs text-slate-300">USDT (TRC20)</span>
-                 <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
-             </div>
-             <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('1RBJu6cHBetMCYHxDZH1x8nw41buXVxJX', 'BTC')">
-                 <img src="https://i.postimg.cc/gxWnGs7Z/btc-logo.png" class="w-8 h-8 mb-2 rounded-full" alt="BTC">
-                 <span class="font-mono text-xs text-slate-300">Bitcoin</span>
-                 <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
-             </div>
-             <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('900749799', 'Binance')">
-                 <img src="https://i.postimg.cc/21r8s6bf/binance-logo.png" class="w-8 h-8 mb-2 rounded-full bg-white p-1" alt="Binance">
-                 <span class="font-mono text-xs text-slate-300">Binance Pay</span>
-                 <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
-             </div>
-        </div>
-        <div class="neo-card p-5 rounded-2xl space-y-4">
-            <h3 class="font-semibold text-slate-200">Submit Verification Info</h3>
-            <select id="dep-method" class="neo-input w-full p-3 rounded-xl">
-                <option value="" disabled selected>Select Payment Method</option>
-                <option value="USDT">USDT</option>
-                <option value="BTC">BTC</option>
-                <option value="Binance">Binance</option>
-            </select>
-            <input type="number" id="dep-amount" placeholder="Amount (USD)" class="neo-input w-full p-3 rounded-xl">
-            <input type="text" id="dep-sender" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
-            <input type="text" id="dep-trx" placeholder="Transaction ID (TxID)" class="neo-input w-full p-3 rounded-xl">
-            <button id="btn-submit-deposit" class="action-btn w-full py-4 rounded-xl text-lg shadow-lg shadow-indigo-500/20">VERIFY DEPOSIT</button>
-        </div>
-        <div class="pt-4">
-            <h3 class="text-sm font-bold text-slate-400 mb-3 px-2">Transaction History</h3>
-            <div id="deposit-history-log" class="space-y-2"></div>
+        <div class="neo-card p-4 rounded-xl">
+            <p class="text-sm text-slate-400">Referral Earnings</p>
+            <p id="ref-stat-earnings" class="text-2xl font-bold text-emerald-400">$0.00</p>
         </div>
     </div>
     
-    <!-- WITHDRAWAL VIEW (New) -->
-    <div id="view-withdrawal" class="app-view space-y-6">
-        <div class="text-center mb-6">
-            <h2 class="text-2xl font-bold text-slate-100">Withdraw Funds</h2>
-            <p class="text-slate-500 text-sm">Request a withdrawal to your wallet</p>
-        </div>
-        <div class="neo-card p-5 rounded-2xl border-cyan-500/30 bg-cyan-500/5">
-            <div class="flex items-start gap-3">
-                <i data-lucide="info" class="w-6 h-6 text-cyan-400 shrink-0 mt-1"></i>
-                <div>
-                     <h4 class="font-bold text-cyan-300 mb-1">WITHDRAWAL INFO</h4>
-                     <p class="text-xs text-cyan-200/70 leading-relaxed">
-                        Withdrawals are processed within 24 hours. Minimum withdrawal is <span id="min-withdrawal-text" class="text-white font-bold">$5.00</span>.
-                     </p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="neo-card p-5 rounded-2xl space-y-4">
-            <h3 class="font-semibold text-slate-200">Enter Withdrawal Details</h3>
-            <select id="wd-method" class="neo-input w-full p-3 rounded-xl">
-                <option value="" disabled selected>Select Withdrawal Method</option>
-                <option value="USDT">USDT (TRC20)</option>
-                <option value="BTC">BTC</option>
-                <option value="Binance">Binance Pay ID</option>
-            </select>
-            <input type="text" id="wd-address" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
-            <input type="number" id="wd-amount" placeholder="Amount to Withdraw (USD)" class="neo-input w-full p-3 rounded-xl">
-            
-            <button id="btn-submit-withdrawal" class="action-btn w-full py-4 rounded-xl text-lg bg-gradient-to-r from-cyan-500 to-blue-500 shadow-lg shadow-cyan-500/20">SUBMIT WITHDRAWAL</button>
-        </div>
-        <div class="pt-4">
-            <h3 class="text-sm font-bold text-slate-400 mb-3 px-2">Withdrawal History</h3>
-            <div id="withdrawal-history-log" class="space-y-2"></div>
-        </div>
-    </div>
-
-
-    <!-- PROFILE VIEW -->
-    <div id="view-profile" class="app-view space-y-6">
-        <div class="flex flex-col items-center pt-6">
-             <div class="relative mb-4">
-                <div class="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-indigo-500 to-cyan-500">
-                     <img id="profile-user-img" src="" class="w-full h-full rounded-full bg-slate-900 object-cover p-1 hidden" alt="Profile">
-                     <div id="profile-user-initials" class="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-4xl font-bold text-slate-500 border-4 border-slate-900"></div>
-                </div>
-                <span id="profile-badge" class="absolute bottom-2 right-0 px-3 py-1 bg-slate-700 text-xs rounded-full border border-slate-600 font-semibold">FREE USER</span>
-            </div>
-            <h3 id="profile-name-display" class="text-2xl font-bold text-white text-center">Loading...</h3>
-            <button id="btn-copy-uid" class="mt-2 text-xs text-slate-400 bg-slate-800/50 px-3 py-1 rounded-full flex items-center gap-1 hover:bg-slate-800 transition">
-                UID: <span id="uid-display">...</span> <i data-lucide="copy" class="w-3 h-3"></i>
-            </button>
-        </div>
-        <div class="grid grid-cols-3 gap-3 text-center">
-            <div class="neo-card p-3 rounded-xl bg-slate-800/50">
-                <p class="text-[11px] text-slate-500 uppercase">Total Complete Tasks</p>
-                <p id="stat-tasks" class="text-md font-bold text-cyan-400">0</p>
-            </div>
-            <div class="neo-card p-3 rounded-xl bg-slate-800/50">
-                <p class="text-[11px] text-slate-500 uppercase">Total Income</p>
-                <p id="stat-income" class="text-md font-bold text-yellow-400">$0.00</p>
-            </div>
-            <div class="neo-card p-3 rounded-xl bg-slate-800/50">
-                <p class="text-[11px] text-slate-500 uppercase">Total Refer</p>
-                <p id="stat-referrals" class="text-md font-bold text-emerald-400">0</p>
-            </div>
-        </div>
-        <div class="space-y-3">
-            <button onclick="switchView('view-features')" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 rounded-lg bg-orange-500/10 text-orange-500"><i data-lucide="zap" class="w-5 h-5"></i></div>
-                    <span class="font-medium">Advanced Features</span>
-                </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600"></i>
-            </button>
-            <button onclick="openSupport()" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
-                 <div class="flex items-center gap-3">
-                    <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-500"><i data-lucide="life-buoy" class="w-5 h-5"></i></div>
-                    <span class="font-medium">Support Hub</span>
-                </div>
-                <i data-lucide="external-link" class="w-5 h-5 text-slate-600"></i>
+    <div class="neo-card p-5 rounded-2xl text-center">
+        <h3 class="font-semibold text-slate-300 mb-2">Your Unique Referral Link</h3>
+        <div class="relative">
+            <input type="text" id="referral-link-display" readonly class="neo-input w-full p-3 rounded-xl text-center bg-slate-900 font-mono text-sm" value="Loading...">
+            <button onclick="copyText(document.getElementById('referral-link-display').value)" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-slate-700">
+                <i data-lucide="copy" class="w-4 h-4 text-slate-400"></i>
             </button>
         </div>
     </div>
-
-     <!-- FEATURES VIEW (Transfer) -->
-    <div id="view-features" class="app-view space-y-6">
-         <div class="flex items-center gap-3 mb-6">
-            <button onclick="switchView('view-profile')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-            <h2 class="text-xl font-bold">Tools & Services</h2>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-            <button onclick="switchView('subview-send')" class="neo-card p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-indigo-500 transition group">
-                <div class="w-14 h-14 rounded-full bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all text-indigo-500">
-                    <i data-lucide="send" class="w-7 h-7 ml-1"></i>
-                </div>
-                <span class="font-semibold">P2P Transfer</span>
-            </button>
-            <button onclick="switchView('view-premium')" class="neo-card p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-yellow-500 transition group">
-                <div class="w-14 h-14 rounded-full bg-yellow-500/10 flex items-center justify-center group-hover:bg-yellow-500 group-hover:text-white transition-all text-yellow-500">
-                    <i data-lucide="gem" class="w-7 h-7"></i>
-                </div>
-                <span class="font-semibold">Premium</span>
-            </button>
-        </div>
-        <div class="neo-card p-5 rounded-2xl mt-4 bg-slate-800/30">
-             <h3 class="font-bold text-slate-300 mb-4 flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4"></i> Recent Activities</h3>
-             <div id="activity-log" class="space-y-3 text-sm text-slate-500 text-center py-4 max-h-60 overflow-y-auto">
-                 No recent activities found.
-             </div>
-        </div>
+    
+    <div class="grid grid-cols-2 gap-4">
+        <button onclick="shareOnTelegram()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#2AABEE] text-white font-semibold">
+            <i data-lucide="send" class="w-5 h-5"></i> Telegram
+        </button>
+         <button onclick="shareLive()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-purple-600 text-white font-semibold">
+            <i data-lucide="share-2" class="w-5 h-5"></i> Share Live
+        </button>
     </div>
 
-    <!-- SUBVIEW: P2P SEND -->
-    <div id="subview-send" class="app-view space-y-6">
-         <div class="flex items-center gap-3 mb-6">
-            <button onclick="switchView('view-features')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-            <h2 class="text-xl font-bold">Transfer Balance</h2>
-        </div>
-        <div class="neo-card p-6 rounded-3xl space-y-5">
-            <div class="bg-yellow-500/10 text-yellow-500 p-3 rounded-xl text-sm flex gap-2 items-start">
-                <i data-lucide="alert-triangle" class="w-5 h-5 shrink-0"></i>
-                <p>Default transfer fee is <strong>5%</strong>. Minimum transfer is <strong>$0.50</strong>. Premium members get fee discounts.</p>
-            </div>
+    <div class="neo-card p-5 rounded-xl text-left">
+        <h3 class="font-semibold text-slate-200 mb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-indigo-400"></i> How it Works:</h3>
+        <ul class="space-y-3 text-sm text-slate-400">
+            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Share your unique link with friends.</span></li>
+            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>When they join using your link, they become your referral.</span></li>
+            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>You earn a commission on their every deposit, forever.</span></li>
+            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>The more friends you invite, the more you earn passively.</span></li>
+        </ul>
+    </div>
+</div>
+
+
+<!-- DEPOSIT VIEW -->
+<div id="view-deposit" class="app-view space-y-6">
+    <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-slate-100">Add Funds</h2>
+        <p class="text-slate-500 text-sm">Secure & Fast Balance Top-up</p>
+    </div>
+    <div class="neo-card p-5 rounded-2xl border-indigo-500/30 bg-indigo-500/5">
+        <div class="flex items-start gap-3">
+            <i data-lucide="alert-circle" class="w-6 h-6 text-indigo-400 shrink-0 mt-1"></i>
             <div>
-                <label class="text-xs text-slate-400 ml-2 mb-1 block">Recipient UID</label>
-                <input type="text" id="p2p-uid" placeholder="Enter User ID" class="neo-input w-full p-4 rounded-xl font-mono">
+                 <h4 class="font-bold text-indigo-300 mb-1">IMPORTANT NOTE</h4>
+                 <p class="text-xs text-indigo-200/70 leading-relaxed">
+                    Please use a valid payment method. Minimum deposit is <span id="min-deposit-text" class="text-white font-bold">$10.00</span>.
+                 </p>
             </div>
-             <div>
-                <label class="text-xs text-slate-400 ml-2 mb-1 block">Amount</label>
-                <input type="number" id="p2p-amount" placeholder="0.00" class="neo-input w-full p-4 rounded-xl font-bold text-lg">
-                <p id="p2p-fee-calc" class="text-right text-xs text-slate-500 mt-2 h-4"></p>
-            </div>
-            <button id="btn-exec-p2p" class="action-btn w-full py-4 rounded-xl text-lg">CONFIRM TRANSFER</button>
         </div>
     </div>
+    <div class="grid grid-cols-3 gap-3 text-center">
+         <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('0x82f67a0590e10f679c062f8e2c235af4ea980bc9', 'USDT')">
+             <img src="https://i.postimg.cc/dkyYkPk2/usdt-logo.png" class="w-8 h-8 mb-2 rounded-full" alt="USDT">
+             <span class="font-mono text-xs text-slate-300">USDT (TRC20)</span>
+             <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
+         </div>
+         <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('1RBJu6cHBetMCYHxDZH1x8nw41buXVxJX', 'BTC')">
+             <img src="https://i.postimg.cc/gxWnGs7Z/btc-logo.png" class="w-8 h-8 mb-2 rounded-full" alt="BTC">
+             <span class="font-mono text-xs text-slate-300">Bitcoin</span>
+             <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
+         </div>
+         <div class="neo-card p-3 rounded-xl flex flex-col items-center" onclick="copyNumber('900749799', 'Binance')">
+             <img src="https://i.postimg.cc/21r8s6bf/binance-logo.png" class="w-8 h-8 mb-2 rounded-full bg-white p-1" alt="Binance">
+             <span class="font-mono text-xs text-slate-300">Binance Pay</span>
+             <span class="text-[10px] text-slate-500 mt-1">Tap to Copy</span>
+         </div>
+    </div>
+    <div class="neo-card p-5 rounded-2xl space-y-4">
+        <h3 class="font-semibold text-slate-200">Submit Verification Info</h3>
+        <select id="dep-method" class="neo-input w-full p-3 rounded-xl">
+            <option value="" disabled selected>Select Payment Method</option>
+            <option value="USDT">USDT</option>
+            <option value="BTC">BTC</option>
+            <option value="Binance">Binance</option>
+        </select>
+        <input type="number" id="dep-amount" placeholder="Amount (USD)" class="neo-input w-full p-3 rounded-xl">
+        <input type="text" id="dep-sender" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
+        <input type="text" id="dep-trx" placeholder="Transaction ID (TxID)" class="neo-input w-full p-3 rounded-xl">
+        <button id="btn-submit-deposit" class="action-btn w-full py-4 rounded-xl text-lg shadow-lg shadow-indigo-500/20">VERIFY DEPOSIT</button>
+    </div>
+    <div class="pt-4">
+        <h3 class="text-sm font-bold text-slate-400 mb-3 px-2">Transaction History</h3>
+        <div id="deposit-history-log" class="space-y-2"></div>
+    </div>
+</div>
 
+<!-- WITHDRAWAL VIEW (New) -->
+<div id="view-withdrawal" class="app-view space-y-6">
+    <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-slate-100">Withdraw Funds</h2>
+        <p class="text-slate-500 text-sm">Request a withdrawal to your wallet</p>
+    </div>
+    <div class="neo-card p-5 rounded-2xl border-cyan-500/30 bg-cyan-500/5">
+        <div class="flex items-start gap-3">
+            <i data-lucide="info" class="w-6 h-6 text-cyan-400 shrink-0 mt-1"></i>
+            <div>
+                 <h4 class="font-bold text-cyan-300 mb-1">WITHDRAWAL INFO</h4>
+                 <p class="text-xs text-cyan-200/70 leading-relaxed">
+                    Withdrawals are processed within 24 hours. Minimum withdrawal is <span id="min-withdrawal-text" class="text-white font-bold">$5.00</span>.
+                 </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="neo-card p-5 rounded-2xl space-y-4">
+        <h3 class="font-semibold text-slate-200">Enter Withdrawal Details</h3>
+        <select id="wd-method" class="neo-input w-full p-3 rounded-xl">
+            <option value="" disabled selected>Select Withdrawal Method</option>
+            <option value="USDT">USDT (TRC20)</option>
+            <option value="BTC">BTC</option>
+            <option value="Binance">Binance Pay ID</option>
+        </select>
+        <input type="text" id="wd-address" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
+        <input type="number" id="wd-amount" placeholder="Amount to Withdraw (USD)" class="neo-input w-full p-3 rounded-xl">
+        
+        <button id="btn-submit-withdrawal" class="action-btn w-full py-4 rounded-xl text-lg bg-gradient-to-r from-cyan-500 to-blue-500 shadow-lg shadow-cyan-500/20">SUBMIT WITHDRAWAL</button>
+    </div>
+    <div class="pt-4">
+        <h3 class="text-sm font-bold text-slate-400 mb-3 px-2">Withdrawal History</h3>
+        <div id="withdrawal-history-log" class="space-y-2"></div>
+    </div>
+</div>
+
+
+<!-- PROFILE VIEW -->
+<div id="view-profile" class="app-view space-y-6">
+    <div class="flex flex-col items-center pt-6">
+         <div class="relative mb-4">
+            <div class="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-indigo-500 to-cyan-500">
+                 <img id="profile-user-img" src="" class="w-full h-full rounded-full bg-slate-900 object-cover p-1 hidden" alt="Profile">
+                 <div id="profile-user-initials" class="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-4xl font-bold text-slate-500 border-4 border-slate-900"></div>
+            </div>
+            <span id="profile-badge" class="absolute bottom-2 right-0 px-3 py-1 bg-slate-700 text-xs rounded-full border border-slate-600 font-semibold">FREE USER</span>
+        </div>
+        <h3 id="profile-name-display" class="text-2xl font-bold text-white text-center">Loading...</h3>
+        <button id="btn-copy-uid" class="mt-2 text-xs text-slate-400 bg-slate-800/50 px-3 py-1 rounded-full flex items-center gap-1 hover:bg-slate-800 transition">
+            UID: <span id="uid-display">...</span> <i data-lucide="copy" class="w-3 h-3"></i>
+        </button>
+    </div>
+    <div class="grid grid-cols-3 gap-3 text-center">
+        <div class="neo-card p-3 rounded-xl bg-slate-800/50">
+            <p class="text-[11px] text-slate-500 uppercase">Total Complete Tasks</p>
+            <p id="stat-tasks" class="text-md font-bold text-cyan-400">0</p>
+        </div>
+        <div class="neo-card p-3 rounded-xl bg-slate-800/50">
+            <p class="text-[11px] text-slate-500 uppercase">Total Income</p>
+            <p id="stat-income" class="text-md font-bold text-yellow-400">$0.00</p>
+        </div>
+        <div class="neo-card p-3 rounded-xl bg-slate-800/50">
+            <p class="text-[11px] text-slate-500 uppercase">Total Refer</p>
+            <p id="stat-referrals" class="text-md font-bold text-emerald-400">0</p>
+        </div>
+    </div>
+    <div class="space-y-3">
+        <button onclick="switchView('view-features')" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
+            <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg bg-orange-500/10 text-orange-500"><i data-lucide="zap" class="w-5 h-5"></i></div>
+                <span class="font-medium">Advanced Features</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600"></i>
+        </button>
+        <button onclick="openSupport()" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
+             <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-500"><i data-lucide="life-buoy" class="w-5 h-5"></i></div>
+                <span class="font-medium">Support Hub</span>
+            </div>
+            <i data-lucide="external-link" class="w-5 h-5 text-slate-600"></i>
+        </button>
+    </div>
+</div>
+
+ <!-- FEATURES VIEW (Transfer) -->
+<div id="view-features" class="app-view space-y-6">
+     <div class="flex items-center gap-3 mb-6">
+        <button onclick="switchView('view-profile')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+        <h2 class="text-xl font-bold">Tools & Services</h2>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <button onclick="switchView('subview-send')" class="neo-card p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-indigo-500 transition group">
+            <div class="w-14 h-14 rounded-full bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all text-indigo-500">
+                <i data-lucide="send" class="w-7 h-7 ml-1"></i>
+            </div>
+            <span class="font-semibold">P2P Transfer</span>
+        </button>
+        <button onclick="switchView('view-premium')" class="neo-card p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-yellow-500 transition group">
+            <div class="w-14 h-14 rounded-full bg-yellow-500/10 flex items-center justify-center group-hover:bg-yellow-500 group-hover:text-white transition-all text-yellow-500">
+                <i data-lucide="gem" class="w-7 h-7"></i>
+            </div>
+            <span class="font-semibold">Premium</span>
+        </button>
+    </div>
+    <div class="neo-card p-5 rounded-2xl mt-4 bg-slate-800/30">
+         <h3 class="font-bold text-slate-300 mb-4 flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4"></i> Recent Activities</h3>
+         <div id="activity-log" class="space-y-3 text-sm text-slate-500 text-center py-4 max-h-60 overflow-y-auto">
+             No recent activities found.
+         </div>
+    </div>
+</div>
+
+<!-- SUBVIEW: P2P SEND -->
+<div id="subview-send" class="app-view space-y-6">
+     <div class="flex items-center gap-3 mb-6">
+        <button onclick="switchView('view-features')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+        <h2 class="text-xl font-bold">Transfer Balance</h2>
+    </div>
+    <div class="neo-card p-6 rounded-3xl space-y-5">
+        <div class="bg-yellow-500/10 text-yellow-500 p-3 rounded-xl text-sm flex gap-2 items-start">
+            <i data-lucide="alert-triangle" class="w-5 h-5 shrink-0"></i>
+            <p>Default transfer fee is <strong>5%</strong>. Minimum transfer is <strong>$0.50</strong>. Premium members get fee discounts.</p>
+        </div>
+        <div>
+            <label class="text-xs text-slate-400 ml-2 mb-1 block">Recipient UID</label>
+            <input type="text" id="p2p-uid" placeholder="Enter User ID" class="neo-input w-full p-4 rounded-xl font-mono">
+        </div>
+         <div>
+            <label class="text-xs text-slate-400 ml-2 mb-1 block">Amount</label>
+            <input type="number" id="p2p-amount" placeholder="0.00" class="neo-input w-full p-4 rounded-xl font-bold text-lg">
+            <p id="p2p-fee-calc" class="text-right text-xs text-slate-500 mt-2 h-4"></p>
+        </div>
+        <button id="btn-exec-p2p" class="action-btn w-full py-4 rounded-xl text-lg">CONFIRM TRANSFER</button>
+    </div>
+</div>
    <!-- GET PREMIUM VIEW -->
-   <div id="view-premium" class="app-view space-y-6">
-        <div class="flex items-center gap-3 mb-6">
-           <button onclick="switchView('view-profile')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-           <h2 class="text-xl font-bold">Premium Membership</h2>
-        </div>
-        <div id="premium-tiers-container" class="space-y-4">
-            <!-- Tiers will be dynamically loaded here -->
-        </div>
-   </div>
-
-    <!-- NEWS VIEW -->
-    <div id="view-news" class="app-view space-y-4">
-        <h2 class="text-2xl font-bold px-2">Latest News</h2>
-        <div id="news-feed" class="space-y-4">
-            <!-- News will be loaded here from Firebase -->
-        </div>
+<div id="view-premium" class="app-view space-y-6">
+    <div class="flex items-center gap-3 mb-6">
+       <button onclick="switchView('view-profile')" class="p-2 rounded-full bg-slate-800 text-slate-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+       <h2 class="text-xl font-bold">Premium Membership</h2>
     </div>
+    <div id="premium-tiers-container" class="space-y-4">
+        <!-- Tiers will be dynamically loaded here -->
+    </div>
+</div>
 
+<!-- NEWS VIEW -->
+<div id="view-news" class="app-view space-y-4">
+    <h2 class="text-2xl font-bold px-2">Latest News</h2>
+    <div id="news-feed" class="space-y-4">
+        <!-- News will be loaded here from Firebase -->
+    </div>
+</div>
 </main>
 
 <!-- DOCK NAVIGATION -->
@@ -984,13 +970,20 @@
         taskListContainer.innerHTML = tasksHTML;
         
         if (completedToday.length >= taskLimit) {
-            const countdownHTML = `
-                <div id="task-countdown-container" class="neo-card p-6 rounded-2xl text-center mt-8 bg-slate-800/50">
-                    <h3 class="text-xl font-bold text-white">All Tasks Completed Today!</h3>
-                    <p class="text-slate-400 mt-2 mb-4">New tasks will be available in:</p>
-                    <div id="task-countdown-timer" class="text-4xl font-bold text-cyan-400 font-mono tracking-wider">--:--:--</div>
+            const newTasksCardHTML = `
+                <div class="flex items-center justify-between bg-slate-800 p-3 rounded-xl border border-slate-700 mt-4">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-indigo-500/20 p-3 rounded-full">
+                             <i data-lucide="arrow-up-right-square" class="w-6 h-6 text-indigo-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-md text-slate-200">Task update</h3>
+                            <p id="new-task-countdown" class="text-cyan-400 font-bold text-sm font-mono">--:--:--</p>
+                        </div>
+                    </div>
+                    <button onclick="switchView('view-premium')" class="task-update-btn px-5 py-2 rounded-lg text-sm">UPDATE</button>
                 </div>`;
-            taskListContainer.innerHTML += countdownHTML;
+            taskListContainer.innerHTML += newTasksCardHTML;
             startTaskCountdown();
         }
 
@@ -998,7 +991,7 @@
     }
     
     function startTaskCountdown() {
-        const timerElement = document.getElementById('task-countdown-timer');
+        const timerElement = document.getElementById('new-task-countdown');
         if (!timerElement) return;
 
         const countdownInterval = setInterval(() => {
