@@ -175,7 +175,36 @@
         </div>
     </div>
     <div id="panel-content" class="p-4 space-y-2 overflow-y-auto h-[calc(100%-160px)]">
-        <button onclick="openPremiumPage()" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
+        <!-- New Menu Items -->
+        <button onclick="closeSidePanel(); switchView('view-deposit');" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
+            <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-500"><i data-lucide="arrow-down-left" class="w-5 h-5"></i></div>
+                <span class="font-medium">Deposit</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600"></i>
+        </button>
+         <button onclick="closeSidePanel(); switchView('view-withdrawal');" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
+            <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-500"><i data-lucide="arrow-up-right" class="w-5 h-5"></i></div>
+                <span class="font-medium">Withdrawal</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600"></i>
+        </button>
+        <button onclick="openSupport()" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
+             <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg bg-blue-500/10 text-blue-500"><i data-lucide="life-buoy" class="w-5 h-5"></i></div>
+                <span class="font-medium">Support Hub</span>
+            </div>
+            <i data-lucide="external-link" class="w-5 h-5 text-slate-600"></i>
+        </button>
+        <button onclick="visitWebsite()" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition">
+            <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg bg-purple-500/10 text-purple-500"><i data-lucide="globe" class="w-5 h-5"></i></div>
+                <span class="font-medium">Visit Website</span>
+            </div>
+            <i data-lucide="external-link" class="w-5 h-5 text-slate-600"></i>
+        </button>
+        <button onclick="openPremiumPage()" class="neo-card w-full p-4 rounded-xl flex items-center justify-between hover:bg-slate-800 transition mt-4 border-t border-slate-800 pt-6">
             <div class="flex items-center gap-3">
                 <div class="p-2 rounded-lg bg-yellow-500/10 text-yellow-500"><i data-lucide="gem" class="w-5 h-5"></i></div>
                 <span class="font-medium">Get Premium</span>
@@ -184,14 +213,10 @@
         </button>
     </div>
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800 bg-slate-900">
-        <div class="flex justify-evenly text-slate-400">
-            <a href="#" class="hover:text-indigo-400 transition"><i data-lucide="globe" class="w-5 h-5"></i></a>
-            <a href="#" class="hover:text-cyan-400 transition"><i data-lucide="twitter" class="w-5 h-5"></i></a>
-            <a href="#" class="hover:text-indigo-400 transition"><i data-lucide="send" class="w-5 h-5"></i></a>
-        </div>
-        <p class="text-center text-[10px] text-slate-600 mt-3 tracking-widest">REWARD v4.6.0 encrypted</p>
+        <p class="text-center text-[10px] text-slate-600 tracking-widest">REWARD v4.7.0 encrypted</p>
     </div>
 </aside>
+
 
 <!-- MAIN APP CONTAINER -->
 <div id="nexus-app" class="min-h-screen">
@@ -209,8 +234,8 @@
         </div>
     </div>
     <div class="flex items-center gap-2">
-        <button onclick="switchView('view-deposit')" class="bg-indigo-500/10 text-indigo-400 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-500/20 hover:bg-indigo-500/20 transition">
-            + ADD FUND
+        <button onclick="switchView('view-deposit')" class="action-btn px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-indigo-500/20">
+            <i data-lucide="plus" class="w-4 h-4"></i> ADD FUND
         </button>
         <button id="btn-notifications" class="relative p-2 text-slate-400 hover:text-slate-200 transition bg-slate-800/50 rounded-full">
             <i data-lucide="bell" class="w-5 h-5"></i>
@@ -247,9 +272,12 @@
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
             <p class="text-slate-400 font-medium mb-2 flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> Available Balance</p>
             <h2 id="main-balance-display" class="text-4xl font-bold text-white tracking-tight mb-6">$0.00</h2>
-            <div class="grid grid-cols-1 gap-3">
+            <div class="grid grid-cols-2 gap-3">
                 <button onclick="switchView('view-deposit')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2">
                     <i data-lucide="plus-circle" class="w-5 h-5"></i> DEPOSIT
+                </button>
+                 <button onclick="switchView('view-withdrawal')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500">
+                    <i data-lucide="arrow-up-circle" class="w-5 h-5"></i> WITHDRAW
                 </button>
             </div>
         </div>
@@ -258,7 +286,7 @@
         <div id="live-withdrawal-feed" class="space-y-3">
             <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
                 <i data-lucide="arrow-up-right" class="w-5 h-5 text-cyan-400"></i>
-                Recent Withdrawals
+                Recent Activities
             </h3>
             <div id="withdrawal-feed-container" class="h-48 overflow-hidden relative space-y-3">
                 <!-- Feed items will be injected here -->
@@ -288,11 +316,12 @@
         </div>
    </div>
 
-    <!-- REFER VIEW -->
+    <!-- REFER VIEW (Improved) -->
     <div id="view-refer" class="app-view space-y-6">
-        <div class="text-center">
-            <h2 class="text-2xl font-bold text-slate-100">Refer & Earn</h2>
-            <p class="text-slate-500 text-sm">Invite friends and earn rewards together</p>
+        <div class="text-center p-6 rounded-3xl neo-card bg-gradient-to-b from-indigo-500/10">
+            <i data-lucide="gift" class="w-16 h-16 mx-auto text-indigo-400 mb-4"></i>
+            <h2 class="text-3xl font-bold text-white">Refer & Earn Big</h2>
+            <p class="text-slate-400 mt-2">Invite friends and get a commission on their every deposit!</p>
         </div>
         
         <div class="grid grid-cols-2 gap-4 text-center">
@@ -317,24 +346,25 @@
         </div>
         
         <div class="grid grid-cols-2 gap-4">
-            <button class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#2AABEE] text-white font-semibold">
+            <button onclick="shareOnTelegram()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#2AABEE] text-white font-semibold">
                 <i data-lucide="send" class="w-5 h-5"></i> Telegram
             </button>
-             <button class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-purple-600 text-white font-semibold">
+             <button onclick="shareLive()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-purple-600 text-white font-semibold">
                 <i data-lucide="share-2" class="w-5 h-5"></i> Share Live
             </button>
         </div>
 
         <div class="neo-card p-5 rounded-xl text-left">
-            <h3 class="font-semibold text-slate-200 mb-3">Referral Benefits:</h3>
-            <ul class="space-y-2 text-sm text-slate-400 list-disc list-inside">
-                <li>Share your link with friends.</li>
-                <li>When they join, they become your referral.</li>
-                <li>You earn a commission on their every deposit.</li>
-                <li>The more friends you invite, the more you earn.</li>
+            <h3 class="font-semibold text-slate-200 mb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-indigo-400"></i> How it Works:</h3>
+            <ul class="space-y-3 text-sm text-slate-400">
+                <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Share your unique link with friends.</span></li>
+                <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>When they join using your link, they become your referral.</span></li>
+                <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>You earn a commission on their every deposit, forever.</span></li>
+                <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>The more friends you invite, the more you earn passively.</span></li>
             </ul>
         </div>
     </div>
+
 
     <!-- DEPOSIT VIEW -->
     <div id="view-deposit" class="app-view space-y-6">
@@ -348,7 +378,7 @@
                 <div>
                      <h4 class="font-bold text-indigo-300 mb-1">IMPORTANT NOTE</h4>
                      <p class="text-xs text-indigo-200/70 leading-relaxed">
-                        Please use a valid payment method. Minimum deposit is <span class="text-white font-bold">$10.00</span>.
+                        Please use a valid payment method. Minimum deposit is <span id="min-deposit-text" class="text-white font-bold">$10.00</span>.
                      </p>
                 </div>
             </div>
@@ -378,7 +408,7 @@
                 <option value="BTC">BTC</option>
                 <option value="Binance">Binance</option>
             </select>
-            <input type="number" id="dep-amount" placeholder="Amount (Min 10 USD)" class="neo-input w-full p-3 rounded-xl">
+            <input type="number" id="dep-amount" placeholder="Amount (USD)" class="neo-input w-full p-3 rounded-xl">
             <input type="text" id="dep-sender" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
             <input type="text" id="dep-trx" placeholder="Transaction ID (TxID)" class="neo-input w-full p-3 rounded-xl">
             <button id="btn-submit-deposit" class="action-btn w-full py-4 rounded-xl text-lg shadow-lg shadow-indigo-500/20">VERIFY DEPOSIT</button>
@@ -388,6 +418,44 @@
             <div id="deposit-history-log" class="space-y-2"></div>
         </div>
     </div>
+    
+    <!-- WITHDRAWAL VIEW (New) -->
+    <div id="view-withdrawal" class="app-view space-y-6">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-slate-100">Withdraw Funds</h2>
+            <p class="text-slate-500 text-sm">Request a withdrawal to your wallet</p>
+        </div>
+        <div class="neo-card p-5 rounded-2xl border-cyan-500/30 bg-cyan-500/5">
+            <div class="flex items-start gap-3">
+                <i data-lucide="info" class="w-6 h-6 text-cyan-400 shrink-0 mt-1"></i>
+                <div>
+                     <h4 class="font-bold text-cyan-300 mb-1">WITHDRAWAL INFO</h4>
+                     <p class="text-xs text-cyan-200/70 leading-relaxed">
+                        Withdrawals are processed within 24 hours. Minimum withdrawal is <span id="min-withdrawal-text" class="text-white font-bold">$5.00</span>.
+                     </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="neo-card p-5 rounded-2xl space-y-4">
+            <h3 class="font-semibold text-slate-200">Enter Withdrawal Details</h3>
+            <select id="wd-method" class="neo-input w-full p-3 rounded-xl">
+                <option value="" disabled selected>Select Withdrawal Method</option>
+                <option value="USDT">USDT (TRC20)</option>
+                <option value="BTC">BTC</option>
+                <option value="Binance">Binance Pay ID</option>
+            </select>
+            <input type="text" id="wd-address" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
+            <input type="number" id="wd-amount" placeholder="Amount to Withdraw (USD)" class="neo-input w-full p-3 rounded-xl">
+            
+            <button id="btn-submit-withdrawal" class="action-btn w-full py-4 rounded-xl text-lg bg-gradient-to-r from-cyan-500 to-blue-500 shadow-lg shadow-cyan-500/20">SUBMIT WITHDRAWAL</button>
+        </div>
+        <div class="pt-4">
+            <h3 class="text-sm font-bold text-slate-400 mb-3 px-2">Withdrawal History</h3>
+            <div id="withdrawal-history-log" class="space-y-2"></div>
+        </div>
+    </div>
+
 
     <!-- PROFILE VIEW -->
     <div id="view-profile" class="app-view space-y-6">
@@ -550,7 +618,8 @@
     import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, runTransaction, onSnapshot, updateDoc, Timestamp, writeBatch } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     // --- CONFIGURATION ---
-    const MIN_DEPOSIT_AMT = 10; 
+    let MIN_DEPOSIT_AMT = 10; 
+    let MIN_WITHDRAWAL_AMT = 5;
     const P2P_FEE_PERCENT = 0.05; // 5%
     const MIN_P2P_AMT = 0.5;
     const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
@@ -653,6 +722,14 @@
             if (configSnap.exists()) {
                 const configData = configSnap.data();
                 sysConfig = configData;
+
+                // Set min deposit/withdrawal from Firebase config
+                MIN_DEPOSIT_AMT = sysConfig.minDeposit || 10;
+                MIN_WITHDRAWAL_AMT = sysConfig.minWithdrawal || 5;
+
+                document.getElementById('min-deposit-text').textContent = `$${MIN_DEPOSIT_AMT.toFixed(2)}`;
+                document.getElementById('min-withdrawal-text').textContent = `$${MIN_WITHDRAWAL_AMT.toFixed(2)}`;
+                
                 if(configData.premiumTiers) {
                      Object.keys(premiumTiers).forEach(key => {
                         if(configData.premiumTiers[key]) {
@@ -726,11 +803,12 @@
         
         const topDepositBtn = document.querySelector('header .flex.items-center.gap-2 > button:first-child');
         if (topDepositBtn) {
-           topDepositBtn.style.display = viewId === 'view-deposit' ? 'none' : 'inline-flex';
+           topDepositBtn.style.display = (viewId === 'view-deposit' || viewId === 'view-withdrawal') ? 'none' : 'inline-flex';
         }
 
         if(viewId === 'view-tasks') loadTasksView();
         if(viewId === 'view-deposit') loadDepositHistory();
+        if(viewId === 'view-withdrawal') loadWithdrawalHistory();
         if(viewId === 'view-profile') loadProfileStats();
         if(viewId === 'view-news') loadNewsFeed();
         if(viewId === 'view-premium') loadPremiumTiers();
@@ -1004,7 +1082,7 @@
     // --- DEPOSIT FUNCTIONS ---
     document.getElementById('btn-submit-deposit').addEventListener('click', async () => {
         const method = document.getElementById('dep-method').value;
-        const amount = parseInt(document.getElementById('dep-amount').value);
+        const amount = parseFloat(document.getElementById('dep-amount').value);
         const sender = document.getElementById('dep-sender').value.trim();
         const trx = document.getElementById('dep-trx').value.trim();
 
@@ -1027,7 +1105,10 @@
             
             showModal(`<div class="text-center space-y-3"><i data-lucide="check-circle" class="w-12 h-12 text-emerald-500 mx-auto"></i><h3 class="text-lg font-bold text-white">Submitted!</h3><p class="text-slate-400">Your deposit of $${amount} is under review. It typically takes 5-30 minutes.</p><button onclick="closeModal()" class="action-btn w-full py-2 rounded-xl">OK</button></div>`);
             
-            document.getElementById('dep-amount').value = ''; document.getElementById('dep-trx').value = '';
+            document.getElementById('dep-method').value = '';
+            document.getElementById('dep-amount').value = '';
+            document.getElementById('dep-sender').value = '';
+            document.getElementById('dep-trx').value = '';
             loadDepositHistory();
 
         } catch(e) { showToast(e.message, "error");
@@ -1041,7 +1122,7 @@
         const q = query(collection(db, "deposits"), where("userId", "==", userData.tgChatId), orderBy("requestedAt", "desc"), limit(10));
         const snap = await getDocs(q);
 
-        if(snap.empty) { el.innerHTML = '<p class="text-slate-600 text-center text-xs py-2">No transactions yet.</p>'; return; }
+        if(snap.empty) { el.innerHTML = '<p class="text-slate-600 text-center text-xs py-2">No deposit history.</p>'; return; }
 
         el.innerHTML = snap.docs.map(d => {
             const data = d.data();
@@ -1056,6 +1137,85 @@
             </div>`;
         }).join('');
     }
+    
+    // --- WITHDRAWAL FUNCTIONS (New) ---
+    document.getElementById('btn-submit-withdrawal').addEventListener('click', async () => {
+        const method = document.getElementById('wd-method').value;
+        const address = document.getElementById('wd-address').value.trim();
+        const amount = parseFloat(document.getElementById('wd-amount').value);
+
+        if (!method || !address || !amount) return showToast("Please fill all fields", "warning");
+
+        if (amount < MIN_WITHDRAWAL_AMT) return showToast(`Minimum withdrawal is $${MIN_WITHDRAWAL_AMT.toFixed(2)}`, "error");
+        
+        if (userData.balance < amount) return showToast("Insufficient balance.", "error");
+
+        const btn = document.getElementById('btn-submit-withdrawal');
+        btn.disabled = true; btn.innerText = "PROCESSING...";
+
+        try {
+            const userRef = doc(db, "users", userData.tgChatId);
+
+            await runTransaction(db, async (transaction) => {
+                const userDoc = await transaction.get(userRef);
+                if (!userDoc.exists() || userDoc.data().balance < amount) {
+                    throw new Error("Transaction failed: Insufficient funds.");
+                }
+
+                // Deduct balance immediately
+                const newBalance = userDoc.data().balance - amount;
+                transaction.update(userRef, { balance: newBalance });
+
+                // Create withdrawal request
+                const withdrawalRef = doc(collection(db, "withdrawals"));
+                transaction.set(withdrawalRef, {
+                    userId: userData.tgChatId,
+                    userName: userData.name,
+                    method,
+                    address,
+                    amount,
+                    status: "pending",
+                    requestedAt: serverTimestamp()
+                });
+            });
+
+            showModal(`<div class="text-center space-y-3"><i data-lucide="check-circle" class="w-12 h-12 text-emerald-500 mx-auto"></i><h3 class="text-lg font-bold text-white">Withdrawal Submitted!</h3><p class="text-slate-400">Your withdrawal request for $${amount} has been received and will be processed within 24 hours.</p><button onclick="closeModal()" class="action-btn w-full py-2 rounded-xl">OK</button></div>`);
+            
+            document.getElementById('wd-method').value = '';
+            document.getElementById('wd-address').value = '';
+            document.getElementById('wd-amount').value = '';
+            loadWithdrawalHistory();
+
+        } catch(e) {
+            showToast(e.message, "error");
+        } finally {
+            btn.disabled = false; btn.innerText = "SUBMIT WITHDRAWAL";
+            lucide.createIcons();
+        }
+    });
+
+    async function loadWithdrawalHistory() {
+        const el = document.getElementById('withdrawal-history-log');
+        el.innerHTML = '<p class="text-slate-600 text-center text-xs py-2">Loading history...</p>';
+        const q = query(collection(db, "withdrawals"), where("userId", "==", userData.tgChatId), orderBy("requestedAt", "desc"), limit(10));
+        const snap = await getDocs(q);
+
+        if(snap.empty) { el.innerHTML = '<p class="text-slate-600 text-center text-xs py-2">No withdrawal history.</p>'; return; }
+
+        el.innerHTML = snap.docs.map(d => {
+            const data = d.data();
+            const statusColors = { pending: 'text-yellow-500', approved: 'text-emerald-500', rejected: 'text-red-500' };
+            return `
+            <div class="flex justify-between items-center p-3 bg-slate-800/40 rounded-xl border border-slate-800">
+                <div>
+                    <p class="text-sm font-medium text-slate-300">${data.method} - $${data.amount}</p>
+                    <p class="text-[10px] text-slate-500 font-mono">${data.address}</p>
+                </div>
+                <span class="text-xs font-bold ${statusColors[data.status] || 'text-slate-400'} uppercase">${data.status}</span>
+            </div>`;
+        }).join('');
+    }
+
 
     // --- LIVE WITHDRAWAL FEED ---
     async function initLiveWithdrawalFeed() {
@@ -1071,7 +1231,7 @@
                 allActivities.push({ ...doc.data(), isFake: true });
             });
 
-            const realQ = query(collection(db, "deposits"), where("status", "==", "approved"), orderBy("requestedAt", "desc"), limit(10));
+            const realQ = query(collection(db, "withdrawals"), where("status", "==", "approved"), orderBy("requestedAt", "desc"), limit(10));
             const realSnap = await getDocs(realQ);
             realSnap.forEach(doc => {
                 const data = doc.data();
@@ -1125,7 +1285,7 @@
         }
     }
     
-     // --- REFERRAL FUNCTIONS ---
+     // --- REFERRAL & SHARE FUNCTIONS ---
     function loadReferralView() {
         const linkInput = document.getElementById('referral-link-display');
         const refCountEl = document.getElementById('ref-stat-count');
@@ -1150,6 +1310,33 @@
         
         getReferralStats();
     }
+    
+    window.shareOnTelegram = function() {
+        const link = document.getElementById('referral-link-display').value;
+        const text = "Join me on REWARD CLAIM and earn money! Use my link to sign up:";
+        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;
+        window.open(telegramUrl, '_blank');
+    }
+
+    window.shareLive = async function() {
+        const link = document.getElementById('referral-link-display').value;
+        const shareData = {
+            title: 'Join REWARD CLAIM',
+            text: 'Join me on REWARD CLAIM and earn money! Use my link to sign up:',
+            url: link,
+        };
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                throw new Error('Web Share API not supported');
+            }
+        } catch (err) {
+            copyText(link);
+            showToast('Share not supported, link copied instead!', 'info');
+        }
+    }
+
 
     // --- NOTIFICATION & LIVE FEED FUNCTIONS ---
     async function checkNewNotifications() {
@@ -1205,7 +1392,14 @@
 
     // --- HELPER FUNCTIONS ---
     window.openPremiumPage = () => { closeSidePanel(); switchView('view-premium'); };
-    window.openSupport = () => { window.open("https://t.me/your_support_username", '_blank'); };
+    window.openSupport = () => { 
+        const supportLink = sysConfig.supportLink || "https://t.me/your_support_username";
+        window.open(supportLink, '_blank'); 
+    };
+    window.visitWebsite = () => {
+        const websiteUrl = sysConfig.websiteUrl || "#";
+        window.open(websiteUrl, '_blank');
+    };
     window.closeSidePanel = () => {
         document.getElementById('main-side-panel').classList.remove('open');
         document.getElementById('panel-overlay').classList.remove('open');
