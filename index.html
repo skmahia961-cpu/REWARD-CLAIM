@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -236,7 +235,7 @@
     </div>
     <div class="flex items-center gap-2">
         <button onclick="switchView('view-deposit')" class="action-btn px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-indigo-500/20">
-            <i data-lucide="plus" class="w-4 h-4"></i> ADD FUND
+            <i data-lucide="plus" class="w-4 h-4"></i>FUND
         </button>
         <button id="btn-notifications" class="relative p-2 text-slate-400 hover:text-slate-200 transition bg-slate-800/50 rounded-full">
             <i data-lucide="bell" class="w-5 h-5"></i>
@@ -287,7 +286,7 @@
     <div id="live-withdrawal-feed" class="space-y-3">
         <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
             <i data-lucide="arrow-up-right" class="w-5 h-5 text-cyan-400"></i>
-            Recent Activities
+            Live Withdrawals
         </h3>
         <div id="withdrawal-feed-container" class="h-48 overflow-hidden relative space-y-3">
             <!-- Feed items will be injected here -->
@@ -329,17 +328,6 @@
         </div>
     </div>
     
-    <!-- Live Referral Feed -->
-    <div id="live-referral-feed" class="space-y-3">
-        <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
-            <i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>
-            Live Referrals
-        </h3>
-        <div id="referral-feed-container" class="h-48 overflow-hidden relative space-y-3">
-            <!-- Feed items will be injected here -->
-        </div>
-    </div>
-
     <div class="neo-card p-5 rounded-2xl text-center">
         <h3 class="font-semibold text-slate-300 mb-2">Your Unique Referral Link</h3>
         <div class="relative">
@@ -367,6 +355,17 @@
             <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>You earn a commission on their every deposit, forever.</span></li>
             <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>The more friends you invite, the more you earn passively.</span></li>
         </ul>
+    </div>
+    
+    <!-- Live Referral Feed -->
+    <div id="live-referral-feed" class="space-y-3">
+        <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
+            <i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>
+            Live Referrals
+        </h3>
+        <div id="referral-feed-container" class="h-48 overflow-hidden relative space-y-3">
+            <!-- Feed items will be injected here -->
+        </div>
     </div>
 </div>
 
@@ -415,7 +414,6 @@
         </select>
         <input type="number" id="dep-amount" placeholder="Amount (USD)" class="neo-input w-full p-3 rounded-xl">
         <input type="text" id="dep-sender" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
-        <input type="text" id="dep-trx" placeholder="Transaction ID (TxID)" class="neo-input w-full p-3 rounded-xl">
         <button id="btn-submit-deposit" class="action-btn w-full py-4 rounded-xl text-lg shadow-lg shadow-indigo-500/20">VERIFY DEPOSIT</button>
     </div>
     <div class="pt-4">
@@ -1094,22 +1092,18 @@
         const method = document.getElementById('dep-method').value;
         const amount = parseFloat(document.getElementById('dep-amount').value);
         const sender = document.getElementById('dep-sender').value.trim();
-        const trx = document.getElementById('dep-trx').value.trim();
 
-        if(!method || !amount || !sender || !trx) return showToast("Please fill all fields", "warning");
-
+        if(!method || !amount || !sender) return showToast("Please fill all fields", "warning");
         if(amount < MIN_DEPOSIT_AMT) return showModal(`<div class="text-center text-red-400 space-y-3"><i data-lucide="alert-octagon" class="w-12 h-12 mx-auto"></i><h3 class="font-bold text-lg">Invalid Amount</h3><p class="text-slate-300">Minimum deposit amount is <span class="font-bold text-white">$${MIN_DEPOSIT_AMT.toFixed(2)}</span>.</p><button onclick="closeModal()" class="neo-card w-full py-2 rounded-xl mt-4">OK</button></div>`);
 
         const btn = document.getElementById('btn-submit-deposit');
         btn.disabled = true; btn.innerText = "VERIFYING...";
 
         try {
-            const q = query(collection(db, "deposits"), where("transactionId", "==", trx));
-            const snap = await getDocs(q);
-            if(!snap.empty) throw new Error("This Transaction ID is already used.");
-
+            // As TxID is removed, we cannot check for duplicates easily. 
+            // This requires backend logic to prevent replay attacks.
             await addDoc(collection(db, "deposits"), {
-                userId: userData.tgChatId, userName: userData.name, method, amount, senderNumber: sender, transactionId: trx,
+                userId: userData.tgChatId, userName: userData.name, method, amount, senderNumber: sender,
                 status: "pending", requestedAt: serverTimestamp()
             });
             
@@ -1118,7 +1112,6 @@
             document.getElementById('dep-method').value = '';
             document.getElementById('dep-amount').value = '';
             document.getElementById('dep-sender').value = '';
-            document.getElementById('dep-trx').value = '';
             loadDepositHistory();
 
         } catch(e) { showToast(e.message, "error");
@@ -1137,11 +1130,12 @@
         el.innerHTML = snap.docs.map(d => {
             const data = d.data();
             const statusColors = { pending: 'text-yellow-500', approved: 'text-emerald-500', rejected: 'text-red-500' };
+            const date = data.requestedAt ? new Date(data.requestedAt.seconds * 1000).toLocaleDateString() : 'N/A';
             return `
             <div class="flex justify-between items-center p-3 bg-slate-800/40 rounded-xl border border-slate-800">
                 <div>
                     <p class="text-sm font-medium text-slate-300">${data.method} - $${data.amount}</p>
-                    <p class="text-[10px] text-slate-500 font-mono">${data.transactionId}</p>
+                    <p class="text-[10px] text-slate-500 font-mono">${date}</p>
                 </div>
                 <span class="text-xs font-bold ${statusColors[data.status] || 'text-slate-400'} uppercase">${data.status}</span>
             </div>`;
@@ -1307,9 +1301,16 @@
         
         const inputSection = document.getElementById('referral-input-section');
         if (userData.referredBy) {
+            const referrerRef = doc(db, "users", userData.referredBy);
+            const referrerSnap = await getDoc(referrerRef);
+            let referrerName = `UID: ${userData.referredBy}`;
+            if(referrerSnap.exists()){
+                referrerName = referrerSnap.data().name || `UID: ${userData.referredBy}`;
+            }
+
             inputSection.innerHTML = `
                 <h3 class="font-semibold text-slate-200 text-lg flex items-center justify-center gap-2"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>Referral Claimed</h3>
-                <p class="text-sm text-slate-400">You were referred by UID: <span class="font-mono">${userData.referredBy}</span></p>
+                <p class="text-sm text-slate-400">You were referred by: <span class="font-semibold text-white">${referrerName}</span></p>
             `;
             lucide.createIcons();
         }
@@ -1322,9 +1323,7 @@
                 const snap = await getDocs(q);
                 
                 refCountEl.textContent = snap.docs.length;
-                // Note: The $1 for referring someone is added directly to balance.
-                // This 'earnings' stat can be used for commissions later.
-                const referralEarnings = snap.docs.length * 1; // Base earning for each referral
+                const referralEarnings = snap.docs.length * 1; 
                 refEarningsEl.textContent = `$${referralEarnings.toFixed(2)}`;
                 
             } catch (error) {
@@ -1388,11 +1387,10 @@
             });
 
             showToast(`Success! You and your friend both earned $${rewardAmount.toFixed(2)}.`, 'success');
-            // Manually update local state to reflect the change immediately
             userData.balance += rewardAmount;
             userData.referredBy = code;
             updateDashboard();
-            loadReferralView(); // Reload the view to show the 'completed' state
+            loadReferralView(); 
 
         } catch (e) {
             showToast("Error: " + e.message, "error");
@@ -1539,7 +1537,7 @@
     // --- HELPER FUNCTIONS ---
     window.openPremiumPage = () => { closeSidePanel(); switchView('view-premium'); };
     window.openSupport = () => { 
-        const supportLink = sysConfig.supportLink || "https://t.me/your_support_username";
+        const supportLink = sysConfig.supportLink || "https://t.me/sarahmartinBTC";
         window.open(supportLink, '_blank'); 
     };
     window.visitWebsite = () => {
@@ -1773,6 +1771,5 @@
         }
     }
 </script>
-
 </body>
 </html>
