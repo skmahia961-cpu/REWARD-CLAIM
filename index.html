@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>REWARD CLAIM</title>
-  
+
     <meta name="monetag" content="a41ceca9ffc67edad031c0024f85ef59">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -86,7 +86,7 @@
         transition: opacity 0.5s ease;
     }
     .loader-ring {
-        width: 60px; height: 60px; border: 4px solid #1e293b; border-top-color: #6366f1;
+        width: 60px; height: 60px; border: 4px solid #1e293b; border-top-color: #22c55e;
         border-radius: 50%; animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -114,10 +114,10 @@
     <div class="relative">
         <div class="loader-ring"></div>
         <div class="absolute inset-0 flex items-center justify-center">
-            <i data-lucide="hexagon" class="w-6 h-6 text-indigo-500 fill-indigo-500/20"></i>
+            <i data-lucide="dollar-sign" class="w-6 h-6 text-green-500"></i>
         </div>
     </div>
-    <h1 class="mt-6 text-2xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">NEXUS</h1>
+    <h1 class="mt-6 text-2xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-green-600">REWARD CLAIM</h1>
     <p id="loading-msg" class="text-slate-500 text-sm mt-2 animate-pulse">Establishing Secure Connection...</p>
 </div>
 
@@ -150,7 +150,7 @@
             <a href="#" class="hover:text-cyan-400 transition"><i data-lucide="twitter" class="w-5 h-5"></i></a>
             <a href="#" class="hover:text-indigo-400 transition"><i data-lucide="send" class="w-5 h-5"></i></a>
         </div>
-        <p class="text-center text-[10px] text-slate-600 mt-3 tracking-widest">REWARD v4.5.2 encrypted</p>
+        <p class="text-center text-[10px] text-slate-600 mt-3 tracking-widest">REWARD v4.6.0 encrypted</p>
     </div>
 </aside>
 
@@ -215,6 +215,17 @@
                     </button>
                 </div>
             </div>
+
+            <!-- Live Deposit Feed -->
+            <div id="live-deposit-feed" class="space-y-3">
+                <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
+                    <i data-lucide="zap" class="w-5 h-5 text-cyan-400"></i>
+                    Recent Deposits
+                </h3>
+                <div id="deposit-feed-container" class="h-48 overflow-hidden relative space-y-3">
+                    <!-- Feed items will be injected here -->
+                </div>
+            </div>
         </div>
         
         <!-- TASKS VIEW -->
@@ -226,7 +237,6 @@
            <div id="task-list" class="space-y-4">
                <!-- Tasks will be dynamically inserted here -->
            </div>
-           <!-- NEW/UPDATED: Premium upsell card -->
             <div id="task-upsell-card" class="neo-card rounded-2xl p-5 flex items-center gap-4 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-indigo-500/20 cursor-pointer" onclick="switchView('view-premium')">
                 <div class="relative">
                     <div class="w-14 h-14 rounded-full bg-yellow-400/10 flex items-center justify-center animate-pulse">
@@ -240,6 +250,39 @@
             </div>
        </div>
 
+        <!-- REFER VIEW -->
+        <div id="view-refer" class="app-view space-y-6">
+            <div class="text-center">
+                <i data-lucide="users" class="w-16 h-16 mx-auto text-cyan-400 mb-4"></i>
+                <h2 class="text-2xl font-bold text-slate-100">Refer & Earn</h2>
+                <p class="text-slate-500 text-sm">Invite friends and earn rewards on their activities!</p>
+            </div>
+            <div class="neo-card p-5 rounded-2xl text-center">
+                <h3 class="font-semibold text-slate-300 mb-2">Your Unique Referral Link</h3>
+                <div class="relative">
+                    <input type="text" id="referral-link-display" readonly class="neo-input w-full p-3 rounded-xl text-center bg-slate-900 font-mono text-sm" value="Loading...">
+                    <button onclick="copyText(document.getElementById('referral-link-display').value)" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-slate-700">
+                        <i data-lucide="copy" class="w-4 h-4 text-slate-400"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div class="neo-card p-4 rounded-xl">
+                    <p class="text-sm text-slate-400">Total Referrals</p>
+                    <p id="ref-stat-count" class="text-2xl font-bold text-white">0</p>
+                </div>
+                <div class="neo-card p-4 rounded-xl">
+                    <p class="text-sm text-slate-400">Total Earnings</p>
+                    <p id="ref-stat-earnings" class="text-2xl font-bold text-emerald-400">$0.00</p>
+                </div>
+            </div>
+            <div class="neo-card p-4 rounded-xl">
+                <h3 class="font-semibold text-slate-300 mb-3">Your Referrals</h3>
+                <div id="referral-list" class="max-h-48 overflow-y-auto text-center text-slate-500">
+                    <p>No referrals yet.</p>
+                </div>
+            </div>
+        </div>
 
         <!-- DEPOSIT VIEW -->
         <div id="view-deposit" class="app-view space-y-6">
@@ -253,7 +296,7 @@
                     <div>
                          <h4 class="font-bold text-indigo-300 mb-1">IMPORTANT NOTE</h4>
                          <p class="text-xs text-indigo-200/70 leading-relaxed">
-                            Please use a valid payment method. Minimum deposit is <span class="text-white font-bold">$1.00</span>.
+                            Please use a valid payment method. Minimum deposit is <span class="text-white font-bold">$10.00</span>.
                          </p>
                     </div>
                 </div>
@@ -283,7 +326,7 @@
                     <option value="BTC">BTC</option>
                     <option value="Binance">Binance</option>
                 </select>
-                <input type="number" id="dep-amount" placeholder="Amount (Min 1 USD)" class="neo-input w-full p-3 rounded-xl">
+                <input type="number" id="dep-amount" placeholder="Amount (Min 10 USD)" class="neo-input w-full p-3 rounded-xl">
                 <input type="text" id="dep-sender" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
                 <input type="text" id="dep-trx" placeholder="Transaction ID (TxID)" class="neo-input w-full p-3 rounded-xl">
                 <button id="btn-submit-deposit" class="action-btn w-full py-4 rounded-xl text-lg shadow-lg shadow-indigo-500/20">VERIFY DEPOSIT</button>
@@ -354,7 +397,6 @@
                     </div>
                     <span class="font-semibold">P2P Transfer</span>
                 </button>
-                <!-- ADDED PREMIUM BUTTON -->
                 <button onclick="switchView('view-premium')" class="neo-card p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-yellow-500 transition group">
                     <div class="w-14 h-14 rounded-full bg-yellow-500/10 flex items-center justify-center group-hover:bg-yellow-500 group-hover:text-white transition-all text-yellow-500">
                         <i data-lucide="gem" class="w-7 h-7"></i>
@@ -425,9 +467,9 @@
             <i data-lucide="clipboard-check" class="w-6 h-6"></i>
             <span>Tasks</span>
         </button>
-         <button class="dock-item" data-target="view-deposit">
-            <i data-lucide="plus-square" class="w-6 h-6"></i>
-            <span>Add Fund</span>
+         <button class="dock-item" data-target="view-refer">
+            <i data-lucide="users" class="w-6 h-6"></i>
+            <span>Refer</span>
         </button>
         <button class="dock-item" data-target="view-news">
             <i data-lucide="rss" class="w-6 h-6"></i>
@@ -456,13 +498,12 @@
     import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, runTransaction, onSnapshot, updateDoc, Timestamp, writeBatch } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     // --- CONFIGURATION ---
-    const MIN_DEPOSIT_AMT = 1; 
+    const MIN_DEPOSIT_AMT = 10; 
     const P2P_FEE_PERCENT = 0.05; // 5%
     const MIN_P2P_AMT = 0.5;
     const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
     
-    // --- PREMIUM TIER CONFIGURATION (UPDATED) ---
-    // REMOVED: depositCashback from all tiers
+    // --- PREMIUM TIER CONFIGURATION ---
     let premiumTiers = {
         silver:    { name: 'Silver',    price: 1,  level: 1, duration: 30, taskLimit: 3, benefits: { noAds: true, feeReduction: 0.01 } },
         palladium: { name: 'Palladium', price: 5,  level: 2, duration: 30, taskLimit: 5, benefits: { noAds: true, feeReduction: 0.02 } },
@@ -503,15 +544,19 @@
             } catch (e) { console.log("Not in TG environment"); }
 
             if (!tgSession) {
-                document.getElementById('loading-msg').textContent = "Error: Please open via Telegram";
-                document.getElementById('loading-msg').classList.add('text-red-500');
-                return; 
+                // For testing purposes, create a dummy session
+                tgSession = { id: '12345678', first_name: 'Test', last_name: 'User', username: 'testuser', photo_url: 'https://via.placeholder.com/100' };
+                // document.getElementById('loading-msg').textContent = "Error: Please open via Telegram";
+                // document.getElementById('loading-msg').classList.add('text-red-500');
+                // return; 
             }
 
             await loadConfig();
             await initSession();
             setupInteractions();
             lucide.createIcons();
+            
+            initLiveDepositFeed();
 
             document.getElementById('splash-screen').style.opacity = '0';
             setTimeout(() => document.getElementById('splash-screen').remove(), 500);
@@ -536,7 +581,8 @@
                 premiumTier: null,
                 premiumExpiry: null,
                 lastNotificationCheck: null,
-                dailyCompletedTasks: []
+                dailyCompletedTasks: [],
+                referredBy: null // To track who referred this user
             };
             await setDoc(userRef, userData);
         }
@@ -624,12 +670,19 @@
         document.querySelectorAll('.app-view').forEach(el => el.classList.remove('active-view'));
         document.getElementById(viewId).classList.add('active-view');
 
-        const mainViews = ['view-dashboard', 'view-tasks', 'view-deposit', 'view-news', 'view-profile'];
+        const mainViews = ['view-dashboard', 'view-tasks', 'view-refer', 'view-news', 'view-profile'];
         if (mainViews.includes(viewId)) {
             document.querySelectorAll('.dock-item').forEach(btn => {
                 btn.classList.toggle('nav-active', btn.dataset.target === viewId);
             });
         }
+        
+        // Hide deposit button if not on deposit view
+        const topDepositBtn = document.querySelector('header .flex.items-center.gap-2 > button:first-child');
+        if (topDepositBtn) {
+           topDepositBtn.style.display = viewId === 'view-deposit' ? 'none' : 'inline-flex';
+        }
+
 
         if(viewId === 'view-tasks') loadTasksView();
         if(viewId === 'view-deposit') loadDepositHistory();
@@ -637,11 +690,13 @@
         if(viewId === 'view-news') loadNewsFeed();
         if(viewId === 'view-premium') loadPremiumTiers();
         if(viewId === 'view-features') loadActivityLog();
+        if(viewId === 'view-refer') loadReferralView();
+
 
         window.scrollTo(0,0);
     }
     
-    // --- PREMIUM TIER FUNCTIONS (UPDATED) ---
+    // --- PREMIUM TIER FUNCTIONS ---
     function loadPremiumTiers() {
         const container = document.getElementById('premium-tiers-container');
         const tierKeys = Object.keys(premiumTiers).sort((a,b) => premiumTiers[a].level - premiumTiers[b].level);
@@ -655,7 +710,6 @@
             const benefitsList = [
                 `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> Daily Task Limit: <strong>${tier.taskLimit}</strong></li>`,
                 tier.benefits.noAds ? '<li><i class="inline-block w-4 h-4" data-lucide="check"></i> No Ads</li>' : '',
-                // UPDATED: Corrected fee display
                 tier.benefits.feeReduction > 0 ? `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> P2P Fee reduced to <strong>${reducedFee.toFixed(0)}%</strong></li>` : ''
             ].filter(Boolean).join('');
 
@@ -665,7 +719,7 @@
             } else if (tier.level === currentUserLevel) {
                 buttonHtml = `<button class="action-btn w-full py-3 rounded-xl" disabled>Current Plan</button>`;
             } else {
-                 if(currentUserLevel === tierKeys.length) { // Max level check
+                 if(currentUserLevel === tierKeys.length) { 
                     buttonHtml = `<button class="action-btn w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500" disabled>MAX</button>`;
                  } else {
                     buttonHtml = `<button onclick="purchasePremium('${key}')" class="action-btn w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500">UPGRADE</button>`;
@@ -744,7 +798,7 @@
         };
     }
 
-    // --- TASK SYSTEM FUNCTIONS (UPDATED) ---
+    // --- TASK SYSTEM FUNCTIONS ---
     function loadTasksView() {
         const taskListContainer = document.getElementById('task-list');
         window.startTask = startTask;
@@ -767,7 +821,6 @@
         let firstPendingTask = null;
         let tasksHTML = '';
         
-        // Find the first pending task
         for (let i = 1; i <= taskLimit; i++) {
             const taskId = `daily_task_${i}`;
             if (!completedToday.includes(taskId)) {
@@ -788,10 +841,8 @@
             if (isCompleted) {
                 buttonHTML = `<button class="bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold text-sm cursor-not-allowed">Completed</button>`;
             } else if (firstPendingTask && task.id === firstPendingTask.id) {
-                // This is the next available task
                 buttonHTML = `<button onclick='startTask(${taskJSON}, this, false, null)' class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-semibold text-sm">VISIT NOW</button>`;
             } else {
-                // This task is locked
                 buttonHTML = `<button onclick='startTask(null, this, true, ${firstPendingTaskJSON})' class="bg-slate-600 text-slate-300 px-5 py-2 rounded-lg font-semibold text-sm cursor-pointer">VISIT NOW</button>`;
             }
 
@@ -852,7 +903,6 @@
         activeTimers.push(countdownInterval);
     }
     
-    // UPDATED: In-app countdown task function with sequential logic
     function startTask(task, buttonElement, isLocked, correctTask) {
         if (isLocked) {
             showToast("Please complete the previous task first.", 'warning');
@@ -944,7 +994,6 @@
             
             showModal(`<div class="text-center space-y-3"><i data-lucide="check-circle" class="w-12 h-12 text-emerald-500 mx-auto"></i><h3 class="text-lg font-bold text-white">Submitted!</h3><p class="text-slate-400">Your deposit of $${amount} is under review. It typically takes 5-30 minutes.</p><button onclick="closeModal()" class="action-btn w-full py-2 rounded-xl">OK</button></div>`);
             
-            // REMOVED: Cashback toast notification
             document.getElementById('dep-amount').value = ''; document.getElementById('dep-trx').value = '';
             loadDepositHistory();
 
@@ -974,6 +1023,122 @@
             </div>`;
         }).join('');
     }
+
+    // --- LIVE DEPOSIT FEED ---
+    async function initLiveDepositFeed() {
+        const container = document.getElementById('deposit-feed-container');
+        if (!container) return;
+
+        let allDeposits = [];
+
+        try {
+            // Fetch fake deposits
+            const fakeQ = query(collection(db, "fake_deposits"), limit(20));
+            const fakeSnap = await getDocs(fakeQ);
+            fakeSnap.forEach(doc => {
+                allDeposits.push({ ...doc.data(), isFake: true });
+            });
+
+            // Fetch real approved deposits
+            const realQ = query(collection(db, "deposits"), where("status", "==", "approved"), orderBy("requestedAt", "desc"), limit(10));
+            const realSnap = await getDocs(realQ);
+            realSnap.forEach(doc => {
+                const data = doc.data();
+                allDeposits.push({ name: data.userName, amount: data.amount, isFake: false });
+            });
+
+            // Shuffle the array
+            allDeposits.sort(() => 0.5 - Math.random());
+
+            if (allDeposits.length === 0) {
+                 container.innerHTML = '<p class="text-center text-slate-600 text-sm p-4">No recent activity.</p>';
+                 return;
+            }
+            
+            let currentIndex = 0;
+            function showNextDeposit() {
+                if (allDeposits.length === 0) return;
+                const deposit = allDeposits[currentIndex];
+                const name = deposit.name.substring(0, 3) + '***';
+                const timeAgo = Math.floor(Math.random() * 59) + 1;
+
+                const item = document.createElement('div');
+                item.className = 'neo-card p-3 rounded-xl flex items-center gap-3 animate-fade-in-down';
+                item.innerHTML = `
+                    <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                        <i data-lucide="arrow-down-left" class="w-5 h-5 text-emerald-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-200">
+                            ${name} just deposited <span class="text-emerald-400">$${deposit.amount}</span>
+                        </p>
+                        <p class="text-xs text-slate-500">${timeAgo} seconds ago</p>
+                    </div>`;
+                
+                container.prepend(item);
+                lucide.createIcons();
+
+                if (container.children.length > 10) {
+                    container.lastChild.remove();
+                }
+
+                currentIndex = (currentIndex + 1) % allDeposits.length;
+            }
+
+            showNextDeposit(); // Show one immediately
+            const feedInterval = setInterval(showNextDeposit, Math.random() * (8000 - 4000) + 4000); // every 4-8 seconds
+            activeTimers.push(feedInterval);
+
+        } catch (e) {
+            console.error("Failed to load deposit feed:", e);
+            container.innerHTML = '<p class="text-center text-red-500 text-sm">Could not load feed.</p>';
+        }
+    }
+    
+     // --- REFERRAL FUNCTIONS ---
+    function loadReferralView() {
+        const linkInput = document.getElementById('referral-link-display');
+        const refCountEl = document.getElementById('ref-stat-count');
+        const refEarningsEl = document.getElementById('ref-stat-earnings');
+        const refListEl = document.getElementById('referral-list');
+
+        // Generate and display referral link
+        const botUsername = sysConfig.botUsername || "YourBotUsername"; // Fetch from config or use a placeholder
+        const referralLink = `https://t.me/${botUsername}?start=${userData.tgChatId}`;
+        linkInput.value = referralLink;
+        
+        // Load referral stats (this part requires querying users collection)
+        async function getReferralStats() {
+            try {
+                const q = query(collection(db, "users"), where("referredBy", "==", userData.tgChatId));
+                const snap = await getDocs(q);
+                
+                const referrals = snap.docs.map(doc => doc.data());
+                refCountEl.textContent = referrals.length;
+                
+                // You would need to implement earnings logic, for now it's 0
+                refEarningsEl.textContent = "$0.00"; 
+                
+                if (referrals.length > 0) {
+                    refListEl.innerHTML = referrals.map(ref => `
+                        <div class="flex items-center justify-between p-2 bg-slate-900/50 rounded-lg">
+                            <span class="text-slate-300">${ref.name}</span>
+                            <span class="text-xs text-slate-500">${ref.createdAt.toDate().toLocaleDateString()}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    refListEl.innerHTML = '<p>No referrals yet.</p>';
+                }
+                
+            } catch (error) {
+                console.error("Error loading referral data:", error);
+                refListEl.innerHTML = '<p class="text-red-500">Could not load data.</p>';
+            }
+        }
+        
+        getReferralStats();
+    }
+
 
     // --- NOTIFICATION & LIVE FEED FUNCTIONS ---
     async function checkNewNotifications() {
@@ -1066,7 +1231,8 @@
         if (amount < MIN_P2P_AMT) return showToast(`Minimum transfer amount is $${MIN_P2P_AMT.toFixed(2)}.`, "warning");
         
         let feePercent = P2P_FEE_PERCENT;
-        if (userData.isPremium && premiumTiers[userData.premiumTier]?.benefits.feeReduction > 0) {
+        const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
+        if (userData.isPremium && !isPremiumExpired && premiumTiers[userData.premiumTier]?.benefits.feeReduction > 0) {
             feePercent -= premiumTiers[userData.premiumTier].benefits.feeReduction;
         }
         const fee = amount * feePercent;
@@ -1133,7 +1299,8 @@
         document.getElementById('p2p-amount').addEventListener('input', (e) => {
             const val = parseFloat(e.target.value) || 0;
             let feePercent = P2P_FEE_PERCENT;
-            if (userData.isPremium && premiumTiers[userData.premiumTier]?.benefits.feeReduction > 0) {
+            const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
+             if (userData.isPremium && !isPremiumExpired && premiumTiers[userData.premiumTier]?.benefits.feeReduction > 0) {
                 feePercent -= premiumTiers[userData.premiumTier].benefits.feeReduction;
             }
             const fee = val * feePercent;
@@ -1158,7 +1325,6 @@
         });
     }
 
-    // UPDATED: Profile stats to remove cashback calculation
     async function loadProfileStats() {
         const statDepositEl = document.getElementById('stat-deposit');
         const statEarnedEl = document.getElementById('stat-cashback');
@@ -1171,13 +1337,11 @@
         const uid = userData.tgChatId;
     
         try {
-            // Total approved deposits
             const depositQuery = query(collection(db, "deposits"), where("userId", "==", uid), where("status", "==", "approved"));
             const depositSnap = await getDocs(depositQuery);
             const totalDeposit = depositSnap.docs.reduce((sum, doc) => sum + doc.data().amount, 0);
             statDepositEl.textContent = `$${totalDeposit.toFixed(2)}`;
     
-            // Total earnings from tasks
             let totalTaskEarnings = 0;
             const taskReward = 0.50; 
             if (userData.dailyCompletedTasks && Array.isArray(userData.dailyCompletedTasks)) {
@@ -1185,7 +1349,6 @@
             }
             statEarnedEl.textContent = `$${(totalTaskEarnings).toFixed(2)}`;
     
-            // P2P savings
             const p2pQuery = query(collection(db, "p2p_logs"), where("fromId", "==", uid));
             const p2pSnap = await getDocs(p2pQuery);
             let totalSavings = 0;
