@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="en" class="dark">
@@ -227,6 +228,18 @@
            <div id="task-list" class="space-y-4">
                <!-- Tasks will be dynamically inserted here -->
            </div>
+           <!-- NEW/UPDATED: Premium upsell card -->
+            <div id="task-upsell-card" class="neo-card rounded-2xl p-5 flex items-center gap-4 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-indigo-500/20 cursor-pointer" onclick="switchView('view-premium')">
+                <div class="relative">
+                    <div class="w-14 h-14 rounded-full bg-yellow-400/10 flex items-center justify-center animate-pulse">
+                        <i data-lucide="gem" class="w-8 h-8 text-yellow-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white">Want More Tasks?</h3>
+                    <p class="text-sm text-slate-400">Upgrade to Premium for more daily tasks and higher earnings!</p>
+                </div>
+            </div>
        </div>
 
 
@@ -450,13 +463,14 @@
     const MIN_P2P_AMT = 0.5;
     const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
     
-    // --- PREMIUM TIER CONFIGURATION (Default values, will be overridden by Firestore) ---
+    // --- PREMIUM TIER CONFIGURATION (UPDATED) ---
+    // REMOVED: depositCashback from all tiers
     let premiumTiers = {
-        silver:    { name: 'Silver',    price: 1, duration: 30, taskLimit: 3, benefits: { noAds: true, depositCashback: 0.01, feeReduction: 0.01 } },
-        palladium: { name: 'Palladium', price: 5, duration: 30, taskLimit: 5, benefits: { noAds: true, depositCashback: 0.02, feeReduction: 0.02 } },
-        diamond:   { name: 'Diamond',   price: 15, duration: 30, taskLimit: 8, benefits: { noAds: true, depositCashback: 0.03, feeReduction: 0.03 } },
-        heroic:    { name: 'Heroic',    price: 30, duration: 30, taskLimit: 10, benefits: { noAds: true, depositCashback: 0.04, feeReduction: 0.04 } },
-        master:    { name: 'Master',    price: 50, duration: 30, taskLimit: 15, benefits: { noAds: true, depositCashback: 0.05, feeReduction: 0.05 } }
+        silver:    { name: 'Silver',    price: 1,  level: 1, duration: 30, taskLimit: 3, benefits: { noAds: true, feeReduction: 0.01 } },
+        palladium: { name: 'Palladium', price: 5,  level: 2, duration: 30, taskLimit: 5, benefits: { noAds: true, feeReduction: 0.02 } },
+        diamond:   { name: 'Diamond',   price: 15, level: 3, duration: 30, taskLimit: 8, benefits: { noAds: true, feeReduction: 0.03 } },
+        heroic:    { name: 'Heroic',    price: 30, level: 4, duration: 30, taskLimit: 10, benefits: { noAds: true, feeReduction: 0.04 } },
+        master:    { name: 'Master',    price: 50, level: 5, duration: 30, taskLimit: 15, benefits: { noAds: true, feeReduction: 0.05 } }
     };
 
     // FIREBASE CONFIG
@@ -629,25 +643,39 @@
         window.scrollTo(0,0);
     }
     
-    // --- PREMIUM TIER FUNCTIONS ---
+    // --- PREMIUM TIER FUNCTIONS (UPDATED) ---
     function loadPremiumTiers() {
         const container = document.getElementById('premium-tiers-container');
-        let html = Object.keys(premiumTiers).map(key => {
+        const tierKeys = Object.keys(premiumTiers).sort((a,b) => premiumTiers[a].level - premiumTiers[b].level);
+        const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
+        const currentUserLevel = (userData.isPremium && !isPremiumExpired) ? premiumTiers[userData.premiumTier]?.level || 0 : 0;
+        
+        let html = tierKeys.map(key => {
             const tier = premiumTiers[key];
+            const reducedFee = (P2P_FEE_PERCENT - tier.benefits.feeReduction) * 100;
+
             const benefitsList = [
                 `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> Daily Task Limit: <strong>${tier.taskLimit}</strong></li>`,
                 tier.benefits.noAds ? '<li><i class="inline-block w-4 h-4" data-lucide="check"></i> No Ads</li>' : '',
-                tier.benefits.depositCashback > 0 ? `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> ${tier.benefits.depositCashback * 100}% Deposit Cashback</li>` : '',
-                tier.benefits.feeReduction > 0 ? `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> P2P Fee reduced to ${(P2P_FEE_PERCENT - tier.benefits.feeReduction) * 100}%</li>` : ''
+                // UPDATED: Corrected fee display
+                tier.benefits.feeReduction > 0 ? `<li><i class="inline-block w-4 h-4" data-lucide="check"></i> P2P Fee reduced to <strong>${reducedFee.toFixed(0)}%</strong></li>` : ''
             ].filter(Boolean).join('');
 
-            const isCurrentUserTier = userData.premiumTier === key && userData.premiumExpiry && userData.premiumExpiry.toDate() > new Date();
-            const buttonHtml = isCurrentUserTier
-                ? `<button class="action-btn w-full py-3 rounded-xl" disabled>CURRENT PLAN</button>`
-                : `<button onclick="purchasePremium('${key}')" class="action-btn w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500">UPGRADE</button>`;
+            let buttonHtml;
+            if (tier.level < currentUserLevel) {
+                 buttonHtml = `<button class="action-btn w-full py-3 rounded-xl" disabled>Purchased</button>`;
+            } else if (tier.level === currentUserLevel) {
+                buttonHtml = `<button class="action-btn w-full py-3 rounded-xl" disabled>Current Plan</button>`;
+            } else {
+                 if(currentUserLevel === tierKeys.length) { // Max level check
+                    buttonHtml = `<button class="action-btn w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500" disabled>MAX</button>`;
+                 } else {
+                    buttonHtml = `<button onclick="purchasePremium('${key}')" class="action-btn w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500">UPGRADE</button>`;
+                 }
+            }
 
             return `
-            <div class="neo-card p-5 rounded-2xl ${isCurrentUserTier ? 'border-yellow-400/50' : 'border-slate-700'}">
+            <div class="neo-card p-5 rounded-2xl ${tier.level === currentUserLevel ? 'border-yellow-400/50' : 'border-slate-700'}">
                 <h3 class="text-2xl font-bold text-yellow-400">${tier.name}</h3>
                 <p class="text-3xl font-bold my-3">$${tier.price} <span class="text-lg text-slate-400">/ ${tier.duration} days</span></p>
                 <ul class="text-sm text-slate-300 space-y-2 my-4 text-left pl-2">
@@ -718,19 +746,12 @@
         };
     }
 
-    // --- TASK SYSTEM FUNCTIONS (MODIFIED) ---
+    // --- TASK SYSTEM FUNCTIONS (UPDATED) ---
     function loadTasksView() {
         const taskListContainer = document.getElementById('task-list');
-        const pageTitle = document.querySelector('#view-tasks h2');
-        const pageSubtitle = document.querySelector('#view-tasks p');
-
         window.startTask = startTask;
-        window.switchView = switchView;
 
-        pageTitle.textContent = "Daily Earning Tasks";
-        pageSubtitle.textContent = "Complete simple tasks to earn rewards";
-
-        const taskReward = 0.50; // MODIFIED: Set reward to $0.50 as requested
+        const taskReward = 0.50;
         const taskLink = sysConfig.taskLink || "https://otieu.com/4/10076799";
         
         let taskLimit = sysConfig.freeUserTaskLimit || 1;
@@ -744,19 +765,37 @@
         const completedToday = (userData.dailyCompletedTasks || [])
             .filter(task => task.completedAt && new Date(task.completedAt.seconds * 1000).toISOString().split('T')[0] === today)
             .map(task => task.taskId);
-
+        
+        let firstPendingTask = null;
         let tasksHTML = '';
+        
+        // Find the first pending task
+        for (let i = 1; i <= taskLimit; i++) {
+            const taskId = `daily_task_${i}`;
+            if (!completedToday.includes(taskId)) {
+                firstPendingTask = { id: taskId, title: `Task ${i}`, reward: taskReward, link: taskLink };
+                break;
+            }
+        }
+
         for (let i = 1; i <= taskLimit; i++) {
             const taskId = `daily_task_${i}`;
             const isCompleted = completedToday.includes(taskId);
-
-            const task = {
-                id: taskId,
-                title: `Task ${i}`,
-                reward: taskReward,
-                link: taskLink
-            };
+            
+            const task = { id: taskId, title: `Task ${i}`, reward: taskReward, link: taskLink };
             const taskJSON = JSON.stringify(task);
+            const firstPendingTaskJSON = JSON.stringify(firstPendingTask);
+            
+            let buttonHTML;
+            if (isCompleted) {
+                buttonHTML = `<button class="bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold text-sm cursor-not-allowed">Completed</button>`;
+            } else if (firstPendingTask && task.id === firstPendingTask.id) {
+                // This is the next available task
+                buttonHTML = `<button onclick='startTask(${taskJSON}, this, false, null)' class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-semibold text-sm">VISIT NOW</button>`;
+            } else {
+                // This task is locked
+                buttonHTML = `<button onclick='startTask(null, this, true, ${firstPendingTaskJSON})' class="bg-slate-600 text-slate-300 px-5 py-2 rounded-lg font-semibold text-sm cursor-pointer">VISIT NOW</button>`;
+            }
 
             tasksHTML += `
                 <div class="flex items-center justify-between bg-slate-800 p-3 rounded-xl border border-slate-700">
@@ -769,10 +808,7 @@
                             <p class="text-yellow-400 font-bold text-sm">Reward: $${task.reward.toFixed(2)}</p>
                         </div>
                     </div>
-                    ${isCompleted 
-                        ? `<button class="bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold text-sm cursor-not-allowed">Completed</button>`
-                        : `<button onclick='startTask(${taskJSON}, this)' class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-semibold text-sm">VISIT NOW</button>`
-                    }
+                    ${buttonHTML}
                 </div>
             `;
         }
@@ -783,11 +819,8 @@
                 <div id="task-countdown-container" class="neo-card p-6 rounded-2xl text-center mt-8 bg-slate-800/50">
                     <h3 class="text-xl font-bold text-white">All Tasks Completed Today!</h3>
                     <p class="text-slate-400 mt-2 mb-4">New tasks will be available in:</p>
-                    <div id="task-countdown-timer" class="text-4xl font-bold text-cyan-400 font-mono tracking-wider">
-                        --:--:--
-                    </div>
-                </div>
-            `;
+                    <div id="task-countdown-timer" class="text-4xl font-bold text-cyan-400 font-mono tracking-wider">--:--:--</div>
+                </div>`;
             taskListContainer.innerHTML += countdownHTML;
             startTaskCountdown();
         }
@@ -806,7 +839,6 @@
             tomorrow.setHours(0, 0, 0, 0);
 
             const diff = tomorrow.getTime() - now.getTime();
-
             if (diff <= 0) {
                 clearInterval(countdownInterval);
                 timerElement.textContent = "00:00:00";
@@ -817,36 +849,37 @@
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
             timerElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }, 1000);
-
         activeTimers.push(countdownInterval);
     }
     
-    // NEW: In-app countdown task function
-    function startTask(task, buttonElement) {
+    // UPDATED: In-app countdown task function with sequential logic
+    function startTask(task, buttonElement, isLocked, correctTask) {
+        if (isLocked) {
+            showToast("Please complete the previous task first.", 'warning');
+            if (correctTask && correctTask.link) {
+                window.open(correctTask.link, '_blank');
+            }
+            return;
+        }
+
         buttonElement.disabled = true;
-        window.open(task.link, '_blank'); // Still opens the link as per "VISIT NOW"
+        window.open(task.link, '_blank');
 
         let countdown = 10;
         buttonElement.textContent = `Waiting (${countdown}s)`;
-
         const intervalId = setInterval(() => {
             countdown--;
             buttonElement.textContent = `Waiting (${countdown}s)`;
             if (countdown <= 0) {
                 clearInterval(intervalId);
-                // The UI will update automatically via the real-time listener
-                // once the database is updated.
                 completeTask(task);
             }
         }, 1000);
-        
         activeTimers.push(intervalId);
     }
     
-    // MODIFIED: completeTask function to handle direct task object and fix the serverTimestamp error
     async function completeTask(task) {
         if (!task) return;
 
@@ -867,14 +900,7 @@
 
                 const currentData = userDoc.data();
                 const newBalance = currentData.balance + task.reward;
-                
-                // === FIX IS HERE ===
-                // Replaced serverTimestamp() with Timestamp.fromDate(new Date())
-                const newTaskEntry = { 
-                    taskId: task.id, 
-                    completedAt: Timestamp.fromDate(new Date()) 
-                };
-                
+                const newTaskEntry = { taskId: task.id, completedAt: Timestamp.fromDate(new Date()) };
                 const updatedCompletedTasks = [...(currentData.dailyCompletedTasks || []), newTaskEntry];
 
                 transaction.update(userRef, {
@@ -882,13 +908,11 @@
                     dailyCompletedTasks: updatedCompletedTasks
                 });
             });
-            
             showToast(`Congratulations! You've earned $${task.reward.toFixed(2)}`, 'success');
             logPublicActivity(`earned $${task.reward.toFixed(2)} from a task.`);
         } catch (e) {
             console.error("Error completing task:", e);
             showToast(`Error: ${e.message || e}`, 'error');
-            // If it fails, reload the task view to re-enable the button
             if (document.getElementById('view-tasks').classList.contains('active-view')) {
                 loadTasksView();
             }
@@ -922,11 +946,7 @@
             
             showModal(`<div class="text-center space-y-3"><i data-lucide="check-circle" class="w-12 h-12 text-emerald-500 mx-auto"></i><h3 class="text-lg font-bold text-white">Submitted!</h3><p class="text-slate-400">Your deposit of $${amount} is under review. It typically takes 5-30 minutes.</p><button onclick="closeModal()" class="action-btn w-full py-2 rounded-xl">OK</button></div>`);
             
-            if (userData.isPremium && premiumTiers[userData.premiumTier]?.benefits.depositCashback > 0) {
-                const expectedCashback = amount * premiumTiers[userData.premiumTier].benefits.depositCashback;
-                setTimeout(() => showToast(`As a ${premiumTiers[userData.premiumTier].name} member, you'll get $${expectedCashback.toFixed(2)} cashback upon approval.`), 1000);
-            }
-
+            // REMOVED: Cashback toast notification
             document.getElementById('dep-amount').value = ''; document.getElementById('dep-trx').value = '';
             loadDepositHistory();
 
@@ -1109,8 +1129,6 @@
         document.getElementById('modal-close').addEventListener('click', closeModal);
         document.getElementById('modal-backdrop').addEventListener('click', closeModal);
         document.getElementById('btn-copy-uid').addEventListener('click', () => copyText(userData.tgChatId));
-        
-        // REMOVED: document.addEventListener('visibilitychange', handleVisibilityChange);
 
         document.getElementById('btn-exec-p2p').addEventListener('click', executeP2PTransfer);
 
@@ -1135,7 +1153,6 @@
                 if (oldData.balance !== newData.balance || oldData.isPremium !== newData.isPremium || oldData.premiumTier !== newData.premiumTier) {
                      updateDashboard();
                 }
-                // When user data changes (e.g., a task is completed), reload the tasks view if it's active
                 if (document.getElementById('view-tasks').classList.contains('active-view')) {
                     loadTasksView();
                 }
@@ -1143,6 +1160,7 @@
         });
     }
 
+    // UPDATED: Profile stats to remove cashback calculation
     async function loadProfileStats() {
         const statDepositEl = document.getElementById('stat-deposit');
         const statEarnedEl = document.getElementById('stat-cashback');
@@ -1161,25 +1179,13 @@
             const totalDeposit = depositSnap.docs.reduce((sum, doc) => sum + doc.data().amount, 0);
             statDepositEl.textContent = `$${totalDeposit.toFixed(2)}`;
     
-            // Total earnings from tasks and cashback
+            // Total earnings from tasks
             let totalTaskEarnings = 0;
-            const taskReward = 0.50; // Use the same reward value as in the task view
+            const taskReward = 0.50; 
             if (userData.dailyCompletedTasks && Array.isArray(userData.dailyCompletedTasks)) {
                 totalTaskEarnings = userData.dailyCompletedTasks.length * taskReward;
             }
-            
-            const purchaseQuery = query(collection(db, "deposits"), where("userId", "==", uid), where("status", "==", "approved"));
-            const purchaseSnap = await getDocs(purchaseQuery);
-            let totalCashback = 0;
-            purchaseSnap.forEach(doc => {
-                const depData = doc.data();
-                const userTier = userData.premiumTier;
-                if(userTier && premiumTiers[userTier]?.benefits.depositCashback > 0) {
-                    totalCashback += depData.amount * premiumTiers[userTier].benefits.depositCashback;
-                }
-            });
-            
-            statEarnedEl.textContent = `$${(totalTaskEarnings + totalCashback).toFixed(2)}`;
+            statEarnedEl.textContent = `$${(totalTaskEarnings).toFixed(2)}`;
     
             // P2P savings
             const p2pQuery = query(collection(db, "p2p_logs"), where("fromId", "==", uid));
