@@ -144,6 +144,8 @@
     .animated-task-button {
         animation: pulse-glow 2.5s infinite ease-in-out;
     }
+    @keyframes fade-in-down { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-down { animation: fade-in-down 0.5s ease forwards; }
 </style>
 </head>
 <body class="max-w-md mx-auto min-h-screen overflow-x-hidden no-select pb-28">
@@ -233,7 +235,7 @@
         </div>
     </div>
     <div class="flex items-center gap-2">
-        <button onclick="switchView('view-deposit')" class="action-btn px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-indigo-500/20">
+        <button onclick="switchView('view-deposit')" class="action-btn px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-indigo-500/20">
             <i data-lucide="plus" class="w-4 h-4"></i> ADD FUND
         </button>
         <button id="btn-notifications" class="relative p-2 text-slate-400 hover:text-slate-200 transition bg-slate-800/50 rounded-full">
@@ -306,12 +308,16 @@
 
 <!-- REFER VIEW (Improved) -->
 <div id="view-refer" class="app-view space-y-6">
-    <div class="text-center p-6 rounded-3xl neo-card bg-gradient-to-b from-indigo-500/10">
-        <i data-lucide="gift" class="w-16 h-16 mx-auto text-indigo-400 mb-4"></i>
-        <h2 class="text-3xl font-bold text-white">Refer & Earn Big</h2>
-        <p class="text-slate-400 mt-2">Invite friends and get a commission on their every deposit!</p>
+    <!-- Enter Referral Code -->
+    <div id="referral-input-section" class="neo-card p-5 rounded-2xl text-center space-y-3">
+        <h3 class="font-semibold text-slate-200 text-lg">Have a Referral Code?</h3>
+        <p class="text-xs text-slate-400">Enter your friend's code below. You both will receive <span class="text-emerald-400 font-bold">$1.00</span> instantly!</p>
+        <div class="relative">
+            <input type="text" id="referral-code-input" placeholder="Enter Code Here" class="neo-input w-full p-3 rounded-xl text-center font-mono">
+        </div>
+        <button id="btn-verify-referral" class="action-btn w-full py-3 rounded-xl">VERIFY & CLAIM $1.00</button>
     </div>
-    
+
     <div class="grid grid-cols-2 gap-4 text-center">
         <div class="neo-card p-4 rounded-xl">
             <p class="text-sm text-slate-400">Total Referrals</p>
@@ -323,6 +329,17 @@
         </div>
     </div>
     
+    <!-- Live Referral Feed -->
+    <div id="live-referral-feed" class="space-y-3">
+        <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
+            <i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>
+            Live Referrals
+        </h3>
+        <div id="referral-feed-container" class="h-48 overflow-hidden relative space-y-3">
+            <!-- Feed items will be injected here -->
+        </div>
+    </div>
+
     <div class="neo-card p-5 rounded-2xl text-center">
         <h3 class="font-semibold text-slate-300 mb-2">Your Unique Referral Link</h3>
         <div class="relative">
@@ -345,8 +362,8 @@
     <div class="neo-card p-5 rounded-xl text-left">
         <h3 class="font-semibold text-slate-200 mb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-indigo-400"></i> How it Works:</h3>
         <ul class="space-y-3 text-sm text-slate-400">
+            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Enter a friend's code once to get a $1 bonus for both of you.</span></li>
             <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Share your unique link with friends.</span></li>
-            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>When they join using your link, they become your referral.</span></li>
             <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>You earn a commission on their every deposit, forever.</span></li>
             <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>The more friends you invite, the more you earn passively.</span></li>
         </ul>
@@ -1278,8 +1295,8 @@
         }
     }
     
-     // --- REFERRAL & SHARE FUNCTIONS ---
-    function loadReferralView() {
+    // --- REFERRAL & SHARE FUNCTIONS ---
+    async function loadReferralView() {
         const linkInput = document.getElementById('referral-link-display');
         const refCountEl = document.getElementById('ref-stat-count');
         const refEarningsEl = document.getElementById('ref-stat-earnings');
@@ -1288,13 +1305,27 @@
         const referralLink = `https://t.me/${botUsername}?start=${userData.tgChatId}`;
         linkInput.value = referralLink;
         
+        const inputSection = document.getElementById('referral-input-section');
+        if (userData.referredBy) {
+            inputSection.innerHTML = `
+                <h3 class="font-semibold text-slate-200 text-lg flex items-center justify-center gap-2"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>Referral Claimed</h3>
+                <p class="text-sm text-slate-400">You were referred by UID: <span class="font-mono">${userData.referredBy}</span></p>
+            `;
+            lucide.createIcons();
+        }
+        
+        initLiveReferralFeed();
+
         async function getReferralStats() {
             try {
                 const q = query(collection(db, "users"), where("referredBy", "==", userData.tgChatId));
                 const snap = await getDocs(q);
                 
                 refCountEl.textContent = snap.docs.length;
-                refEarningsEl.textContent = "$0.00"; // Placeholder for earnings logic
+                // Note: The $1 for referring someone is added directly to balance.
+                // This 'earnings' stat can be used for commissions later.
+                const referralEarnings = snap.docs.length * 1; // Base earning for each referral
+                refEarningsEl.textContent = `$${referralEarnings.toFixed(2)}`;
                 
             } catch (error) {
                 console.error("Error loading referral data:", error);
@@ -1303,7 +1334,129 @@
         
         getReferralStats();
     }
+
+    async function verifyReferralCode() {
+        const btn = document.getElementById('btn-verify-referral');
+        const input = document.getElementById('referral-code-input');
+        const code = input.value.trim();
+        const rewardAmount = 1; // $1
+
+        if (!code) return showToast("Please enter a referral code.", "warning");
+        if (userData.referredBy) return showToast("You have already used a referral code.", "error");
+        if (code === userData.tgChatId) return showToast("You cannot refer yourself.", "error");
+
+        btn.disabled = true;
+        btn.textContent = 'VERIFYING...';
+
+        try {
+            await runTransaction(db, async (transaction) => {
+                const currentUserRef = doc(db, "users", userData.tgChatId);
+                const referrerRef = doc(db, "users", code);
+
+                const [currentUserDoc, referrerDoc] = await Promise.all([
+                    transaction.get(currentUserRef),
+                    transaction.get(referrerRef)
+                ]);
+
+                if (!currentUserDoc.exists()) throw new Error("Your user data could not be found.");
+                if (!referrerDoc.exists()) throw new Error("The referral code is invalid or the user does not exist.");
+
+                const currentUserData = currentUserDoc.data();
+                if (currentUserData.referredBy) throw new Error("You have already claimed a referral bonus.");
+
+                // Update current user
+                transaction.update(currentUserRef, {
+                    balance: currentUserData.balance + rewardAmount,
+                    referredBy: code
+                });
+
+                // Update referrer
+                transaction.update(referrerRef, {
+                    balance: referrerDoc.data().balance + rewardAmount
+                });
+
+                // Log the referral for the live feed
+                const logRef = doc(collection(db, "referral_logs"));
+                transaction.set(logRef, {
+                    referrerId: code,
+                    referrerName: referrerDoc.data().name || 'A user',
+                    refereeId: userData.tgChatId,
+                    refereeName: userData.name,
+                    reward: rewardAmount,
+                    timestamp: serverTimestamp()
+                });
+            });
+
+            showToast(`Success! You and your friend both earned $${rewardAmount.toFixed(2)}.`, 'success');
+            // Manually update local state to reflect the change immediately
+            userData.balance += rewardAmount;
+            userData.referredBy = code;
+            updateDashboard();
+            loadReferralView(); // Reload the view to show the 'completed' state
+
+        } catch (e) {
+            showToast("Error: " + e.message, "error");
+            btn.disabled = false;
+            btn.textContent = 'VERIFY & CLAIM $1.00';
+        }
+    }
     
+    async function initLiveReferralFeed() {
+        const container = document.getElementById('referral-feed-container');
+        if (!container) return;
+
+        try {
+            const q = query(collection(db, "referral_logs"), orderBy("timestamp", "desc"), limit(20));
+            const snap = await getDocs(q);
+
+            let allActivities = [];
+            snap.forEach(doc => allActivities.push(doc.data()));
+
+            if (allActivities.length === 0) {
+                 container.innerHTML = '<p class="text-center text-slate-600 text-sm p-4">Be the first to refer a friend!</p>';
+                 return;
+            }
+
+            let currentIndex = 0;
+            const showNextActivity = () => {
+                if (allActivities.length === 0) return;
+                const activity = allActivities[currentIndex];
+                const refereeName = (activity.refereeName || 'Someone').substring(0, 3) + '***';
+                const referrerName = (activity.referrerName || 'A user').substring(0, 3) + '***';
+                const timeAgo = Math.floor(Math.random() * 59) + 1;
+
+                const item = document.createElement('div');
+                item.className = 'neo-card p-3 rounded-xl flex items-center gap-3 animate-fade-in-down';
+                item.innerHTML = `
+                    <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                        <i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-200">
+                           ${refereeName} was invited by ${referrerName}!
+                        </p>
+                        <p class="text-xs text-slate-500">Both earned $${activity.reward.toFixed(2)} - ${timeAgo}s ago</p>
+                    </div>`;
+
+                container.prepend(item);
+                lucide.createIcons();
+
+                if (container.children.length > 10) {
+                    container.lastChild.remove();
+                }
+                currentIndex = (currentIndex + 1) % allActivities.length;
+            };
+
+            showNextActivity();
+            const feedInterval = setInterval(showNextActivity, Math.random() * (9000 - 5000) + 5000);
+            activeTimers.push(feedInterval);
+
+        } catch (e) {
+            console.error("Failed to load referral feed:", e);
+            container.innerHTML = '<p class="text-center text-red-500 text-sm">Could not load feed.</p>';
+        }
+    }
+
     window.shareOnTelegram = function() {
         const link = document.getElementById('referral-link-display').value;
         const text = "Join me on REWARD CLAIM and earn money! Use my link to sign up:";
@@ -1492,6 +1645,12 @@
         document.getElementById('modal-backdrop').addEventListener('click', closeModal);
         document.getElementById('btn-copy-uid').addEventListener('click', () => copyText(userData.tgChatId));
         document.getElementById('btn-exec-p2p').addEventListener('click', executeP2PTransfer);
+        
+        const verifyBtn = document.getElementById('btn-verify-referral');
+        if (verifyBtn) {
+            verifyBtn.addEventListener('click', verifyReferralCode);
+        }
+
         document.getElementById('p2p-amount').addEventListener('input', (e) => {
             const val = parseFloat(e.target.value) || 0;
             let feePercent = P2P_FEE_PERCENT;
