@@ -6,12 +6,12 @@
     <title>REWARD CLAIM</title>
 <meta name="monetag" content="a41ceca9ffc67edad031c0024f85ef59">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <script src="https://cdn.tailwindcss.com"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<!-- Device Fingerprinting Library -->
-<script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
 <script>
     tailwind.config = {
         darkMode: 'class',
@@ -434,7 +434,6 @@
                  <h4 class="font-bold text-cyan-300 mb-1">WITHDRAWAL INFO</h4>
                  <p class="text-xs text-cyan-200/70 leading-relaxed">
                     Withdrawals are processed within 24 hours. Minimum withdrawal is <span id="min-withdrawal-text" class="text-white font-bold">$5.00</span>.
-                    <strong class="text-white">A minimum of 2 referrals are required to withdraw.</strong>
                  </p>
             </div>
         </div>
@@ -620,20 +619,19 @@
     // --- CONFIGURATION ---
     let MIN_DEPOSIT_AMT = 10; 
     let MIN_WITHDRAWAL_AMT = 5;
-    const MIN_REFERRALS_FOR_WITHDRAWAL = 2; // New requirement
     let REFERRAL_BONUS = 1;
     let TASK_REWARD = 0.5;
     const P2P_FEE_PERCENT = 0.05; // 5%
     const MIN_P2P_AMT = 0.5;
     const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
     
-    // --- PREMIUM TIER CONFIGURATION (UPDATED NAMES) ---
+    // --- PREMIUM TIER CONFIGURATION (DEFAULTS) ---
     let premiumTiers = {
-        plan1: { name: 'Plan 1',    price: 1,  level: 1, duration: 30, taskLimit: 3, benefits: { noAds: true, feeReduction: 0.01 } },
-        plan2: { name: 'Plan 2',    price: 5,  level: 2, duration: 30, taskLimit: 5, benefits: { noAds: true, feeReduction: 0.02 } },
-        plan3: { name: 'Plan 3',    price: 15, level: 3, duration: 30, taskLimit: 8, benefits: { noAds: true, feeReduction: 0.03 } },
-        plan4: { name: 'Plan 4',    price: 30, level: 4, duration: 30, taskLimit: 10, benefits: { noAds: true, feeReduction: 0.04 } },
-        plan5: { name: 'Plan 5',    price: 50, level: 5, duration: 30, taskLimit: 15, benefits: { noAds: true, feeReduction: 0.05 } }
+        silver:    { name: 'Silver',    price: 1,  level: 1, duration: 30, taskLimit: 3, benefits: { noAds: true, feeReduction: 0.01 } },
+        palladium: { name: 'Palladium', price: 5,  level: 2, duration: 30, taskLimit: 5, benefits: { noAds: true, feeReduction: 0.02 } },
+        diamond:   { name: 'Diamond',   price: 15, level: 3, duration: 30, taskLimit: 8, benefits: { noAds: true, feeReduction: 0.03 } },
+        heroic:    { name: 'Heroic',    price: 30, level: 4, duration: 30, taskLimit: 10, benefits: { noAds: true, feeReduction: 0.04 } },
+        master:    { name: 'Master',    price: 50, level: 5, duration: 30, taskLimit: 15, benefits: { noAds: true, feeReduction: 0.05 } }
     };
 
     // FIREBASE CONFIG
@@ -686,31 +684,11 @@
     async function initSession() {
         const uid = String(tgSession.id);
         const userRef = doc(db, "users", uid);
-
-        // Device Fingerprinting to prevent multiple accounts
-        const fp = await FingerprintJS.load();
-        const result = await fp.get();
-        const deviceId = result.visitorId;
-        
         const snap = await getDoc(userRef);
 
         if (snap.exists()) {
             userData = snap.data();
-             // If user exists but has no device ID, add it
-            if (!userData.deviceId) {
-                await updateDoc(userRef, { deviceId: deviceId });
-                userData.deviceId = deviceId;
-            }
         } else {
-             // Check if another account already exists on this device before creating a new one
-            const deviceQuery = query(collection(db, "users"), where("deviceId", "==", deviceId));
-            const deviceSnap = await getDocs(deviceQuery);
-
-            if (!deviceSnap.empty) {
-                document.body.innerHTML = `<div class="flex items-center justify-center h-screen text-red-500 font-bold text-center p-4">You can only create one account per device.</div>`;
-                throw new Error("Duplicate device detected. Account creation blocked.");
-            }
-            
             userData = {
                 tgChatId: uid,
                 name: `${tgSession.first_name} ${tgSession.last_name || ''}`.trim(),
@@ -722,8 +700,7 @@
                 premiumExpiry: null,
                 lastNotificationCheck: null,
                 dailyCompletedTasks: [],
-                referredBy: null,
-                deviceId: deviceId // Store the device ID on creation
+                referredBy: null
             };
             await setDoc(userRef, userData);
         }
@@ -928,7 +905,7 @@
                     });
                 });
                 
-                logPublicActivity(`upgraded to ${tier.name}!`);
+                logPublicActivity(`upgraded to ${tier.name} Premium!`);
                 closeModal();
                 showToast(`Successfully upgraded to ${tier.name}!`, 'success');
                 
@@ -1170,29 +1147,13 @@
         }).join('');
     }
     
-    // --- WITHDRAWAL FUNCTIONS (New logic added) ---
+    // --- WITHDRAWAL FUNCTIONS (New) ---
     document.getElementById('btn-submit-withdrawal').addEventListener('click', async () => {
-        // Check for referral count before allowing withdrawal
-        const referralsQuery = query(collection(db, "users"), where("referredBy", "==", userData.tgChatId));
-        const referralsSnap = await getDocs(referralsQuery);
-        const referralCount = referralsSnap.size;
-
-        if (referralCount < MIN_REFERRALS_FOR_WITHDRAWAL) {
-            return showModal(`
-                <div class="text-center space-y-3">
-                    <i data-lucide="users" class="w-12 h-12 text-cyan-400 mx-auto"></i>
-                    <h3 class="text-lg font-bold text-white">Withdrawal Requirement</h3>
-                    <p class="text-slate-400">You must have at least ${MIN_REFERRALS_FOR_WITHDRAWAL} referrals to make a withdrawal. You currently have ${referralCount}.</p>
-                    <button onclick="closeModal(); switchView('view-refer');" class="action-btn w-full py-2 rounded-xl">Invite Friends</button>
-                </div>
-            `);
-        }
-        
         const method = document.getElementById('wd-method').value;
         const address = document.getElementById('wd-address').value.trim();
         const amount = parseFloat(document.getElementById('wd-amount').value);
 
-        if (!method || !address || !amount) return showToast("Please fill all fields", "warning");
+        if (!method || !address || isNaN(amount)) return showToast("Please fill all fields correctly", "warning");
 
         if (amount < MIN_WITHDRAWAL_AMT) return showToast(`Minimum withdrawal is $${MIN_WITHDRAWAL_AMT.toFixed(2)}`, "error");
         
@@ -1344,8 +1305,7 @@
         document.getElementById('referral-bonus-text').textContent = `$${REFERRAL_BONUS.toFixed(2)}`;
         document.getElementById('referral-claim-bonus-text').textContent = `$${REFERRAL_BONUS.toFixed(2)}`;
         
-        const botUsername = sysConfig.botUsername || "YourNexusBot";
-        const referralLink = `https://t.me/${botUsername}?start=${userData.tgChatId}`;
+        const referralLink = `http://t.me/Reward_Claimlbot/eaen?start=${userData.tgChatId}`;
         linkInput.value = referralLink;
         
         const inputSection = document.getElementById('referral-input-section');
