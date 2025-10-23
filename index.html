@@ -466,7 +466,6 @@
                  <img id="profile-user-img" src="" class="w-full h-full rounded-full bg-slate-900 object-cover p-1 hidden" alt="Profile">
                  <div id="profile-user-initials" class="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-4xl font-bold text-slate-500 border-4 border-slate-900"></div>
             </div>
-            <span id="profile-badge" class="absolute bottom-2 right-0 px-3 py-1 bg-slate-700 text-xs rounded-full border border-slate-600 font-semibold">FREE USER</span>
         </div>
         <h3 id="profile-name-display" class="text-2xl font-bold text-white text-center">Loading...</h3>
         <button id="btn-copy-uid" class="mt-2 text-xs text-slate-400 bg-slate-800/50 px-3 py-1 rounded-full flex items-center gap-1 hover:bg-slate-800 transition">
@@ -627,13 +626,13 @@
     const ADMIN_ID = "CUb4r6eg1RV6Ljkj5U2V1cSswng1";
     
     // --- PREMIUM TIER CONFIGURATION (DEFAULTS) ---
-    // Changed names to Plan 1, Plan 2, etc.
     let premiumTiers = {
-        plan1: { name: 'Plan 1', price: 1,  level: 1, duration: 30, taskLimit: 3, benefits: { feeReduction: 0.01, benefit_text_1: "Daily Task Limit: 3" } },
-        plan2: { name: 'Plan 2', price: 5,  level: 2, duration: 30, taskLimit: 5, benefits: { feeReduction: 0.02, benefit_text_1: "Daily Task Limit: 5" } },
-        plan3: { name: 'Plan 3', price: 15, level: 3, duration: 30, taskLimit: 8, benefits: { feeReduction: 0.03, benefit_text_1: "Daily Task Limit: 8" } },
-        plan4: { name: 'Plan 4', price: 30, level: 4, duration: 30, taskLimit: 10, benefits: { feeReduction: 0.04, benefit_text_1: "Daily Task Limit: 10" } },
-        plan5: { name: 'Plan 5', price: 50, level: 5, duration: 30, taskLimit: 15, benefits: { feeReduction: 0.05, benefit_text_1: "Daily Task Limit: 15" } }
+        plan0: { name: 'Plan 0', price: 0,  level: 0, duration: 3, taskLimit: 1, benefits: { feeReduction: 0, benefit_text_1: "Daily Task Limit: 1" } },
+        plan1: { name: 'Plan 1', price: 10,  level: 1, duration: 30, taskLimit: 2, benefits: { feeReduction: 0.01, benefit_text_1: "Daily Task Limit: 2" } },
+        plan2: { name: 'Plan 2', price: 20,  level: 2, duration: 30, taskLimit: 4, benefits: { feeReduction: 0.02, benefit_text_1: "Daily Task Limit: 4" } },
+        plan3: { name: 'Plan 3', price: 30, level: 3, duration: 30, taskLimit: 6, benefits: { feeReduction: 0.03, benefit_text_1: "Daily Task Limit: 6" } },
+        plan4: { name: 'Plan 4', price: 40, level: 4, duration: 30, taskLimit: 8, benefits: { feeReduction: 0.04, benefit_text_1: "Daily Task Limit: 8" } },
+        plan5: { name: 'Plan 5', price: 50, level: 5, duration: 30, taskLimit: 10, benefits: { feeReduction: 0.05, benefit_text_1: "Daily Task Limit: 10" } }
     };
 
     // FIREBASE CONFIG
@@ -778,24 +777,16 @@
         }
 
         const profileNameEl = document.getElementById('profile-name-display');
-        const profileBadgeEl = document.getElementById('profile-badge');
         
         const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
         
         if (userData.isPremium && userData.premiumTier && !isPremiumExpired) {
-            const tierName = premiumTiers[userData.premiumTier]?.name || 'Premium';
             profileNameEl.innerHTML = `${userData.name} <span class="text-yellow-400" title="Premium User">⭐</span>`;
-            profileBadgeEl.textContent = tierName.toUpperCase();
-            profileBadgeEl.classList.remove('bg-slate-700', 'border-slate-600');
-            profileBadgeEl.classList.add('bg-yellow-500/10', 'text-yellow-400', 'border', 'border-yellow-500/20');
         } else {
             if(userData.isPremium && isPremiumExpired){
                 updateDoc(doc(db, "users", userData.tgChatId), { isPremium: false, premiumTier: null, premiumExpiry: null });
             }
             profileNameEl.textContent = userData.name;
-            profileBadgeEl.textContent = 'FREE USER';
-            profileBadgeEl.classList.add('bg-slate-700', 'border-slate-600');
-            profileBadgeEl.classList.remove('bg-yellow-500/10', 'text-yellow-400', 'border', 'border-yellow-500/20');
         }
 
         document.getElementById('uid-display').textContent = userData.tgChatId;
@@ -843,7 +834,6 @@
         let html = tierKeys.map(key => {
             const tier = premiumTiers[key];
             
-            // Build benefits list dynamically from benefits object
             let benefitsList = [];
             for (const bKey in tier.benefits) {
                 if (bKey.startsWith('benefit_text_')) {
@@ -856,20 +846,37 @@
             }
             
             let buttonHtml;
-            if (tier.level < currentUserLevel) {
-                 buttonHtml = `<button class="action-btn w-full py-3 rounded-xl" disabled>Purchased</button>`;
-            } else if (tier.level === currentUserLevel) {
-                buttonHtml = `<button class="action-btn w-full py-3 rounded-xl" disabled>Current Plan</button>`;
+            const isCurrentPlan = tier.level === currentUserLevel && !isPremiumExpired;
+            
+            if (isCurrentPlan) {
+                buttonHtml = `<div id="countdown-${key}" class="text-center font-mono text-lg text-cyan-400 py-3"></div>`;
+                const countdownInterval = setInterval(() => {
+                    const now = new Date().getTime();
+                    const expiryTime = userData.premiumExpiry.toDate().getTime();
+                    const distance = expiryTime - now;
+
+                    if (distance < 0) {
+                        clearInterval(countdownInterval);
+                        document.getElementById(`countdown-${key}`).innerHTML = "EXPIRED";
+                        return;
+                    }
+
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    document.getElementById(`countdown-${key}`).innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                }, 1000);
+                activeTimers.push(countdownInterval);
+            } else if (tier.level < currentUserLevel && !isPremiumExpired) {
+                buttonHtml = `<button class="action-btn w-full py-3 rounded-xl" disabled>Activated</button>`;
             } else {
-                 if(currentUserLevel === tierKeys.length) { 
-                    buttonHtml = `<button class="action-btn w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500" disabled>MAX</button>`;
-                 } else {
-                    buttonHtml = `<button onclick="purchasePremium('${key}')" class="action-btn w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500">UPGRADE</button>`;
-                 }
+                buttonHtml = `<button onclick="purchasePremium('${key}')" class="action-btn w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500">UPGRADE</button>`;
             }
 
             return `
-            <div class="neo-card p-5 rounded-2xl ${tier.level === currentUserLevel ? 'border-yellow-400/50' : 'border-slate-700'}">
+            <div class="neo-card p-5 rounded-2xl ${isCurrentPlan ? 'border-yellow-400/50' : 'border-slate-700'}">
                 <h3 class="text-2xl font-bold text-yellow-400">${tier.name}</h3>
                 <p class="text-3xl font-bold my-3">$${tier.price} <span class="text-lg text-slate-400">/ ${tier.duration} days</span></p>
                 <ul class="text-sm text-slate-300 space-y-2 my-4 text-left pl-2">
