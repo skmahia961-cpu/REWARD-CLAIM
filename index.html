@@ -665,22 +665,6 @@
                 // For testing purposes, create a dummy session
                 tgSession = { id: '12345678', first_name: 'Test', last_name: 'User', username: 'testuser', photo_url: 'https://via.placeholder.com/100' };
             }
-            
-            // [MODIFIED] Multiple account prevention with improved UI
-            const storedUserId = localStorage.getItem('app_user_id');
-            if (storedUserId && storedUserId !== String(tgSession.id)) {
-                document.body.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-screen text-center p-4">
-                    <div class="neo-card p-8 rounded-2xl w-full max-w-sm">
-                        <i data-lucide="ban" class="w-16 h-16 mb-4 mx-auto text-red-500"></i>
-                        <h1 class="text-2xl font-bold text-red-400">Access Denied</h1>
-                        <p class="text-slate-400 text-sm font-normal mt-2">Multiple accounts on the same device are not permitted for security reasons.</p>
-                    </div>
-                </div>`;
-                lucide.createIcons();
-                return;
-            }
-            localStorage.setItem('app_user_id', String(tgSession.id));
 
             await loadConfig();
             await initSession();
