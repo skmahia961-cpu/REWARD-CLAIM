@@ -609,6 +609,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, runTransaction, onSnapshot, updateDoc, Timestamp, writeBatch } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     // --- CONFIGURATION ---
@@ -643,53 +644,62 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
     let tgSession = null;
     let userData = null;
     let sysConfig = {};
     let activeTimers = []; 
+    let firebaseUser = null;
 
     // --- CORE FUNCTIONS ---
     window.onload = async () => {
-        setTimeout(async () => {
-             try {
-                if(window.Telegram?.WebApp) {
-                    window.Telegram.WebApp.ready();
-                    window.Telegram.WebApp.expand();
-                    window.Telegram.WebApp.setHeaderColor('#0f172a');
-                    window.Telegram.WebApp.setBackgroundColor('#0f172a');
-                    if (window.Telegram.WebApp.initDataUnsafe?.user) {
-                        tgSession = window.Telegram.WebApp.initDataUnsafe.user;
-                    }
+        try {
+            if(window.Telegram?.WebApp) {
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand();
+                window.Telegram.WebApp.setHeaderColor('#0f172a');
+                window.Telegram.WebApp.setBackgroundColor('#0f172a');
+                if (window.Telegram.WebApp.initDataUnsafe?.user) {
+                    tgSession = window.Telegram.WebApp.initDataUnsafe.user;
                 }
-            } catch (e) { 
-                console.error("Telegram WebApp initialization failed:", e); 
             }
+        } catch (e) { 
+            console.error("Telegram WebApp initialization failed:", e); 
+        }
 
-            // [MODIFIED] Show error if Telegram session is not found, instead of using a test user.
-            if (!tgSession) {
-                document.body.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-screen text-center p-4">
-                    <div class="neo-card p-8 rounded-2xl w-full max-w-sm">
-                        <i data-lucide="alert-triangle" class="w-16 h-16 mb-4 mx-auto text-red-500"></i>
-                        <h1 class="text-2xl font-bold text-red-400">Authentication Failed</h1>
-                        <p class="text-slate-400 text-sm font-normal mt-2">Could not identify user. Please launch this app through the official Telegram bot.</p>
-                    </div>
-                </div>`;
-                lucide.createIcons();
-                return; // Stop execution
-            }
-
-            await loadConfig();
-            await initSession();
-            setupInteractions();
+        if (!tgSession) {
+            document.body.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-screen text-center p-4">
+                <div class="neo-card p-8 rounded-2xl w-full max-w-sm">
+                    <i data-lucide="alert-triangle" class="w-16 h-16 mb-4 mx-auto text-red-500"></i>
+                    <h1 class="text-2xl font-bold text-red-400">Authentication Failed</h1>
+                    <p class="text-slate-400 text-sm font-normal mt-2">Could not identify user. Please launch this app through the official Telegram bot.</p>
+                </div>
+            </div>`;
             lucide.createIcons();
-            
-            initLiveWithdrawalFeed();
+            return;
+        }
 
-            document.getElementById('splash-screen').style.opacity = '0';
-            setTimeout(() => document.getElementById('splash-screen').remove(), 500);
-        }, 1500);
+        try {
+            const userCredential = await signInAnonymously(auth);
+            firebaseUser = userCredential.user;
+            await initializeAppLogic();
+        } catch (error) {
+            console.error("Firebase Anonymous Auth Failed:", error);
+            document.getElementById('loading-msg').innerText = 'Connection Error. Please restart.';
+        }
     };
+
+    async function initializeAppLogic() {
+        await loadConfig();
+        await initSession();
+        setupInteractions();
+        lucide.createIcons();
+        initLiveWithdrawalFeed();
+
+        document.getElementById('splash-screen').style.opacity = '0';
+        setTimeout(() => document.getElementById('splash-screen').remove(), 500);
+    }
 
     async function initSession() {
         const uid = String(tgSession.id);
@@ -698,15 +708,20 @@
 
         if (snap.exists()) {
             userData = snap.data();
+            if (!userData.firebaseUid || userData.firebaseUid !== firebaseUser.uid) {
+                await updateDoc(userRef, { firebaseUid: firebaseUser.uid });
+                userData.firebaseUid = firebaseUser.uid;
+            }
         } else {
             userData = {
                 tgChatId: uid,
+                firebaseUid: firebaseUser.uid,
                 name: `${tgSession.first_name} ${tgSession.last_name || ''}`.trim(),
                 username: tgSession.username || null,
                 balance: 0,
                 createdAt: serverTimestamp(),
                 isPremium: false,
-                premiumTier: 'plan0', // Default to free plan
+                premiumTier: 'plan0',
                 premiumExpiry: null,
                 lastNotificationCheck: null,
                 dailyCompletedTasks: [],
@@ -734,8 +749,6 @@
                 const configData = configSnap.data();
                 sysConfig = configData;
 
-                // [USER REQUEST] The following lines ensure that settings from Firebase `config/main` are used.
-                // If a value is not in Firebase, it uses the default from above.
                 MIN_DEPOSIT_AMT = sysConfig.minDeposit || 10;
                 MIN_WITHDRAWAL_AMT = sysConfig.minWithdrawal || 5;
                 MIN_REFERRALS_FOR_WITHDRAWAL = sysConfig.minReferralsForWithdrawal || 2;
@@ -788,7 +801,6 @@
         const profileNameEl = document.getElementById('profile-name-display');
         const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
         
-        // [MODIFIED] Replaced star with a blue verified badge SVG
         if (userData.isPremium && userData.premiumTier !== 'plan0' && !isPremiumExpired) {
              profileNameEl.innerHTML = `
                 <span>${userData.name}</span>
@@ -806,7 +818,7 @@
     }
     
     function checkFreeTrialExpiry() {
-        if (!userData || !userData.createdAt || userData.premiumTier !== 'plan0') {
+        if (!userData || !userData.createdAt || userData.premiumTier !== 'plan0' || !(userData.createdAt.toDate)) {
             return;
         }
 
@@ -828,7 +840,6 @@
         }
     }
 
-    // --- VIEW CONTROLLER ---
     window.switchView = function(viewId) {
         activeTimers.forEach(timerId => clearInterval(timerId));
         activeTimers = [];
@@ -860,7 +871,6 @@
         window.scrollTo(0,0);
     }
     
-    // --- PREMIUM TIER FUNCTIONS ---
     function loadPremiumTiers() {
         const container = document.getElementById('premium-tiers-container');
         const tierKeys = Object.keys(premiumTiers).sort((a,b) => premiumTiers[a].level - premiumTiers[b].level);
@@ -988,9 +998,8 @@
         };
     }
 
-    // --- TASK SYSTEM FUNCTIONS ---
     function loadTasksView() {
-        if (userData.premiumTier === 'plan0' && userData.createdAt) {
+        if (userData.premiumTier === 'plan0' && userData.createdAt && userData.createdAt.toDate) {
             const accountCreationDate = userData.createdAt.toDate();
             const trialEndDate = new Date(accountCreationDate);
             trialEndDate.setDate(trialEndDate.getDate() + premiumTiers.plan0.duration);
@@ -1005,8 +1014,6 @@
         window.startTask = startTask;
 
         const taskReward = TASK_REWARD;
-        // [USER REQUEST] The task link is now dynamically controlled from Firebase config.
-        // To change it, update the 'taskLink' field in the 'config/main' document in Firestore.
         const taskLink = sysConfig.taskLink || "https://adexora.my.id/dl/AqMmpgSA5cUt";
         
         let taskLimit = premiumTiers.plan0.taskLimit;
@@ -1169,7 +1176,6 @@
         }
     }
 
-    // --- DEPOSIT FUNCTIONS ---
     document.getElementById('btn-submit-deposit').addEventListener('click', async () => {
         const method = document.getElementById('dep-method').value;
         const amount = parseFloat(document.getElementById('dep-amount').value);
@@ -1183,8 +1189,14 @@
 
         try {
             await addDoc(collection(db, "deposits"), {
-                userId: userData.tgChatId, userName: userData.name, method, amount, senderNumber: sender,
-                status: "pending", requestedAt: serverTimestamp()
+                userId: userData.tgChatId,
+                firebaseUid: userData.firebaseUid,
+                userName: userData.name, 
+                method, 
+                amount, 
+                senderNumber: sender,
+                status: "pending", 
+                requestedAt: serverTimestamp()
             });
             
             showModal(`<div class="text-center space-y-3"><i data-lucide="check-circle" class="w-12 h-12 text-emerald-500 mx-auto"></i><h3 class="text-lg font-bold text-white">Submitted!</h3><p class="text-slate-400">Your deposit of $${amount} is under review. It typically takes 5-30 minutes.</p><button onclick="closeModal()" class="action-btn w-full py-2 rounded-xl">OK</button></div>`);
@@ -1224,7 +1236,6 @@
         }).join('');
     }
     
-    // --- WITHDRAWAL FUNCTIONS ---
     document.getElementById('btn-submit-withdrawal').addEventListener('click', async () => {
         const method = document.getElementById('wd-method').value;
         const address = document.getElementById('wd-address').value.trim();
@@ -1258,6 +1269,7 @@
                 const withdrawalRef = doc(collection(db, "withdrawals"));
                 transaction.set(withdrawalRef, {
                     userId: userData.tgChatId,
+                    firebaseUid: userData.firebaseUid,
                     userName: userData.name,
                     method,
                     address,
@@ -1306,8 +1318,6 @@
         }).join('');
     }
 
-
-    // --- LIVE WITHDRAWAL FEED ---
     async function initLiveWithdrawalFeed() {
         const container = document.getElementById('withdrawal-feed-container');
         if (!container) return;
@@ -1375,7 +1385,6 @@
         }
     }
     
-    // --- REFERRAL & SHARE FUNCTIONS ---
     async function loadReferralView() {
         const linkInput = document.getElementById('referral-link-display');
         const refCountEl = document.getElementById('ref-stat-count');
@@ -1384,7 +1393,7 @@
         document.getElementById('referral-bonus-text').textContent = `$${REFERRAL_BONUS.toFixed(2)}`;
         document.getElementById('referral-claim-bonus-text').textContent = `$${REFERRAL_BONUS.toFixed(2)}`;
         
-        const referralLink = `http://t.me/Reward_Claimlbot/eaen?start=${userData.tgChatId}`;
+        const referralLink = `https://t.me/Reward_Claimlbot/eaen?start=${userData.tgChatId}`;
         linkInput.value = referralLink;
         
         const inputSection = document.getElementById('referral-input-section');
@@ -1566,16 +1575,7 @@
         }
     }
 
-
-    // --- NOTIFICATION & LIVE FEED FUNCTIONS ---
     async function checkNewNotifications() {
-        // [USER REQUEST] This notification system requires manual creation of notification documents in Firestore.
-        // To make a notification appear for a user, create a new document in the 'notifications' collection.
-        // The document must contain:
-        // - 'userId': The Telegram user ID (string) of the recipient.
-        // - 'title': The notification title (string).
-        // - 'message': The notification body (string).
-        // - 'createdAt': A Firestore server timestamp.
         const lastCheck = userData.lastNotificationCheck || Timestamp.fromDate(new Date(0));
         const q = query(
             collection(db, "notifications"), 
@@ -1636,7 +1636,6 @@
         }
     }
 
-    // --- HELPER & UI FUNCTIONS ---
     window.openPremiumPage = () => { closeSidePanel(); switchView('view-premium'); };
     window.openSupport = () => { 
         const supportLink = sysConfig.supportLink || "https://t.me/sarahmartinBTC";
@@ -1701,7 +1700,6 @@
         });
     }
 
-    // --- P2P TRANSFER ---
     async function executeP2PTransfer() {
         const recipientUid = document.getElementById('p2p-uid').value.trim();
         const amount = parseFloat(document.getElementById('p2p-amount').value);
@@ -1760,7 +1758,6 @@
         }
     }
 
-    // --- EVENT LISTENERS SETUP ---
     function setupInteractions() {
         document.querySelectorAll('.dock-item').forEach(item => {
             item.addEventListener('click', () => switchView(item.dataset.target));
