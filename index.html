@@ -6,9 +6,7 @@
     <title>REWARD CLAIM</title>
 <meta name="monetag" content="a41ceca9ffc67edad031c0024f85ef59">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
 <script src="https://cdn.tailwindcss.com"></script>
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -214,7 +212,7 @@
         </button>
     </div>
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800 bg-slate-900">
-        <p class="text-center text-[10px] text-slate-600 tracking-widest">REWARD v4.8.0 encrypted</p>
+        <p class="text-center text-[10px] text-slate-600 tracking-widest">REWARD v4.8.1 encrypted</p>
     </div>
 </aside>
 
@@ -267,31 +265,31 @@
         </div>
     </div>
 
-    <!-- Main Balance Card -->
-    <div class="neo-card p-6 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
-        <p class="text-slate-400 font-medium mb-2 flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> Available Balance</p>
-        <h2 id="main-balance-display" class="text-4xl font-bold text-white tracking-tight mb-6">$0.00</h2>
-        <div class="grid grid-cols-2 gap-3">
-            <button onclick="switchView('view-deposit')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i> DEPOSIT
-            </button>
-             <button onclick="switchView('view-withdrawal')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500">
-                <i data-lucide="arrow-up-circle" class="w-5 h-5"></i> WITHDRAW
-            </button>
-        </div>
+<!-- Main Balance Card -->
+<div class="neo-card p-6 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
+    <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
+    <p class="text-slate-400 font-medium mb-2 flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> Available Balance</p>
+    <h2 id="main-balance-display" class="text-4xl font-bold text-white tracking-tight mb-6">$0.00</h2>
+    <div class="grid grid-cols-2 gap-3">
+        <button onclick="switchView('view-deposit')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i> DEPOSIT
+        </button>
+         <button onclick="switchView('view-withdrawal')" class="action-btn py-3 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500">
+            <i data-lucide="arrow-up-circle" class="w-5 h-5"></i> WITHDRAW
+        </button>
     </div>
+</div>
 
-    <!-- Live Withdrawal Feed -->
-    <div id="live-withdrawal-feed" class="space-y-3">
-        <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
-            <i data-lucide="arrow-up-right" class="w-5 h-5 text-cyan-400"></i>
-            Live Withdrawals
-        </h3>
-        <div id="withdrawal-feed-container" class="h-48 overflow-hidden relative space-y-3">
-            <!-- Feed items will be injected here -->
-        </div>
+<!-- Live Withdrawal Feed -->
+<div id="live-withdrawal-feed" class="space-y-3">
+    <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
+        <i data-lucide="arrow-up-right" class="w-5 h-5 text-cyan-400"></i>
+        Live Withdrawals
+    </h3>
+    <div id="withdrawal-feed-container" class="h-48 overflow-hidden relative space-y-3">
+        <!-- Feed items will be injected here -->
     </div>
+</div>
 </div>
 
 <!-- TASKS VIEW -->
@@ -317,58 +315,57 @@
         <button id="btn-verify-referral" class="action-btn w-full py-3 rounded-xl">VERIFY & CLAIM <span id="referral-claim-bonus-text">$1.00</span></button>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 text-center">
-        <div class="neo-card p-4 rounded-xl">
-            <p class="text-sm text-slate-400">Total Referrals</p>
-            <p id="ref-stat-count" class="text-2xl font-bold text-white">0</p>
-        </div>
-        <div class="neo-card p-4 rounded-xl">
-            <p class="text-sm text-slate-400">Referral Earnings</p>
-            <p id="ref-stat-earnings" class="text-2xl font-bold text-emerald-400">$0.00</p>
-        </div>
+<div class="grid grid-cols-2 gap-4 text-center">
+    <div class="neo-card p-4 rounded-xl">
+        <p class="text-sm text-slate-400">Total Referrals</p>
+        <p id="ref-stat-count" class="text-2xl font-bold text-white">0</p>
     </div>
-    
-    <div class="neo-card p-5 rounded-2xl text-center">
-        <h3 class="font-semibold text-slate-300 mb-2">Your Unique Referral Link</h3>
-        <div class="relative">
-            <input type="text" id="referral-link-display" readonly class="neo-input w-full p-3 rounded-xl text-center bg-slate-900 font-mono text-sm" value="Loading...">
-            <button onclick="copyText(document.getElementById('referral-link-display').value)" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-slate-700">
-                <i data-lucide="copy" class="w-4 h-4 text-slate-400"></i>
-            </button>
-        </div>
-    </div>
-    
-    <div class="grid grid-cols-2 gap-4">
-        <button onclick="shareOnTelegram()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#2AABEE] text-white font-semibold">
-            <i data-lucide="send" class="w-5 h-5"></i> Telegram
-        </button>
-         <button onclick="shareLive()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-purple-600 text-white font-semibold">
-            <i data-lucide="share-2" class="w-5 h-5"></i> Share Live
-        </button>
-    </div>
-
-    <div class="neo-card p-5 rounded-xl text-left">
-        <h3 class="font-semibold text-slate-200 mb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-indigo-400"></i> How it Works:</h3>
-        <ul class="space-y-3 text-sm text-slate-400">
-            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Enter a friend's code once to get a bonus for both of you.</span></li>
-            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Share your unique link with friends.</span></li>
-            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>You earn a commission on their every deposit, forever.</span></li>
-            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>The more friends you invite, the more you earn passively.</span></li>
-        </ul>
-    </div>
-    
-    <!-- Live Referral Feed -->
-    <div id="live-referral-feed" class="space-y-3">
-        <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
-            <i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>
-            Live Referrals
-        </h3>
-        <div id="referral-feed-container" class="h-48 overflow-hidden relative space-y-3">
-            <!-- Feed items will be injected here -->
-        </div>
+    <div class="neo-card p-4 rounded-xl">
+        <p class="text-sm text-slate-400">Referral Earnings</p>
+        <p id="ref-stat-earnings" class="text-2xl font-bold text-emerald-400">$0.00</p>
     </div>
 </div>
 
+<div class="neo-card p-5 rounded-2xl text-center">
+    <h3 class="font-semibold text-slate-300 mb-2">Your Unique Referral Link</h3>
+    <div class="relative">
+        <input type="text" id="referral-link-display" readonly class="neo-input w-full p-3 rounded-xl text-center bg-slate-900 font-mono text-sm" value="Loading...">
+        <button onclick="copyText(document.getElementById('referral-link-display').value)" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-slate-700">
+            <i data-lucide="copy" class="w-4 h-4 text-slate-400"></i>
+        </button>
+    </div>
+</div>
+
+<div class="grid grid-cols-2 gap-4">
+    <button onclick="shareOnTelegram()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#2AABEE] text-white font-semibold">
+        <i data-lucide="send" class="w-5 h-5"></i> Telegram
+    </button>
+     <button onclick="shareLive()" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-purple-600 text-white font-semibold">
+        <i data-lucide="share-2" class="w-5 h-5"></i> Share Live
+    </button>
+</div>
+
+<div class="neo-card p-5 rounded-xl text-left">
+    <h3 class="font-semibold text-slate-200 mb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-indigo-400"></i> How it Works:</h3>
+    <ul class="space-y-3 text-sm text-slate-400">
+        <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Enter a friend's code once to get a bonus for both of you.</span></li>
+        <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>Share your unique link with friends.</span></li>
+        <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>You earn a commission on their every deposit, forever.</span></li>
+        <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-1 shrink-0"></i> <span>The more friends you invite, the more you earn passively.</span></li>
+    </ul>
+</div>
+
+<!-- Live Referral Feed -->
+<div id="live-referral-feed" class="space-y-3">
+    <h3 class="text-lg font-semibold text-slate-300 px-2 flex items-center gap-2">
+        <i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>
+        Live Referrals
+    </h3>
+    <div id="referral-feed-container" class="h-48 overflow-hidden relative space-y-3">
+        <!-- Feed items will be injected here -->
+    </div>
+</div>
+</div>
 
 <!-- DEPOSIT VIEW -->
 <div id="view-deposit" class="app-view space-y-6">
@@ -438,25 +435,24 @@
             </div>
         </div>
     </div>
-    
-    <div class="neo-card p-5 rounded-2xl space-y-4">
-        <h3 class="font-semibold text-slate-200">Enter Withdrawal Details</h3>
-        <input type="hidden" id="wd-method" value="">
-        <button id="wd-method-selector" class="neo-input w-full p-3 rounded-xl text-left text-slate-400 flex justify-between items-center">
-            <span id="wd-method-text">Select Withdrawal Method</span>
-            <i data-lucide="chevron-down" class="w-5 h-5"></i>
-        </button>
-        <input type="text" id="wd-address" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
-        <input type="number" id="wd-amount" placeholder="Amount to Withdraw (USD)" class="neo-input w-full p-3 rounded-xl">
-        
-        <button id="btn-submit-withdrawal" class="action-btn w-full py-4 rounded-xl text-lg bg-gradient-to-r from-cyan-500 to-blue-500 shadow-lg shadow-cyan-500/20">SUBMIT WITHDRAWAL</button>
-    </div>
-    <div class="pt-4">
-        <h3 class="text-sm font-bold text-slate-400 mb-3 px-2">Withdrawal History</h3>
-        <div id="withdrawal-history-log" class="space-y-2"></div>
-    </div>
-</div>
 
+<div class="neo-card p-5 rounded-2xl space-y-4">
+    <h3 class="font-semibold text-slate-200">Enter Withdrawal Details</h3>
+    <input type="hidden" id="wd-method" value="">
+    <button id="wd-method-selector" class="neo-input w-full p-3 rounded-xl text-left text-slate-400 flex justify-between items-center">
+        <span id="wd-method-text">Select Withdrawal Method</span>
+        <i data-lucide="chevron-down" class="w-5 h-5"></i>
+    </button>
+    <input type="text" id="wd-address" placeholder="Your Wallet Address / Binance ID" class="neo-input w-full p-3 rounded-xl">
+    <input type="number" id="wd-amount" placeholder="Amount to Withdraw (USD)" class="neo-input w-full p-3 rounded-xl">
+    
+    <button id="btn-submit-withdrawal" class="action-btn w-full py-4 rounded-xl text-lg bg-gradient-to-r from-cyan-500 to-blue-500 shadow-lg shadow-cyan-500/20">SUBMIT WITHDRAWAL</button>
+</div>
+<div class="pt-4">
+    <h3 class="text-sm font-bold text-slate-400 mb-3 px-2">Withdrawal History</h3>
+    <div id="withdrawal-history-log" class="space-y-2"></div>
+</div>
+</div>
 
 <!-- PROFILE VIEW -->
 <div id="view-profile" class="app-view space-y-6">
@@ -618,7 +614,7 @@
     // --- CONFIGURATION ---
     let MIN_DEPOSIT_AMT = 10; 
     let MIN_WITHDRAWAL_AMT = 5;
-    let MIN_REFERRALS_FOR_WITHDRAWAL = 2; // New: Default referral requirement
+    let MIN_REFERRALS_FOR_WITHDRAWAL = 2;
     let REFERRAL_BONUS = 1;
     let TASK_REWARD = 0.5;
     const P2P_FEE_PERCENT = 0.05; // 5%
@@ -627,7 +623,7 @@
     
     // --- PREMIUM TIER CONFIGURATION (DEFAULTS) ---
     let premiumTiers = {
-        plan0: { name: 'Plan 0', price: 0,  level: 0, duration: 3, taskLimit: 1, benefits: { feeReduction: 0, benefit_text_1: "Daily Task Limit: 1" } },
+        plan0: { name: 'Free', price: 0,  level: 0, duration: 3, taskLimit: 1, benefits: { feeReduction: 0, benefit_text_1: "Daily Task Limit: 1" } },
         plan1: { name: 'Plan 1', price: 10,  level: 1, duration: 30, taskLimit: 2, benefits: { feeReduction: 0.01, benefit_text_1: "Daily Task Limit: 2" } },
         plan2: { name: 'Plan 2', price: 20,  level: 2, duration: 30, taskLimit: 4, benefits: { feeReduction: 0.02, benefit_text_1: "Daily Task Limit: 4" } },
         plan3: { name: 'Plan 3', price: 30, level: 3, duration: 30, taskLimit: 6, benefits: { feeReduction: 0.03, benefit_text_1: "Daily Task Limit: 6" } },
@@ -670,6 +666,15 @@
                 tgSession = { id: '12345678', first_name: 'Test', last_name: 'User', username: 'testuser', photo_url: 'https://via.placeholder.com/100' };
             }
 
+            // [NEW] Multiple account prevention
+            const storedUserId = localStorage.getItem('app_user_id');
+            if (storedUserId && storedUserId !== String(tgSession.id)) {
+                document.body.innerHTML = `<div class="flex flex-col items-center justify-center h-screen text-red-500 font-bold"><i data-lucide="ban" class="w-16 h-16 mb-4"></i><h1 class="text-2xl">Access Denied</h1><p class="text-slate-400 text-sm font-normal mt-2">Multiple accounts on the same device are not permitted.</p></div>`;
+                lucide.createIcons();
+                return;
+            }
+            localStorage.setItem('app_user_id', String(tgSession.id));
+
             await loadConfig();
             await initSession();
             setupInteractions();
@@ -697,7 +702,7 @@
                 balance: 0,
                 createdAt: serverTimestamp(),
                 isPremium: false,
-                premiumTier: null,
+                premiumTier: 'plan0', // Default to free plan
                 premiumExpiry: null,
                 lastNotificationCheck: null,
                 dailyCompletedTasks: [],
@@ -708,12 +713,13 @@
 
         if(userData.isBlocked) {
             document.body.innerHTML = '<div class="flex items-center justify-center h-screen text-red-500 font-bold">ACCOUNT SUSPENDED</div>';
-            throw new Error("Blocked");
+            throw new Error("User account is blocked.");
         }
         
         updateDashboard();
         initRealtimeListeners();
         checkNewNotifications();
+        checkFreeTrialExpiry(); // [NEW] Check if the free trial has expired
     }
 
     async function loadConfig() {
@@ -724,7 +730,6 @@
                 const configData = configSnap.data();
                 sysConfig = configData;
 
-                // Set values from Firebase config with defaults
                 MIN_DEPOSIT_AMT = sysConfig.minDeposit || 10;
                 MIN_WITHDRAWAL_AMT = sysConfig.minWithdrawal || 5;
                 MIN_REFERRALS_FOR_WITHDRAWAL = sysConfig.minReferralsForWithdrawal || 2;
@@ -736,7 +741,6 @@
                 const withdrawalInfoText = `Withdrawals are processed within 24 hours. Minimum withdrawal is <span class="text-white font-bold">$${MIN_WITHDRAWAL_AMT.toFixed(2)}</span>. You need at least <span class="text-white font-bold">${MIN_REFERRALS_FOR_WITHDRAWAL}</span> referrals to withdraw.`;
                 document.getElementById('withdrawal-info-text').innerHTML = withdrawalInfoText;
                 
-                // New: Load premium tier details from Firebase
                 if(configData.premiumTiers) {
                      Object.keys(premiumTiers).forEach(key => {
                         if(configData.premiumTiers[key]) {
@@ -744,7 +748,6 @@
                             premiumTiers[key].price = remoteTier.price !== undefined ? remoteTier.price : premiumTiers[key].price;
                             premiumTiers[key].duration = remoteTier.duration !== undefined ? remoteTier.duration : premiumTiers[key].duration;
                             premiumTiers[key].taskLimit = remoteTier.taskLimit !== undefined ? remoteTier.taskLimit : premiumTiers[key].taskLimit;
-                            // Load benefits from Firebase
                             if(remoteTier.benefits) {
                                 premiumTiers[key].benefits = {...premiumTiers[key].benefits, ...remoteTier.benefits};
                             }
@@ -777,20 +780,48 @@
         }
 
         const profileNameEl = document.getElementById('profile-name-display');
-        
         const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
         
-        if (userData.isPremium && userData.premiumTier && !isPremiumExpired) {
+        // Treat free plan as non-premium for display
+        if (userData.isPremium && userData.premiumTier !== 'plan0' && !isPremiumExpired) {
             profileNameEl.innerHTML = `${userData.name} <span class="text-yellow-400" title="Premium User">⭐</span>`;
         } else {
             if(userData.isPremium && isPremiumExpired){
-                updateDoc(doc(db, "users", userData.tgChatId), { isPremium: false, premiumTier: null, premiumExpiry: null });
+                // Reset premium status if it has expired
+                updateDoc(doc(db, "users", userData.tgChatId), { isPremium: false, premiumTier: 'plan0', premiumExpiry: null });
             }
             profileNameEl.textContent = userData.name;
         }
 
         document.getElementById('uid-display').textContent = userData.tgChatId;
     }
+    
+    // [NEW] Function to check if the free trial period has expired
+    function checkFreeTrialExpiry() {
+        if (!userData || !userData.createdAt || userData.premiumTier !== 'plan0') {
+            return;
+        }
+
+        const accountCreationDate = userData.createdAt.toDate();
+        const trialEndDate = new Date(accountCreationDate);
+        const trialDurationDays = premiumTiers.plan0.duration;
+        trialEndDate.setDate(trialEndDate.getDate() + trialDurationDays);
+
+        if (new Date() > trialEndDate) {
+            // Trial has expired
+            const modalHTML = `
+                <div class="text-center space-y-4">
+                    <i data-lucide="clock" class="w-12 h-12 mx-auto text-yellow-400"></i>
+                    <h3 class="text-xl font-bold">Free Trial Ended</h3>
+                    <p class="text-slate-300">Your ${trialDurationDays}-day free trial has expired. Please upgrade to a premium plan to continue earning rewards.</p>
+                    <button onclick="switchView('view-premium'); closeModal();" class="action-btn w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500">View Plans</button>
+                </div>
+            `;
+            // Disable the close button on the modal for force upgrade
+            showModal(modalHTML, false); 
+        }
+    }
+
 
     // --- VIEW CONTROLLER ---
     window.switchView = function(viewId) {
@@ -833,6 +864,7 @@
         
         let html = tierKeys.map(key => {
             const tier = premiumTiers[key];
+            if (tier.level === 0) return ''; // Don't show the Free plan as a purchasable option
             
             let benefitsList = [];
             for (const bKey in tier.benefits) {
@@ -849,26 +881,30 @@
             const isCurrentPlan = tier.level === currentUserLevel && !isPremiumExpired;
             
             if (isCurrentPlan) {
-                buttonHtml = `<div id="countdown-${key}" class="text-center font-mono text-lg text-cyan-400 py-3"></div>`;
-                const countdownInterval = setInterval(() => {
-                    const now = new Date().getTime();
-                    const expiryTime = userData.premiumExpiry.toDate().getTime();
-                    const distance = expiryTime - now;
+                buttonHtml = `<div class="text-center font-semibold text-lg text-green-400 py-3">CURRENT PLAN</div>`;
+                if(userData.premiumExpiry) {
+                    const expiryElId = `countdown-${key}`;
+                    buttonHtml += `<div id="${expiryElId}" class="text-center font-mono text-sm text-cyan-400 pb-3"></div>`;
+                    const countdownInterval = setInterval(() => {
+                        const now = new Date().getTime();
+                        const expiryTime = userData.premiumExpiry.toDate().getTime();
+                        const distance = expiryTime - now;
 
-                    if (distance < 0) {
-                        clearInterval(countdownInterval);
-                        document.getElementById(`countdown-${key}`).innerHTML = "EXPIRED";
-                        return;
-                    }
+                        if (distance < 0) {
+                            clearInterval(countdownInterval);
+                            document.getElementById(expiryElId).innerHTML = "EXPIRED";
+                            return;
+                        }
 
-                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                    document.getElementById(`countdown-${key}`).innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-                }, 1000);
-                activeTimers.push(countdownInterval);
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        
+                        document.getElementById(expiryElId).innerHTML = `Expires in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+                    }, 1000);
+                    activeTimers.push(countdownInterval);
+                }
             } else if (tier.level < currentUserLevel && !isPremiumExpired) {
                 buttonHtml = `<button class="action-btn w-full py-3 rounded-xl" disabled>Activated</button>`;
             } else {
@@ -930,6 +966,7 @@
                 closeModal();
                 showToast(`Successfully upgraded to ${tier.name}!`, 'success');
                 
+                // Manually update local user data to reflect changes immediately
                 userData.balance -= tier.price;
                 userData.isPremium = true;
                 userData.premiumTier = tierKey;
@@ -949,13 +986,25 @@
 
     // --- TASK SYSTEM FUNCTIONS ---
     function loadTasksView() {
+        // [NEW] Check for trial expiry before loading tasks
+        if (userData.premiumTier === 'plan0' && userData.createdAt) {
+            const accountCreationDate = userData.createdAt.toDate();
+            const trialEndDate = new Date(accountCreationDate);
+            trialEndDate.setDate(trialEndDate.getDate() + premiumTiers.plan0.duration);
+            if (new Date() > trialEndDate) {
+                checkFreeTrialExpiry(); // Show the expired modal
+                document.getElementById('task-list').innerHTML = ''; // Clear tasks
+                return;
+            }
+        }
+        
         const taskListContainer = document.getElementById('task-list');
         window.startTask = startTask;
 
         const taskReward = TASK_REWARD;
         const taskLink = sysConfig.taskLink || "https://otieu.com/4/10076799";
         
-        let taskLimit = sysConfig.freeUserTaskLimit || 1;
+        let taskLimit = premiumTiers.plan0.taskLimit; // Default to free plan limit
         const isPremiumExpired = userData.premiumExpiry && userData.premiumExpiry.toDate() < new Date();
         
         if (userData.isPremium && userData.premiumTier && !isPremiumExpired) {
@@ -1018,11 +1067,11 @@
                              <i data-lucide="arrow-up-right-square" class="w-6 h-6 text-indigo-400"></i>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-md text-slate-200">Task update</h3>
+                            <h3 class="font-semibold text-md text-slate-200">Tasks Reset In</h3>
                             <p id="new-task-countdown" class="text-cyan-400 font-bold text-sm font-mono">--:--:--</p>
                         </div>
                     </div>
-                    <button onclick="switchView('view-premium')" class="task-update-btn px-5 py-2 rounded-lg text-sm">UPDATE</button>
+                    <button onclick="switchView('view-premium')" class="task-update-btn px-5 py-2 rounded-lg text-sm">GET MORE</button>
                 </div>`;
             taskListContainer.innerHTML += newTasksCardHTML;
             startTaskCountdown();
@@ -1095,7 +1144,10 @@
                 const currentData = userDoc.data();
                 const newBalance = currentData.balance + task.reward;
                 const newTaskEntry = { taskId: task.id, completedAt: Timestamp.fromDate(new Date()) };
-                const updatedCompletedTasks = [...(currentData.dailyCompletedTasks || []), newTaskEntry];
+                
+                // Ensure dailyCompletedTasks is an array before spreading
+                const existingTasks = Array.isArray(currentData.dailyCompletedTasks) ? currentData.dailyCompletedTasks : [];
+                const updatedCompletedTasks = [...existingTasks, newTaskEntry];
 
                 transaction.update(userRef, {
                     balance: newBalance,
@@ -1168,7 +1220,7 @@
         }).join('');
     }
     
-    // --- WITHDRAWAL FUNCTIONS (New) ---
+    // --- WITHDRAWAL FUNCTIONS ---
     document.getElementById('btn-submit-withdrawal').addEventListener('click', async () => {
         const method = document.getElementById('wd-method').value;
         const address = document.getElementById('wd-address').value.trim();
@@ -1197,11 +1249,9 @@
                     throw new Error("Transaction failed: Insufficient funds.");
                 }
 
-                // Deduct balance immediately
                 const newBalance = userDoc.data().balance - amount;
                 transaction.update(userRef, { balance: newBalance });
 
-                // Create withdrawal request
                 const withdrawalRef = doc(collection(db, "withdrawals"));
                 transaction.set(withdrawalRef, {
                     userId: userData.tgChatId,
@@ -1398,18 +1448,15 @@
                 const currentUserData = currentUserDoc.data();
                 if (currentUserData.referredBy) throw new Error("You have already claimed a referral bonus.");
 
-                // Update current user
                 transaction.update(currentUserRef, {
                     balance: currentUserData.balance + rewardAmount,
                     referredBy: code
                 });
 
-                // Update referrer
                 transaction.update(referrerRef, {
                     balance: referrerDoc.data().balance + rewardAmount
                 });
 
-                // Log the referral for the live feed
                 const logRef = doc(collection(db, "referral_logs"));
                 transaction.set(logRef, {
                     referrerId: code,
@@ -1520,7 +1567,9 @@
     // --- NOTIFICATION & LIVE FEED FUNCTIONS ---
     async function checkNewNotifications() {
         const lastCheck = userData.lastNotificationCheck || Timestamp.fromDate(new Date(0));
-        // Corrected Query: Filter notifications for the current user
+        // This query correctly filters notifications for the currently logged-in user.
+        // For this to work, notifications must be created in the 'notifications' collection
+        // with a 'userId' field matching the user's tgChatId.
         const q = query(
             collection(db, "notifications"), 
             where("userId", "==", userData.tgChatId),
@@ -1534,7 +1583,6 @@
     }
 
     async function loadNotifications() {
-        // Corrected Query: Load notifications specifically for the current user
         const q = query(
             collection(db, "notifications"), 
             where("userId", "==", userData.tgChatId),
@@ -1595,14 +1643,18 @@
         document.getElementById('main-side-panel').classList.remove('open');
         document.getElementById('panel-overlay').classList.remove('open');
     };
-    window.showModal = (html) => {
+    
+    // showModal function updated to control close button visibility
+    window.showModal = (html, showCloseButton = true) => {
         const modal = document.getElementById('nexus-modal');
         document.getElementById('modal-body').innerHTML = html;
+        document.getElementById('modal-close').style.display = showCloseButton ? 'block' : 'none';
         modal.style.pointerEvents = 'auto'; modal.style.opacity = '1';
         document.getElementById('modal-content').classList.remove('scale-95');
         document.getElementById('modal-content').classList.add('scale-100');
         lucide.createIcons();
     };
+
     window.closeModal = () => {
          const modal = document.getElementById('nexus-modal');
          modal.style.opacity = '0'; modal.style.pointerEvents = 'none';
@@ -1726,9 +1778,9 @@
         // Custom Select Listeners
         document.getElementById('dep-method-selector').addEventListener('click', () => {
             const options = [
-                { value: 'USDT', text: 'USDT' },
+                { value: 'USDT', text: 'USDT (TRC20)' },
                 { value: 'BTC', text: 'BTC' },
-                { value: 'Binance', text: 'Binance' }
+                { value: 'Binance', text: 'Binance Pay' }
             ];
             showMethodSelector('dep-method', 'dep-method-text', 'Select Payment Method', options);
         });
@@ -1783,16 +1835,13 @@
         const uid = userData.tgChatId;
     
         try {
-            // Total Completed Tasks
             const totalTasks = (userData.dailyCompletedTasks && Array.isArray(userData.dailyCompletedTasks)) ? userData.dailyCompletedTasks.length : 0;
             statTasksEl.textContent = totalTasks;
     
-            // Total Income from tasks
             const taskReward = TASK_REWARD; 
             const totalTaskEarnings = totalTasks * taskReward;
             statIncomeEl.textContent = `$${totalTaskEarnings.toFixed(2)}`;
     
-            // Total Referrals
             const referralsQuery = query(collection(db, "users"), where("referredBy", "==", uid));
             const referralsSnap = await getDocs(referralsQuery);
             statReferralsEl.textContent = referralsSnap.size;
@@ -1864,5 +1913,7 @@
         }
     }
 </script>
+
 </body>
 </html>
+```
